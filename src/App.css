@@ -1,4 +1,4 @@
-.App{
+.loginNav{
     text-align: center;
     color: #f8fafc;
     display: flex;
@@ -39,10 +39,80 @@
     border: none;
     background: none;
     text-decoration: underline;
-    padding-bottom: rem;
+    /*padding-bottom: rem;*/
     padding-top: 1rem;
+}
+
+.error-notification {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
 }
 
 button{
     cursor: pointer;
+}
+
+.nav{
+    background-color: #1f2937;
+    padding: 0.75rem 0.75rem;
+    justify-content: space-between;
+}
+
+.create-button{
+    background-color: #6466f0;
+    border: none;
+    color: white;
+    padding: 0.3rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 0.8rem;
+}
+
+.login-button{
+    text-decoration: none;
+    padding-left: 3rem;
+    padding-right: 2rem;
+}
+
+.dashboard{
+    text-decoration: none;
+    padding-left: 3rem;
+}
+
+.site-logo{
+    padding-left: 3rem;
+}
+
+.login-create{
+    padding-top: 1rem;
+}
+
+.home-text{
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    min-height: 65vh;
+    align-items: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin: 0 auto;
+}
+
+.home-title{
+    font-size: 3.4rem;
+    font-weight: bold;
+}
+
+.notification {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
 }

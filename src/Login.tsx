@@ -1,16 +1,37 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
+import CryptoJS from "crypto-js";
+
+function hashPassword(password: string) {
+  return CryptoJS.SHA256(password).toString();
+}
 
 function Login(props: { onFormSwitch: (arg0: string) => void }) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log(email);
+
+    const response = await fetch(`http://localhost:8080/login/${email}/${hashPassword(pass)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    if (data) {
+      window.location.href = "/";
+    } else {
+      setError("Incorrect email or password. Please try again.");
+    }
   };
 
   return (
     <div className="auth-form-container">
+      {error && <div className="error-notification">{error}</div>}
       <form className="loginForm" onSubmit={handleSubmit}>
         <label className="authLabel" htmlFor="email">
           Email
@@ -36,15 +57,15 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
           id="password"
           name="password"
         />
+        <button className="authButton" type="submit">
+          Log In
+        </button>
       </form>
       <button
         className="authRedirectLink"
         onClick={() => props.onFormSwitch("register")}
       >
         Don't have an account? Register here.
-      </button>
-      <button className="authButton" type="submit">
-        Log In
       </button>
     </div>
   );

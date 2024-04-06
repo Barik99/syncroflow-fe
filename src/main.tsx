@@ -4,13 +4,14 @@ import App from "./App";
 import "bootstrap/dist/css/bootstrap.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Login from "./Login";
 import Home from "./Home";
+import NotFoundPage from "./NotFoundPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    errorElement: <NotFoundPage />,
   },
   {
     path: "/login",
