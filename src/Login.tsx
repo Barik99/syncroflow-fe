@@ -23,6 +23,7 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
     const data = await response.json();
 
     if (data) {
+      window.localStorage.setItem('email', email);
       window.location.href = "/";
     } else {
       setError("Incorrect email or password. Please try again.");

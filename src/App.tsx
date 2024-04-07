@@ -3,6 +3,7 @@ import "./App.css";
 import Login from "./Login";
 import Register from "./Register";
 import Navigation from "./Navigation";
+import Rules from "./Rules"; // Import the Rules component
 
 function App() {
   const [currentForm, setCurrentForm] = useState("login");
@@ -20,6 +21,7 @@ function App() {
           <Register onFormSwitch={toggleForm} />
         )}
       </div>
+      <Rules /> // Include the Rules component
     </div>
   );
 }
