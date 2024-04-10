@@ -29,38 +29,45 @@ function Rules() {
       },
     });
 
-    const rules = await response.json();
-    setRules(rules);
-  };
+      const data = await response.json();
+      console.log(data);
 
-  const handleDeleteClick = (id: string) => {
-    setShowDelete(id);
-  };
-
-return (
-  <div>
-    <Navigation />
-    <div className="rules-container">
-      {rules.length === 0 ? (
-        <p>No rules available at the moment.</p>
-      ) : (
-        rules.map((rule) => (
-          <div key={rule.id} className="rule-card">
-            <h2 className="rule-title">{rule.name}</h2>
-            <p className="rule-description">{rule.description}</p>
-            <p>Action name: {rule.action}</p>
-            <p>Trigger name: {rule.trigger}</p>
-            <p>Active: {rule.active ? 'Yes' : 'No'}</p>
-            <p>Last Use: {rule.lastUse}</p>
-            <p>Multi Use: {rule.multiUse ? 'Yes' : 'No'}</p>
-            <p>Sleep Time: {rule.sleepTime}</p>
-          </div>
-        ))
-      )}
-    </div>
-  </div>
-);
-
+      // Check if data is an array before setting it
+      if (Array.isArray(data)) {
+        setRules(data);
+      } else {
+        console.error('Error: Expected array from API, received:', data);
+      }
+    };
+  return (
+      <div>
+        <Navigation />
+        <div className="container">
+          {rules.length === 0 ? (
+              <p>No rules available at the moment.</p>
+          ) : (
+              <div className="row">
+                {rules.map((rule) => (
+                    <div key={rule.id} className="col-lg-3">
+                      <div className="card mb-3">
+                        <div className="card-body">
+                          <h5 className="card-title">{rule.name}</h5>
+                          <p className="card-text">{rule.description}</p>
+                          <p className="card-text">Action name: {rule.action}</p>
+                          <p className="card-text">Trigger name: {rule.trigger}</p>
+                          <p className="card-text">Active: {rule.active ? 'Yes' : 'No'}</p>
+                          <p className="card-text">Last Use: {rule.lastUse}</p>
+                          <p className="card-text">Multi Use: {rule.multiUse ? 'Yes' : 'No'}</p>
+                          <p className="card-text">Sleep Time: {rule.sleepTime}</p>
+                        </div>
+                      </div>
+                    </div>
+                ))}
+              </div>
+          )}
+        </div>
+      </div>
+  );
 }
 
 
