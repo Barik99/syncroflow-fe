@@ -1,5 +1,6 @@
 import Navigation from "./Navigation";
 import {useEffect, useState} from "react";
+import { Button, Modal } from "react-bootstrap";
 
 interface Rule {
   id: string;
@@ -14,7 +15,10 @@ interface Rule {
 }
 function Rules() {
   const [rules, setRules] = useState<Rule[]>([]);
-  const [showDelete, setShowDelete] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
   const email = window.localStorage.getItem('email');
 
   useEffect(() => {
@@ -43,6 +47,58 @@ function Rules() {
       <div>
         <Navigation />
         <div className="container">
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-primary my-3" onClick={handleShow}>Create Rule</button>
+          </div>
+          <Modal show={showModal} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create Rule</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="ruleName" className="form-label">Name</label>
+                  <input type="text" className="form-control" id="ruleName" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="ruleDescription" className="form-label">Description</label>
+                  <input type="text" className="form-control" id="ruleDescription" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="ruleAction" className="form-label">Action</label>
+                  <input type="text" className="form-control" id="ruleAction" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="ruleActive" className="form-label">Active</label>
+                  <input type="checkbox" className="form-check-input" id="ruleActive" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="ruleLastUse" className="form-label">Last Use</label>
+                  <input type="text" className="form-control" id="ruleLastUse" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="ruleMultiUse" className="form-label">Multi Use</label>
+                  <input type="checkbox" className="form-check-input" id="ruleMultiUse" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="ruleSleepTime" className="form-label">Sleep Time</label>
+                  <input type="number" className="form-control" id="ruleSleepTime" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="ruleTrigger" className="form-label">Trigger</label>
+                  <input type="text" className="form-control" id="ruleTrigger" />
+                </div>
+              </form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleClose}>
+                Create
+              </Button>
+            </Modal.Footer>
+          </Modal>
           {rules.length === 0 ? (
               <p>No rules available at the moment.</p>
           ) : (
