@@ -58,35 +58,35 @@ function Rules() {
               <form>
                 <div className="mb-3">
                   <label htmlFor="ruleName" className="form-label">Name</label>
-                  <input type="text" className="form-control" id="ruleName" />
+                  <input type="text" className="form-control" id="ruleName"/>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleDescription" className="form-label">Description</label>
-                  <input type="text" className="form-control" id="ruleDescription" />
+                  <input type="text" className="form-control" id="ruleDescription"/>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleAction" className="form-label">Action</label>
-                  <input type="text" className="form-control" id="ruleAction" />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="ruleActive" className="form-label">Active</label>
-                  <input type="checkbox" className="form-check-input" id="ruleActive" />
+                  <input type="text" className="form-control" id="ruleAction"/>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleLastUse" className="form-label">Last Use</label>
-                  <input type="text" className="form-control" id="ruleLastUse" />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="ruleMultiUse" className="form-label">Multi Use</label>
-                  <input type="checkbox" className="form-check-input" id="ruleMultiUse" />
+                  <input type="text" className="form-control" id="ruleLastUse"/>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleSleepTime" className="form-label">Sleep Time</label>
-                  <input type="number" className="form-control" id="ruleSleepTime" />
+                  <input type="number" className="form-control" id="ruleSleepTime"/>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleTrigger" className="form-label">Trigger</label>
-                  <input type="text" className="form-control" id="ruleTrigger" />
+                  <input type="text" className="form-control" id="ruleTrigger"/>
+                </div>
+                <div className="mb-3 form-check form-check-inline">
+                  <input type="checkbox" className="form-check-input" id="ruleActive"/>
+                  <label htmlFor="ruleActive" className="form-check-label">Active</label>
+                </div>
+                <div className="mb-3 form-check form-check-inline">
+                  <label htmlFor="ruleMultiUse" className="form-label">Multi Use</label>
+                  <input type="checkbox" className="form-check-input" id="ruleMultiUse"/>
                 </div>
               </form>
             </Modal.Body>
