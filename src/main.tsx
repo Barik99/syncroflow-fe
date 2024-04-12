@@ -6,7 +6,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Home from "./Home";
 import NotFoundPage from "./NotFoundPage";
-import Rules from "./Rules"; // Import the Rules component
+import Rules from "./Rules";
+import Triggers from "./Triggers"; // Import the Rules component
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/rules", // Add a new route for the Rules page
     element: <Rules />,
+  },
+  {
+    path: "/triggers", // Add a new route for the Rules page
+    element: <Triggers />,
   },
 ]);
 

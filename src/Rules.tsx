@@ -5,7 +5,6 @@ import { Button, Modal } from "react-bootstrap";
 interface Rule {
   id: string;
   name: string;
-  description: string;
   action: string;
   active: boolean;
   lastUse: string | null;
@@ -61,12 +60,12 @@ function Rules() {
                   <input type="text" className="form-control" id="ruleName"/>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="ruleDescription" className="form-label">Description</label>
-                  <input type="text" className="form-control" id="ruleDescription"/>
+                  <label htmlFor="ruleAction" className="form-label">Action Name</label>
+                  <input type="text" className="form-control" id="ruleAction"/>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="ruleAction" className="form-label">Action</label>
-                  <input type="text" className="form-control" id="ruleAction"/>
+                  <label htmlFor="ruleTrigger" className="form-label">Trigger Name</label>
+                  <input type="text" className="form-control" id="ruleTrigger"/>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleLastUse" className="form-label">Last Use</label>
@@ -75,10 +74,6 @@ function Rules() {
                 <div className="mb-3">
                   <label htmlFor="ruleSleepTime" className="form-label">Sleep Time</label>
                   <input type="number" className="form-control" id="ruleSleepTime"/>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="ruleTrigger" className="form-label">Trigger</label>
-                  <input type="text" className="form-control" id="ruleTrigger"/>
                 </div>
                 <div className="mb-3 form-check form-check-inline">
                   <input type="checkbox" className="form-check-input" id="ruleActive"/>
@@ -108,7 +103,6 @@ function Rules() {
                       <div className="card mb-3">
                         <div className="card-body">
                           <h5 className="card-title">{rule.name}</h5>
-                          <p className="card-text">{rule.description}</p>
                           <p className="card-text">Action name: {rule.action}</p>
                           <p className="card-text">Trigger name: {rule.trigger}</p>
                           <p className="card-text">Active: {rule.active ? 'Yes' : 'No'}</p>
