@@ -14,10 +14,20 @@ function Triggers() {
   const [showModal, setShowModal] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const [triggerTypes, setTriggerTypes] = useState<any>({});
+  const [triggerName, setTriggerName] = useState("");
+  const [triggerFields, setTriggerFields] = useState<{[key: string]: string}>({});
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
   const email = window.localStorage.getItem('email');
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTriggerName(e.target.value);
+  };
+
+  const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTriggerFields(prevFields => ({...prevFields, [field]: e.target.value}));
+  };
 
   useEffect(() => {
     fetchTriggers();
@@ -58,9 +68,37 @@ function Triggers() {
     }
   };
 
-  const createTrigger = async () => {
-    // Similar to createRule function in Rules.tsx
-  };
+    const createTrigger = async () => {
+        let trigger: { [key: string]: any } = {
+            name: triggerName,
+            type: selectedType,
+        };
+
+        // Add fields based on the selected type
+        const fields = triggerTypes[selectedType];
+        for (const field in fields) {
+            if (fields[field] === "Long") {
+                trigger[field] = parseInt(triggerFields[field]);
+            } else {
+                trigger[field] = triggerFields[field];
+            }
+        }
+
+        const response = await fetch(`http://localhost:8080/addTrigger/${email}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(trigger)
+        });
+
+        if (response.ok) {
+            fetchTriggers();
+            handleClose();
+        } else {
+            console.error('Error: Could not create trigger');
+        }
+    };
 
   const handleTypeChange = (selectedOption: string) => {
     setSelectedType(selectedOption);
@@ -81,7 +119,7 @@ function Triggers() {
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter trigger name" />
+                <Form.Control type="text" placeholder="Enter trigger name" onChange={handleNameChange} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Type</Form.Label>
@@ -92,10 +130,10 @@ function Triggers() {
                   ))}
                 </Form.Select>
               </Form.Group>
-              {selectedType && triggerTypes[selectedType].map((field : string, index : number) => (
+              {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
                 <Form.Group key={index} className="mb-3">
                   <Form.Label>{field}</Form.Label>
-                  <Form.Control type="text" placeholder={`Enter ${field}`} />
+                  <Form.Control type="text" placeholder={`Enter ${field}`} onChange={handleFieldChange(field)} />
                 </Form.Group>
               ))}
             </Form>
