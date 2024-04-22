@@ -7,7 +7,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./Home";
 import NotFoundPage from "./NotFoundPage";
 import Rules from "./Rules";
-import Triggers from "./Triggers"; // Import the Rules component
+import Triggers from "./Triggers";
+import FileExplorer from "./FileExplorer"; // Import the Rules component
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
     path: "/triggers", // Add a new route for the Rules page
     element: <Triggers />,
   },
+  {
+    path: "/file-explorer",
+    element: <FileExplorer />,
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

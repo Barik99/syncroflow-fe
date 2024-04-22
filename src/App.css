@@ -184,3 +184,10 @@ button{
 .dots-button:hover + .delete-button {
     display: block;
 }
+
+.toast-bottom-left {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 9999;
+}

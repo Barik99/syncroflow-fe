@@ -18,6 +18,9 @@ function Navigation() {
         <a href="/actions" className="dashboard text-white">
           Actions
         </a>
+        <a href="/file-explorer" className="dashboard text-white">
+          File Explorer
+        </a>
       </div>
       <div className="login-create">
         <button className="create-button">+ Create</button>
