@@ -5,6 +5,7 @@ import Navigation from './Navigation';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { Breadcrumb } from 'react-bootstrap';
 
 
 interface DirectoryProps {
@@ -138,6 +139,7 @@ const FileExplorer: React.FC = () => {
         setCurrentDirectory(directory);
         setPath(prevPath => [...prevPath, directory.name]);
         setSelectedDirectory(''); // Deselect the directory
+        setSelectedFile(''); // Deselect the file
     };
 
     const handlePathClick = (index: number) => {
@@ -148,6 +150,12 @@ const FileExplorer: React.FC = () => {
         }
         setCurrentDirectory(newCurrentDirectory);
         setPath(newPath);
+
+        // If the clicked directory is different from the current directory, deselect the file
+        if (newPath[newPath.length - 1] !== path[path.length - 1]) {
+            setSelectedDirectory('');
+            setSelectedFile('');
+        }
     };
 
     const renderDirectories = (items: DirectoryProps[]) => {
@@ -236,12 +244,14 @@ const renderFiles = (items: DirectoryProps[]) => {
                 </Modal>
                 <div style={{ borderLeft: '1px solid black', paddingLeft: '20px', marginTop: '20px' }}>
                     <div>
-                        {path.map((dir, index) => (
-                            <span key={index} onClick={() => handlePathClick(index)}>
-                        {dir}
-                                {index < path.length - 1 && " / "}
-                    </span>
-                        ))}
+                        <Breadcrumb>
+                            {path.map((dir, index) => (
+                                <Breadcrumb.Item key={index} active={index === path.length - 1}
+                                                 onClick={() => handlePathClick(index)}>
+                                    {dir}
+                                </Breadcrumb.Item>
+                            ))}
+                        </Breadcrumb>
                     </div>
 
                     {isLoading ? (
