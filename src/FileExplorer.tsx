@@ -31,6 +31,8 @@ const FileExplorer: React.FC = () => {
     const [isFileValid, setIsFileValid] = useState(true);
     const [showNoDirectoriesAlert, setShowNoDirectoriesAlert] = useState(true);
     const [showNoFilesAlert, setShowNoFilesAlert] = useState(true);
+    const [showDeleteDirectoryModal, setShowDeleteDirectoryModal] = useState(false);
+    const [showDeleteFileModal, setShowDeleteFileModal] = useState(false);
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -111,6 +113,11 @@ const FileExplorer: React.FC = () => {
         }
     };
 
+    const handleDeleteDirectoryConfirmation = async () => {
+        await handleDeleteDirectory();
+        setShowDeleteDirectoryModal(false);
+    };
+
     const handleDeleteDirectory = async () => {
         const directoryToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedDirectory;
         const response = await fetch(`http://localhost:8080/removeDirectory`, {
@@ -136,6 +143,11 @@ const FileExplorer: React.FC = () => {
         } else {
             console.error('Error:', await response.text());
         }
+    };
+
+    const handleDeleteFileConfirmation = async () => {
+        await handleDeleteFile();
+        setShowDeleteFileModal(false);
     };
 
     const handleDeleteFile = async () => {
@@ -344,7 +356,7 @@ const FileExplorer: React.FC = () => {
         </span>
             </OverlayTrigger>
         ) : (
-            <Button variant="outline-danger" onClick={handleDeleteDirectory}>
+            <Button variant="outline-danger" onClick={() => setShowDeleteDirectoryModal(true)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-folder-x me-2" viewBox="0 0 16 16">
                     <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181L15.546 8H14.54l.265-2.91A1 1 0 0 0 13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91H9v1H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zm6.339-1.577A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/>
                     <path d="M11.854 10.146a.5.5 0 0 0-.707.708L12.293 12l-1.146 1.146a.5.5 0 0 0 .707.708L13 12.707l1.146 1.147a.5.5 0 0 0 .708-.708L13.707 12l1.147-1.146a.5.5 0 0 0-.707-.708L13 11.293z"/>
@@ -389,7 +401,7 @@ const FileExplorer: React.FC = () => {
         </span>
             </OverlayTrigger>
         ) : (
-            <Button variant="outline-danger" onClick={handleDeleteFile}>
+                <Button variant="outline-danger" onClick={() => setShowDeleteFileModal(true)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-file-earmark-x me-2" viewBox="0 0 16 16">
                     <path d="M6.854 7.146a.5.5 0 1 0-.708.708L7.293 9l-1.147 1.146a.5.5 0 0 0 .708.708L8 9.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 9l1.147-1.146a.5.5 0 0 0-.708-.708L8 8.293z"/>
                     <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
@@ -463,6 +475,45 @@ const FileExplorer: React.FC = () => {
                         </Button>
                     </Modal.Footer>
                 </Modal>
+
+                <Modal show={showDeleteDirectoryModal} onHide={() => setShowDeleteDirectoryModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirm Delete</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Are you sure you want to delete this directory?
+                        <br/>
+                        Location: <strong>{path.join('/')}/{selectedDirectory}</strong>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowDeleteDirectoryModal(false)}>
+                            No
+                        </Button>
+                        <Button variant="danger" onClick={handleDeleteDirectoryConfirmation}>
+                            Yes
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal show={showDeleteFileModal} onHide={() => setShowDeleteFileModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirm Delete</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Are you sure you want to delete this file?
+                        <br/>
+                        Location: <strong>{path.join('/')}/{selectedFile}</strong>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowDeleteFileModal(false)}>
+                            No
+                        </Button>
+                        <Button variant="danger" onClick={handleDeleteFileConfirmation}>
+                            Yes
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
                 <div style={{borderLeft: '1px solid black', paddingLeft: '20px', marginTop: '20px'}}>
                     <div>
                         <Breadcrumb>
