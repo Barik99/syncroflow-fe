@@ -12,6 +12,7 @@
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "crypto-js": "^4.2.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
