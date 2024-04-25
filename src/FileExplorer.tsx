@@ -5,7 +5,7 @@ import Navigation from './Navigation';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import {Breadcrumb, Card, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {Breadcrumb, Card, OverlayTrigger, Toast, Tooltip} from 'react-bootstrap';
 
 
 interface DirectoryProps {
@@ -33,6 +33,8 @@ const FileExplorer: React.FC = () => {
     const [showNoFilesAlert, setShowNoFilesAlert] = useState(true);
     const [showDeleteDirectoryModal, setShowDeleteDirectoryModal] = useState(false);
     const [showDeleteFileModal, setShowDeleteFileModal] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -61,7 +63,12 @@ const FileExplorer: React.FC = () => {
             body: formData,
         });
 
+        const message = await response.text();
+
         if (response.ok) {
+            setShowToast(true);
+            setToastMessage(message);
+
             const updatedData = await fetch('http://localhost:8080/getDirectory')
                 .then(response => response.json());
 
@@ -75,7 +82,8 @@ const FileExplorer: React.FC = () => {
             setShowFileModal(false);
             setUploadedFile(null);
         } else {
-            console.error('Error:', await response.text());
+            setShowToast(true);
+            setToastMessage(`Error: ${message}`);
         }
     };
 
@@ -95,7 +103,12 @@ const FileExplorer: React.FC = () => {
             body: JSON.stringify({ directory: directoryName, parentDirectory }),
         });
 
+        const message = await response.text();
+
         if (response.ok) {
+            setShowToast(true);
+            setToastMessage(message);
+
             const updatedData = await fetch('http://localhost:8080/getDirectory')
                 .then(response => response.json());
 
@@ -109,7 +122,8 @@ const FileExplorer: React.FC = () => {
             setShowModal(false); // Close the modal
             setDirectoryName(''); // Clear the name field
         } else {
-            console.error('Error:', await response.text());
+            setShowToast(true);
+            setToastMessage(`Error: ${message}`);
         }
     };
 
@@ -128,7 +142,12 @@ const FileExplorer: React.FC = () => {
             body: JSON.stringify({ directory: directoryToDelete }),
         });
 
+        const message = await response.text();
+
         if (response.ok) {
+            setShowToast(true);
+            setToastMessage(message);
+
             const updatedData = await fetch('http://localhost:8080/getDirectory')
                 .then(response => response.json());
 
@@ -141,12 +160,43 @@ const FileExplorer: React.FC = () => {
             setCurrentDirectory(newCurrentDirectory);
             setSelectedDirectory('');
         } else {
-            console.error('Error:', await response.text());
+            setShowToast(true);
+            setToastMessage(`Error: ${message}`);
         }
     };
 
     const handleDeleteFileConfirmation = async () => {
-        await handleDeleteFile();
+        const fileToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedFile;
+        const response = await fetch(`http://localhost:8080/removeFile`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ file: fileToDelete }),
+        });
+
+        const message = await response.text();
+
+        if (response.ok) {
+            setShowToast(true);
+            setToastMessage(message);
+
+            const updatedData = await fetch('http://localhost:8080/getDirectory')
+                .then(response => response.json());
+
+            let newCurrentDirectory = updatedData;
+            for (let i = 1; i < path.length; i++) {
+                newCurrentDirectory = newCurrentDirectory.children.find((dir: { name: string; }) => dir.name === path[i]) || null;
+            }
+
+            setDirectories(updatedData);
+            setCurrentDirectory(newCurrentDirectory);
+            setSelectedFile('');
+        } else {
+            setShowToast(true);
+            setToastMessage(`Error: ${message}`);
+        }
+
         setShowDeleteFileModal(false);
     };
 
@@ -513,6 +563,23 @@ const FileExplorer: React.FC = () => {
                         </Button>
                     </Modal.Footer>
                 </Modal>
+
+                <Toast
+                    className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('File deleted') || 
+                    toastMessage.includes('File uploaded successfully!') || toastMessage.includes('Directory created') || 
+                    toastMessage.includes('Directory deleted') ? 'text-bg-success' : 'text-bg-danger'}`}
+                    onClose={() => setShowToast(false)}
+                    show={showToast}
+                    delay={5000}
+                    autohide
+                >
+                    <div className="d-flex">
+                        <div className="toast-body">
+                            {toastMessage}
+                        </div>
+                        <button type="button" className="btn-close btn-close-white me-2 m-auto" onClick={() => setShowToast(false)} aria-label="Close"></button>
+                    </div>
+                </Toast>
 
                 <div style={{borderLeft: '1px solid black', paddingLeft: '20px', marginTop: '20px'}}>
                     <div>
