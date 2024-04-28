@@ -10,14 +10,22 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@craco/craco": "^7.1.0",
+    "@babel/plugin-transform-class-properties": "^7.24.1",
+    "@craco/craco": "^5.9.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.15",
+    "@nextui-org/date-input": "^2.0.3",
+    "@nextui-org/react": "^2.3.6",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "crypto-js": "^4.2.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
+    "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.1",
+    "react-time-picker": "^6.6.0",
     "react-toastify": "^10.0.5"
   },
   "devDependencies": {

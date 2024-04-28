@@ -191,3 +191,10 @@ button{
     left: 1rem;
     z-index: 9999;
 }
+
+.time-input-wrapper * {
+    /* Reset or override the styles here */
+    width: auto; /* Example: reset the width */
+    height: auto; /* Example: reset the height */
+    /* Add more styles as needed */
+}
