@@ -84,6 +84,21 @@ function Triggers() {
         setTriggerFields(prevFields => ({...prevFields, [field]: e.target.value}));
     };
 
+    const [fieldErrorMessage, setFieldErrorMessage] = useState<{[key: string]: string}>({});
+
+    const handleFieldChangeDayOfMonth = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        const numValue = parseInt(value);
+        if (numValue < 1 || numValue > 31) {
+            setFieldValidation(prev => ({...prev, 'day': true}));
+            setFieldErrorMessage(prev => ({...prev, 'day': 'Day must be between 1 and 31'}));
+        } else {
+            setFieldValidation(prev => ({...prev, 'day': false}));
+            setFieldErrorMessage(prev => ({...prev, 'day': ''}));
+            setTriggerFields(prevFields => ({...prevFields, 'day': value}));
+        }
+    };
+
     useEffect(() => {
         fetchTriggers();
         fetchTriggerTypes();
@@ -173,6 +188,12 @@ function Triggers() {
                 return;
             }
             trigger.file = selectedFilePath.replace("Home", "FileDirectory");
+        }
+
+        if (selectedType === 'Day Of Month' && (!triggerFields['day'] || triggerFields['day'].trim() === '')) {
+            setFieldValidation(prev => ({...prev, 'day': true}));
+            setFieldErrorMessage(prev => ({...prev, 'day': 'Day is required'}));
+            return;
         }
 
         console.log("Trigger object after file existence check:", trigger);
@@ -452,6 +473,13 @@ function Triggers() {
                                         <option value="FRIDAY">FRIDAY</option>
                                         <option value="SATURDAY">SATURDAY</option>
                                     </Form.Select>
+                                ) : selectedType === 'Day Of Month' && field === 'day' ? (
+                                    <div>
+                                        <Form.Control type="number" min="1" max="31" placeholder={`Enter a ${field} of the month`}
+                                                      onChange={handleFieldChangeDayOfMonth}
+                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                        {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                    </div>
                                 ) : selectedType === 'File Existence' && field === 'file' ? (
                                     <div>
                                         <Button variant="primary" onClick={handleFileChange}
