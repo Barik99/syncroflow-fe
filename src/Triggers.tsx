@@ -46,10 +46,15 @@ function Triggers() {
     const [selectedFilePath, setSelectedFilePath] = useState("");
     const [tempTriggerName, setTempTriggerName] = useState("");
     const [tempSelectedType, setTempSelectedType] = useState("");
+    const [firstTrigger, setFirstTrigger] = useState("");
+    const [secondTrigger, setSecondTrigger] = useState("");
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
         resetModal();
+        // Reset the firstTrigger and secondTrigger states
+        setFirstTrigger('Select a trigger');
+        setSecondTrigger('Select a trigger');
         setShowModal(true);
     };
 
@@ -77,7 +82,19 @@ function Triggers() {
     };
 
     const handleFieldChangeNotOrAnd = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setTriggerFields(prevFields => ({...prevFields, [field]: e.target.value}));
+        const value = e.target.value;
+        setTriggerFields(prevFields => ({...prevFields, [field]: value}));
+        if (field === 'firstTrigger') {
+            console.log("First trigger:", value);
+            console.log("Second trigger:", secondTrigger);
+            setFirstTrigger(value);
+            setSecondTrigger(secondTrigger);
+        } else if (field === 'secondTrigger') {
+            console.log("First trigger:", firstTrigger);
+            console.log("Second trigger:", value);
+            setSecondTrigger(value);
+            setFirstTrigger(firstTrigger);
+        }
     };
 
     const handleFieldChangeForDaysOfWeek = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -196,6 +213,32 @@ function Triggers() {
             return;
         }
 
+        if (selectedType === 'AND' || selectedType === 'OR') {
+            if (firstTrigger === 'Select a trigger') {
+                setFieldValidation(prev => ({...prev, 'firstTrigger': true}));
+                setFieldErrorMessage(prev => ({...prev, 'firstTrigger': 'This field is required'}));
+                return;
+            } else {
+                setFieldValidation(prev => ({...prev, 'firstTrigger': false}));
+            }
+
+            if (secondTrigger === 'Select a trigger') {
+                setFieldValidation(prev => ({...prev, 'secondTrigger': true}));
+                setFieldErrorMessage(prev => ({...prev, 'secondTrigger': 'This field is required'}));
+                return;
+            } else {
+                setFieldValidation(prev => ({...prev, 'secondTrigger': false}));
+            }
+        } else if (selectedType === 'NOT') {
+            if (triggerFields['trigger'] === 'Select a trigger') {
+                setFieldValidation(prev => ({...prev, 'trigger': true}));
+                setFieldErrorMessage(prev => ({...prev, 'trigger': 'This field is required'}));
+                return;
+            } else {
+                setFieldValidation(prev => ({...prev, 'trigger': false}));
+            }
+        }
+
         console.log("Trigger object after file existence check:", trigger);
 
         const fields = triggerTypes[selectedType];
@@ -247,7 +290,41 @@ function Triggers() {
         setSelectedType(selectedOption);
         if (selectedOption === "Select a type") {
             resetModal();
-        } else {
+        } else if (selectedOption === "AND") {
+            // Initialize triggerFields with the fields of the selected type
+            const fields = triggerTypes[selectedOption];
+            let initialTriggerFields: {[key: string]: string} = {};
+            for (const field in fields) {
+                initialTriggerFields[field] = triggerFields[field] || '';
+            }
+            setTriggerFields(initialTriggerFields);
+        } else if (selectedOption === "OR") {
+            // Initialize triggerFields with the fields of the selected type
+            const fields = triggerTypes[selectedOption];
+            let initialTriggerFields: {[key: string]: string} = {};
+            for (const field in fields) {
+                initialTriggerFields[field] = triggerFields[field] || '';
+            }
+            setTriggerFields(initialTriggerFields);
+
+            // Update the validation state for the firstTrigger and secondTrigger fields
+            setFieldValidation(prev => ({...prev, 'firstTrigger': false, 'secondTrigger': false}));
+        } else if (selectedOption === "NOT") {
+            // Initialize triggerFields with the fields of the selected type
+            const fields = triggerTypes[selectedOption];
+            let initialTriggerFields: {[key: string]: string} = {};
+            for (const field in fields) {
+                initialTriggerFields[field] = triggerFields[field] || '';
+            }
+            setTriggerFields(initialTriggerFields);
+
+            // Reset the firstTrigger and secondTrigger states
+            setFirstTrigger('Select a trigger');
+            setSecondTrigger('Select a trigger');
+
+            // Update the validation state for the trigger field
+            setFieldValidation(prev => ({...prev, 'trigger': false}));
+        }  else {
             // Initialize triggerFields with the fields of the selected type
             const fields = triggerTypes[selectedOption];
             let initialTriggerFields: {[key: string]: string} = {};
@@ -453,11 +530,21 @@ function Triggers() {
                             <Form.Group key={index} className="mb-3">
                                 <Form.Label>{field}</Form.Label>
                                 <br/>
-                                {selectedType === 'NOT' || selectedType === 'AND' || selectedType === 'OR' ? (
-                                    <Form.Select onChange={handleFieldChangeNotOrAnd(field)}
-                                                 className={fieldValidation[field] ? 'is-invalid' : ''}>
+                                {selectedType === 'NOT' ? (
+                                    <Form.Select onChange={handleFieldChangeNotOrAnd('trigger')}
+                                                 className={fieldValidation['trigger'] ? 'is-invalid' : ''}
+                                                 value={triggerFields['trigger']}>
                                         <option>Select a trigger</option>
                                         {triggers.map((trigger, index) => (
+                                            <option key={index} value={trigger.name}>{trigger.name}</option>
+                                        ))}
+                                    </Form.Select>
+                                ) : (selectedType === 'AND' && (field === 'firstTrigger' || field === 'secondTrigger')) || (selectedType === 'OR' && (field === 'firstTrigger' || field === 'secondTrigger')) ? (
+                                    <Form.Select onChange={handleFieldChangeNotOrAnd(field)}
+                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
+                                                 value={field === 'firstTrigger' ? firstTrigger : secondTrigger}>
+                                        <option>Select a trigger</option>
+                                        {triggers.filter(trigger => trigger.name !== (field === 'firstTrigger' ? secondTrigger : firstTrigger)).map((trigger, index) => (
                                             <option key={index} value={trigger.name}>{trigger.name}</option>
                                         ))}
                                     </Form.Select>
