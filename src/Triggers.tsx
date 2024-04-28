@@ -81,6 +81,27 @@ function Triggers() {
         setTriggerFields(prevFields => ({...prevFields, [field]: e.target.value}));
     };
 
+    const handleFieldChangeTimeOfDay = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        if (value.trim() === '') {
+            setFieldValidation(prev => ({...prev, [field]: true}));
+            setFieldErrorMessage(prev => ({...prev, [field]: 'This field is required'}));
+        } else {
+            const numValue = parseInt(value);
+            if (field === 'hours' && (numValue < 0 || numValue > 23)) {
+                setFieldValidation(prev => ({...prev, 'hours': true}));
+                setFieldErrorMessage(prev => ({...prev, 'hours': 'Hours must be between 0 and 23'}));
+            } else if (field === 'minutes' && (numValue < 0 || numValue > 59)) {
+                setFieldValidation(prev => ({...prev, 'minutes': true}));
+                setFieldErrorMessage(prev => ({...prev, 'minutes': 'Minutes must be between 0 and 59'}));
+            } else {
+                setFieldValidation(prev => ({...prev, [field]: false}));
+                setFieldErrorMessage(prev => ({...prev, [field]: ''}));
+                setTriggerFields(prevFields => ({...prevFields, [field]: value}));
+            }
+        }
+    };
+
     const handleFieldChangeNotOrAnd = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.value;
         setTriggerFields(prevFields => ({...prevFields, [field]: value}));
@@ -191,6 +212,10 @@ function Triggers() {
             name: triggerName,
             type: selectedType,
         };
+
+        if (nameValidation || typeValidation || fieldValidation['hours'] || fieldValidation['day'] || fieldValidation['minutes']) {
+            return;
+        }
 
         console.log("Trigger object after initial setup:", trigger);
 
@@ -324,7 +349,15 @@ function Triggers() {
 
             // Update the validation state for the trigger field
             setFieldValidation(prev => ({...prev, 'trigger': false}));
-        }  else {
+        } else if (selectedOption === "Day Of Month" || selectedOption === "Time Of Day") {
+            // Initialize triggerFields with the fields of the selected type
+            const fields = triggerTypes[selectedOption];
+            let initialTriggerFields: {[key: string]: string} = {};
+            for (const field in fields) {
+                initialTriggerFields[field] = '';
+            }
+            setTriggerFields(initialTriggerFields);
+        } else {
             // Initialize triggerFields with the fields of the selected type
             const fields = triggerTypes[selectedOption];
             let initialTriggerFields: {[key: string]: string} = {};
@@ -560,6 +593,20 @@ function Triggers() {
                                         <option value="FRIDAY">FRIDAY</option>
                                         <option value="SATURDAY">SATURDAY</option>
                                     </Form.Select>
+                                ) : selectedType === 'Time Of Day' && field === 'hours' ? (
+                                    <div>
+                                        <Form.Control type="number" min="0" max="23" placeholder={`Enter a hour`}
+                                                      onChange={handleFieldChangeTimeOfDay(field)}
+                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                        {fieldValidation['hours'] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                    </div>
+                                ): selectedType === 'Time Of Day' && field === 'minutes' ? (
+                                    <div>
+                                        <Form.Control type="number" min="0" max="59" placeholder={`Enter a minute`}
+                                                      onChange={handleFieldChangeTimeOfDay(field)}
+                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                        {fieldValidation['minutes'] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                    </div>
                                 ) : selectedType === 'Day Of Month' && field === 'day' ? (
                                     <div>
                                         <Form.Control type="number" min="1" max="31" placeholder={`Enter a ${field} of the month`}
