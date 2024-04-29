@@ -49,6 +49,8 @@ function Triggers() {
     const [firstTrigger, setFirstTrigger] = useState("");
     const [secondTrigger, setSecondTrigger] = useState("");
     const [tempSizeThreshold, setTempSizeThreshold] = useState("");
+    const [tempCommandLineArguments, setTempCommandLineArguments] = useState("");
+    const [tempExitStatus, setTempExitStatus] = useState("");
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
@@ -166,14 +168,23 @@ function Triggers() {
         let filePath = path.join('/') + '/' + fileName;
         filePath = filePath.replace("Home", "FileDirectory"); // Replace "Home" with "FileDirectory"
         setSelectedFilePath(filePath); // Set the selected file path
-        if (tempSelectedType === 'File Existence' || tempSelectedType === 'File Size') {
-            setTriggerFields(prevFields => ({...prevFields, 'file': filePath}));
+        if (tempSelectedType === 'External Program') {
+            // Restore the commandLineArguments and exitStatus
+            setTriggerFields(prevFields => ({
+                ...prevFields,
+                'externalProgram': filePath,
+                'commandLineArguments': tempCommandLineArguments,
+                'exitStatus': tempExitStatus
+            }));
+            console.log('Restored commandLineArguments:', tempCommandLineArguments); // Log the restored commandLineArguments
+            console.log('Restored exitStatus:', tempExitStatus); // Log the restored exitStatus
         }
         setTriggerName(tempTriggerName); // Restore the trigger name
         setSelectedType(tempSelectedType); // Restore the selected type
         setShowFileExplorerModal(false); // Close the 'Select File' modal
         setShowModal(true); // Re-open the 'Create Trigger' modal
     };
+
     const fetchTriggers = async () => {
         const response = await fetch(`http://localhost:8080/triggers/${email}`, {
             method: 'GET',
@@ -244,7 +255,7 @@ function Triggers() {
 
         console.log("Trigger object after initial setup:", trigger);
 
-        if (selectedType === 'File Existence' || selectedType === 'File Size') {
+        if (selectedType === 'File Existence' || selectedType === 'File Size' || selectedType === 'External Program') {
             console.log("Selected file path:", selectedFilePath);
             if (!selectedFilePath) {
                 console.error('Error: No file selected');
@@ -405,6 +416,15 @@ function Triggers() {
 
                 // Reset the selected file path if the 'File Size' trigger type is selected
                 setSelectedFilePath('');
+            } else if (selectedOption === "External Program") {
+                setSelectedFilePath(''); // Reset the selected file path
+                // Initialize triggerFields with the fields of the selected type
+                const fields = triggerTypes[selectedOption];
+                let initialTriggerFields: {[key: string]: string} = {};
+                for (const field in fields) {
+                    initialTriggerFields[field] = '';
+                }
+                setTriggerFields(initialTriggerFields); // Reset all the fields
             }
         }
     };
@@ -419,6 +439,11 @@ function Triggers() {
         setSelectedFile(""); // Reset the selected file
         setTempTriggerName(triggerName); // Store the current trigger name
         setTempSelectedType(selectedType); // Store the current selected type
+        if (selectedType === 'External Program') {
+            // Store the current commandLineArguments and exitStatus
+            setTempCommandLineArguments(triggerFields['commandLineArguments']);
+            setTempExitStatus(triggerFields['exitStatus']);
+        }
         if (selectedType === 'File Size') {
             setTempSizeThreshold(triggerFields['sizeThreshold']); // Store the current size threshold
             setTempSizeThreshold(''); // Clear the size threshold
@@ -661,7 +686,7 @@ function Triggers() {
                                                       className={fieldValidation[field] ? 'is-invalid' : ''}/>
                                         {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
-                                ) : selectedType === 'File Existence' && field === 'file' || selectedType === 'File Size' && field === 'file' ? (
+                                ) : selectedType === 'File Existence' && field === 'file' || selectedType === 'File Size' && field === 'file' || selectedType === 'External Program' && field === 'externalProgram' ? (
                                     <div>
                                         <Button variant="primary" onClick={handleFileChange}
                                                 className={fieldValidation['file'] ? 'is-invalid' : ''}>
@@ -692,10 +717,18 @@ function Triggers() {
                 </Modal.Footer>
             </Modal>
             <Modal show={showFileExplorerModal} onHide={() => {
-                setShowFileExplorerModal(false);
-                setShowModal(true);
+                setShowFileExplorerModal(false); // Close the 'Select File' modal
+                setShowModal(true); // Open the 'Create Trigger' modal
                 setTriggerName(tempTriggerName); // Restore the trigger name
                 setSelectedType(tempSelectedType); // Restore the selected type
+                if (tempSelectedType === 'External Program') {
+                    // Restore the commandLineArguments and exitStatus
+                    setTriggerFields(prevFields => ({
+                        ...prevFields,
+                        'commandLineArguments': tempCommandLineArguments,
+                        'exitStatus': tempExitStatus
+                    }));
+                }
             }}>
                 <Modal.Header closeButton>
                     <Modal.Title>Select a File</Modal.Title>

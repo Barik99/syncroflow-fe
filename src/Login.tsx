@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import CryptoJS from "crypto-js";
+import config from './config';
 
 function hashPassword(password: string) {
   return CryptoJS.SHA256(password).toString();
@@ -12,8 +13,7 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-
-    const response = await fetch(`http://localhost:8080/login/${email}/${hashPassword(pass)}`, {
+    const response = await fetch(`${config.API_URL}/login/${email}/${hashPassword(pass)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,44 +31,44 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
   };
 
   return (
-    <div className="auth-form-container">
-      {error && <div className="error-notification">{error}</div>}
-      <form className="loginForm" onSubmit={handleSubmit}>
-        <label className="authLabel" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="authInput"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          placeholder="email@gmail.com"
-          id="email"
-          name="email"
-        />
-        <label className="authLabel" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="authInput"
-          value={pass}
-          onChange={(e) => setPass(e.target.value)}
-          type="password"
-          placeholder="************"
-          id="password"
-          name="password"
-        />
-        <button className="authButton" type="submit">
-          Log In
+      <div className="auth-form-container">
+        {error && <div className="error-notification">{error}</div>}
+        <form className="loginForm" onSubmit={handleSubmit}>
+          <label className="authLabel" htmlFor="email">
+            Email
+          </label>
+          <input
+              className="authInput"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="email@gmail.com"
+              id="email"
+              name="email"
+          />
+          <label className="authLabel" htmlFor="password">
+            Password
+          </label>
+          <input
+              className="authInput"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              type="password"
+              placeholder="************"
+              id="password"
+              name="password"
+          />
+          <button className="authButton" type="submit">
+            Log In
+          </button>
+        </form>
+        <button
+            className="authRedirectLink"
+            onClick={() => props.onFormSwitch("register")}
+        >
+          Don't have an account? Register here.
         </button>
-      </form>
-      <button
-        className="authRedirectLink"
-        onClick={() => props.onFormSwitch("register")}
-      >
-        Don't have an account? Register here.
-      </button>
-    </div>
+      </div>
   );
 }
 
