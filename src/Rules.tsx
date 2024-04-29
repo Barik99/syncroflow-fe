@@ -1,6 +1,6 @@
 import Navigation from "./Navigation";
-import {useEffect, useState} from "react";
-import { Button, Modal } from "react-bootstrap";
+import React, {useEffect, useState} from "react";
+import {Button, Form, Modal} from "react-bootstrap";
 
 interface Rule {
   id: string;
@@ -12,9 +12,19 @@ interface Rule {
   sleepTime: number;
   trigger: string;
 }
+
+interface Trigger {
+  id: string;
+  name: string;
+}
+
 function Rules() {
   const [rules, setRules] = useState<Rule[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [triggers, setTriggers] = useState<Trigger[]>([]);
+  const [actions, setActions] = useState<Trigger[]>([]);
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedAction, setSelectedAction] = useState("");
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
@@ -22,6 +32,8 @@ function Rules() {
 
   useEffect(() => {
     fetchRules();
+    fetchTriggers();
+    fetchActions();
   }, []);
 
   const fetchRules = async () => {
@@ -42,6 +54,49 @@ function Rules() {
         console.error('Error: Expected array from API, received:', data);
       }
     };
+
+  const fetchTriggers = async () => {
+    const response = await fetch(`http://localhost:8080/triggers/${email}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      setTriggers(data);
+    } else {
+      console.error('Error: Expected array from API, received:', data);
+    }
+  };
+
+  const fetchActions = async () => {
+    const response = await fetch(`http://localhost:8080/actions/${email}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      setActions(data);
+    } else {
+      console.error('Error: Expected array from API, received:', data);
+    }
+  };
+
+  const handleTypeChange = (selectedOption: string) => {
+    setSelectedType(selectedOption);
+  }
+
+  const handleActionChange = (selectedOption: string) => {
+    setSelectedAction(selectedOption);
+  }
+
   return (
       <div>
         <Navigation />
@@ -61,11 +116,21 @@ function Rules() {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleAction" className="form-label">Action Name</label>
-                  <input type="text" className="form-control" id="ruleAction"/>
+                  <Form.Select onChange={(e) => handleActionChange(e.target.value)} value={selectedAction}>
+                    <option>Select an action</option>
+                    {actions.map((action, index) => (
+                        <option key={index} value={action.name}>{action.name}</option>
+                    ))}
+                  </Form.Select>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleTrigger" className="form-label">Trigger Name</label>
-                  <input type="text" className="form-control" id="ruleTrigger"/>
+                  <Form.Select onChange={(e) => handleTypeChange(e.target.value)} value={selectedType}>
+                    <option>Select a trigger</option>
+                    {triggers.map((trigger, index) => (
+                          <option key={index} value={trigger.name}>{trigger.name}</option>
+                      ))}
+                  </Form.Select>
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleLastUse" className="form-label">Last Use</label>
