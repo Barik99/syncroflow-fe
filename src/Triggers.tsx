@@ -48,6 +48,7 @@ function Triggers() {
     const [tempSelectedType, setTempSelectedType] = useState("");
     const [firstTrigger, setFirstTrigger] = useState("");
     const [secondTrigger, setSecondTrigger] = useState("");
+    const [tempSizeThreshold, setTempSizeThreshold] = useState("");
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
@@ -80,6 +81,24 @@ function Triggers() {
     const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         setTriggerFields(prevFields => ({...prevFields, [field]: e.target.value}));
     };
+
+    const handleFieldChangeSizeThreshold = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        if (value.trim() === '') {
+            setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
+            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'This field is required'}));
+        } else {
+            const numValue = parseInt(value);
+            if (numValue < 0) {
+                setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
+                setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Size threshold must be greater than 0'}));
+            } else {
+                setFieldValidation(prev => ({...prev, 'sizeThreshold': false}));
+                setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': ''}));
+                setTriggerFields(prevFields => ({...prevFields, 'sizeThreshold': value}));
+            }
+        }
+    }
 
     const handleFieldChangeTimeOfDay = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value;
@@ -147,7 +166,7 @@ function Triggers() {
         let filePath = path.join('/') + '/' + fileName;
         filePath = filePath.replace("Home", "FileDirectory"); // Replace "Home" with "FileDirectory"
         setSelectedFilePath(filePath); // Set the selected file path
-        if (tempSelectedType === 'File Existence') {
+        if (tempSelectedType === 'File Existence' || tempSelectedType === 'File Size') {
             setTriggerFields(prevFields => ({...prevFields, 'file': filePath}));
         }
         setTriggerName(tempTriggerName); // Restore the trigger name
@@ -217,14 +236,20 @@ function Triggers() {
             return;
         }
 
+        if (selectedType === 'File Size' && (!triggerFields['sizeThreshold'] || triggerFields['sizeThreshold'].trim() === '')) {
+            setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
+            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'SizeThreshold is required'}));
+            return;
+        }
+
         console.log("Trigger object after initial setup:", trigger);
 
-        if (selectedType === 'File Existence') {
+        if (selectedType === 'File Existence' || selectedType === 'File Size') {
             console.log("Selected file path:", selectedFilePath);
             if (!selectedFilePath) {
                 console.error('Error: No file selected');
                 // Display an error message to the user
-                setToastMessage('Error: No file selected for File Existence trigger type');
+                setToastMessage('Error: No file selected for ' + selectedType + ' trigger type');
                 setShowToast(true);
                 // Prevent the creation of the trigger
                 return;
@@ -369,6 +394,17 @@ function Triggers() {
             // Reset the selected file path if the 'File Existence' trigger type is selected
             if (selectedOption === 'File Existence') {
                 setSelectedFilePath('');
+            } else if (selectedOption === "File Size") {
+                // Initialize triggerFields with the fields of the selected type
+                const fields = triggerTypes[selectedOption];
+                let initialTriggerFields: {[key: string]: string} = {};
+                for (const field in fields) {
+                    initialTriggerFields[field] = '';
+                }
+                setTriggerFields(initialTriggerFields);
+
+                // Reset the selected file path if the 'File Size' trigger type is selected
+                setSelectedFilePath('');
             }
         }
     };
@@ -383,6 +419,10 @@ function Triggers() {
         setSelectedFile(""); // Reset the selected file
         setTempTriggerName(triggerName); // Store the current trigger name
         setTempSelectedType(selectedType); // Store the current selected type
+        if (selectedType === 'File Size') {
+            setTempSizeThreshold(triggerFields['sizeThreshold']); // Store the current size threshold
+            setTempSizeThreshold(''); // Clear the size threshold
+        }
         setTriggerName(""); // Clear the trigger name
         setSelectedType(""); // Clear the selected type
         setShowModal(false); // Close the 'Create Trigger' modal
@@ -614,13 +654,22 @@ function Triggers() {
                                                       className={fieldValidation[field] ? 'is-invalid' : ''}/>
                                         {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
-                                ) : selectedType === 'File Existence' && field === 'file' ? (
+                                ) : selectedType === 'File Size' && field === 'sizeThreshold' ? (
+                                    <div>
+                                        <Form.Control type="number" min="0" placeholder={`Enter ${field}`}
+                                                      onChange={handleFieldChangeSizeThreshold}
+                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                        {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                    </div>
+                                ) : selectedType === 'File Existence' && field === 'file' || selectedType === 'File Size' && field === 'file' ? (
                                     <div>
                                         <Button variant="primary" onClick={handleFileChange}
                                                 className={fieldValidation['file'] ? 'is-invalid' : ''}>
                                             Upload File
                                         </Button>
-                                        <div>File chosen: <strong>{selectedFilePath}</strong></div>
+                                        <div className="file-path-container">
+                                            <div>File chosen: <strong>{selectedFilePath}</strong></div>
+                                        </div>
                                         {/* Display the selected file path */}
                                     </div>
                                 ) : (

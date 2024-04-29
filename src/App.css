@@ -198,3 +198,9 @@ button{
     height: auto; /* Example: reset the height */
     /* Add more styles as needed */
 }
+
+.file-path-container {
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
