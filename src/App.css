@@ -76,7 +76,8 @@ button{
 .login-button{
     text-decoration: none;
     padding-left: 3rem;
-    padding-right: 2rem;
+    margin-right: 2rem;
+    margin-left: 1.5rem;
 }
 
 .dashboard{
@@ -203,4 +204,10 @@ button{
     white-space: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
+}
+
+.scheduler-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
