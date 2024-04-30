@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 
 function Navigation() {
     const email = window.localStorage.getItem('email') || 'Login';
+    // @ts-ignore
     const [isToggled, setIsToggled] = useState(JSON.parse(localStorage.getItem('isToggled')) || false);
     const [selectedTime, setSelectedTime] = useState(localStorage.getItem('selectedTime') || "");
     const [selectedDuration, setSelectedDuration] = useState(localStorage.getItem('selectedDuration') || "Set Duration");
@@ -22,12 +23,15 @@ function Navigation() {
 
         let timeValue = selectedTime;
         if (selectedDuration === "1") { // If "Seconds" is selected
+            // @ts-ignore
             timeValue *= 1000;
         }
         if (selectedDuration === "2") { // If "Minutes" is selected
+            // @ts-ignore
             timeValue *= 60000;
         }
         if (selectedDuration === "3") { // If "Hours" is selected
+            // @ts-ignore
             timeValue *= 3600000;
         }
 
@@ -65,21 +69,21 @@ function Navigation() {
                 });
         }
     }
-
+// @ts-ignore
     const handleTimeChange = (event) => {
         setSelectedTime(event.target.value);
     }
-
+// @ts-ignore
     const handleDurationChange = (event) => {
         setSelectedDuration(event.target.value);
     }
-
+// @ts-ignore
     const renderTooltip = (props) => (
         <Tooltip id="button-tooltip" {...props}>
             You need to select a time frame
         </Tooltip>
     );
-
+// @ts-ignore
     const renderTimeTooltip = (props) => (
         <Tooltip id="button-tooltip" {...props}>
             You need to enter the time amount
