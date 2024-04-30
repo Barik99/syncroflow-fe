@@ -103,7 +103,7 @@ function Navigation() {
                     <Nav.Link href="/file-explorer">File Explorer</Nav.Link>
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
-                    <Form inline className="scheduler-container">
+                    <Form className="scheduler-container">
                         <Form.Control type="number" placeholder="Scheduler time" disabled={isToggled} value={selectedTime} onChange={handleTimeChange}/>
                         <Form.Select aria-label="Default select example" disabled={isToggled} value={selectedDuration} onChange={handleDurationChange}>
                             <option>Set Duration</option>
