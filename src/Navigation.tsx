@@ -36,7 +36,8 @@ function Navigation() {
         }
 
         if (!isToggled) { // If the scheduler is not running, start it
-            const url = `http://localhost:8080/schedulerStart/${email}/${timeValue}`;
+            const url = `/api/schedulerStart/${email}/${timeValue}`;
+            console.log(url);
             fetch(url, {
                 method: 'POST',
             })
@@ -52,7 +53,8 @@ function Navigation() {
                     setShowToast(true);
                 });
         } else { // If the scheduler is running, stop it
-            const url = `http://localhost:8080/schedulerStop/${email}`;
+            const url = `/api/schedulerStop/${email}`;
+            console.log(url);
             fetch(url, {
                 method: 'POST',
             })

@@ -14,7 +14,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    const response = await fetch(`http://localhost:8080/register/${email}/${hashPassword(pass)}`, {
+    const response = await fetch(`/api/register/${email}/${hashPassword(pass)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

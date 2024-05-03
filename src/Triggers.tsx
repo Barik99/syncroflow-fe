@@ -63,7 +63,7 @@ function Triggers() {
 
     useEffect(() => {
         const fetchRootDirectory = async () => {
-            const response = await fetch('http://localhost:8080/getDirectory');
+            const response = await fetch('/api/getDirectory');
             const data = await response.json();
             setCurrentDirectory(data);
             setDirectoryContent(data.children || []);
@@ -186,7 +186,7 @@ function Triggers() {
     };
 
     const fetchTriggers = async () => {
-        const response = await fetch(`http://localhost:8080/triggers/${email}`, {
+        const response = await fetch(`/api/triggers/${email}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -203,7 +203,7 @@ function Triggers() {
     };
 
     const fetchTriggerTypes = async () => {
-        const response = await fetch('http://localhost:8080/triggerTypes', {
+        const response = await fetch('/api/triggerTypes', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -324,7 +324,7 @@ function Triggers() {
 
         console.log("Trigger object after field setup:", trigger);
 
-        const response = await fetch(`http://localhost:8080/addTrigger/${email}`, {
+        const response = await fetch(`/api/addTrigger/${email}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -432,7 +432,7 @@ function Triggers() {
     const [fileContent, setFileContent] = useState("");
 
     const handleFileChange = async () => {
-        const response = await fetch('http://localhost:8080/getDirectory');
+        const response = await fetch('/api/getDirectory');
         const data = await response.json();
         console.log(data); // Log the data to the console
         setFileExplorerData(data);
@@ -458,7 +458,7 @@ function Triggers() {
     };
 
     const deleteTrigger = async () => {
-        const response = await fetch(`http://localhost:8080/removeTrigger/${email}/${triggerToDelete}`, {
+        const response = await fetch(`/api/removeTrigger/${email}/${triggerToDelete}`, {
             method: 'DELETE',
         });
         const responseText = await response.text();

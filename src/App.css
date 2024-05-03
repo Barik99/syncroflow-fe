@@ -211,3 +211,16 @@ button{
     align-items: center;
     gap: 10px;
 }
+
+.position-absolute.top-0.end-0 {
+    margin-right: 1rem;
+    margin-top: 0.3rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.required {
+    color: red;
+}

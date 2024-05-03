@@ -58,7 +58,7 @@ const FileExplorer: React.FC = () => {
         const modifiedPath = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/');
         formData.append('path', modifiedPath);
 
-        const response = await fetch('http://localhost:8080/addFile', {
+        const response = await fetch('/api/addFile', {
             method: 'POST',
             body: formData,
         });
@@ -69,7 +69,7 @@ const FileExplorer: React.FC = () => {
             setShowToast(true);
             setToastMessage(message);
 
-            const updatedData = await fetch('http://localhost:8080/getDirectory')
+            const updatedData = await fetch('/api/getDirectory')
                 .then(response => response.json());
 
             let newCurrentDirectory = updatedData;
@@ -95,7 +95,7 @@ const FileExplorer: React.FC = () => {
         }
         setIsValid(true);
         const parentDirectory = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/');
-        const response = await fetch('http://localhost:8080/addDirectory', {
+        const response = await fetch('/api/addDirectory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ const FileExplorer: React.FC = () => {
             setShowToast(true);
             setToastMessage(message);
 
-            const updatedData = await fetch('http://localhost:8080/getDirectory')
+            const updatedData = await fetch('/api/getDirectory')
                 .then(response => response.json());
 
             let newCurrentDirectory = updatedData;
@@ -134,7 +134,7 @@ const FileExplorer: React.FC = () => {
 
     const handleDeleteDirectory = async () => {
         const directoryToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedDirectory;
-        const response = await fetch(`http://localhost:8080/removeDirectory`, {
+        const response = await fetch(`/api/removeDirectory`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const FileExplorer: React.FC = () => {
             setShowToast(true);
             setToastMessage(message);
 
-            const updatedData = await fetch('http://localhost:8080/getDirectory')
+            const updatedData = await fetch('/api/getDirectory')
                 .then(response => response.json());
 
             let newCurrentDirectory = updatedData;
@@ -167,7 +167,7 @@ const FileExplorer: React.FC = () => {
 
     const handleDeleteFileConfirmation = async () => {
         const fileToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedFile;
-        const response = await fetch(`http://localhost:8080/removeFile`, {
+        const response = await fetch(`/api/removeFile`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ const FileExplorer: React.FC = () => {
             setShowToast(true);
             setToastMessage(message);
 
-            const updatedData = await fetch('http://localhost:8080/getDirectory')
+            const updatedData = await fetch('/api/getDirectory')
                 .then(response => response.json());
 
             let newCurrentDirectory = updatedData;
@@ -202,7 +202,7 @@ const FileExplorer: React.FC = () => {
 
     const handleDeleteFile = async () => {
         const fileToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedFile;
-        const response = await fetch(`http://localhost:8080/removeFile`, {
+        const response = await fetch(`/api/removeFile`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ const FileExplorer: React.FC = () => {
         });
 
         if (response.ok) {
-            const updatedData = await fetch('http://localhost:8080/getDirectory')
+            const updatedData = await fetch('/api/getDirectory')
                 .then(response => response.json());
 
             let newCurrentDirectory = updatedData;
@@ -228,7 +228,7 @@ const FileExplorer: React.FC = () => {
     };
 
     useEffect(() => {
-        fetch('http://localhost:8080/getDirectory')
+        fetch('/api/getDirectory')
             .then(response => response.json())
             .then(data => {
                 setDirectories(data);

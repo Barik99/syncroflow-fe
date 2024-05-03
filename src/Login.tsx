@@ -13,7 +13,7 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const response = await fetch(`${config.API_URL}/login/${email}/${hashPassword(pass)}`, {
+    const response = await fetch(`/api/login/${email}/${hashPassword(pass)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
