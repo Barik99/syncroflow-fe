@@ -35,6 +35,7 @@ function Rules() {
   const [ruleToDelete, setRuleToDelete] = useState("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [sleepTime, setSleepTime] = useState("");
+  const [lastUse, setLastUse] = useState<Date | null>(null);
 
   const handleClose = () => {
     setShowModal(false);
@@ -45,6 +46,7 @@ function Rules() {
     setIsActive(false);
     setIsMultiUse(false);
     setFormErrors({});
+    setLastUse(null); // Reset the date picker
   };
   const handleShow = () => setShowModal(true);
   const email = window.localStorage.getItem('email');
@@ -191,6 +193,14 @@ function Rules() {
     validateField('sleepTime', event.target.value);
   }
 
+  const handleLastUseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value) {
+      setLastUse(new Date(event.target.value));
+    } else {
+      setLastUse(null);
+    }
+  }
+
   const handleDelete = async () => {
     const response = await fetch(`/api/removeRule/${email}/${ruleToDelete}`, {
       method: 'DELETE',
@@ -325,7 +335,8 @@ function Rules() {
                 <div className="mb-3">
                   <label htmlFor="ruleTrigger" className="form-label">Trigger Name <span
                       className="required">*</span></label>
-                  <Form.Select id="ruleTrigger" onChange={(e) => handleTypeChange(e.target.value)} value={selectedType} className={formErrors.selectedType ? 'is-invalid' : ''}>
+                  <Form.Select id="ruleTrigger" onChange={(e) => handleTypeChange(e.target.value)} value={selectedType}
+                               className={formErrors.selectedType ? 'is-invalid' : ''}>
                     <option value="">Select a trigger</option>
                     {triggers.map((trigger, index) => (
                         <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
@@ -335,12 +346,19 @@ function Rules() {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleLastUse" className="form-label">Last Use</label>
-                  <input type="text" className="form-control" id="ruleLastUse" placeholder="Enter last use"/>
+                  <Form.Control
+                      type="date"
+                      value={lastUse ? lastUse.toISOString().split('T')[0] : ""}
+                      onChange={handleLastUseChange}
+                      className="form-control"
+                      id="ruleLastUse"
+                  />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="ruleSleepTime" className="form-label">Sleep Time <span
                       className="required">*</span></label>
-                  <input type="number" className={`form-control ${formErrors.sleepTime ? 'is-invalid' : ''}`} id="ruleSleepTime"
+                  <input type="number" className={`form-control ${formErrors.sleepTime ? 'is-invalid' : ''}`}
+                         id="ruleSleepTime"
                          onChange={handleSleepTimeChange} placeholder="Enter sleep time"/>
                   {formErrors.sleepTime && <div className="invalid-feedback">{formErrors.sleepTime}</div>}
                 </div>
