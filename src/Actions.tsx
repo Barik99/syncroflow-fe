@@ -706,6 +706,7 @@ function Triggers() {
                                     onKeyPress={handleKeyPress}
                                     onChange={handleNameChange}
                                     value={triggerName} // Set the value to triggerName
+                                    maxLength={20}
                                     className={nameValidation ? 'is-invalid' : ''}
                                 />
                                 {nameValidation && <div className="invalid-feedback">Name is required</div>}
@@ -770,7 +771,7 @@ function Triggers() {
                                                      value={field === 'firstAction' ? firstTrigger : secondTrigger}>
                                             <option>Select an action</option>
                                             {triggers.filter(trigger => trigger.name !== (field === 'firstAction' ? secondTrigger : firstTrigger)).map((trigger, index) => (
-                                                <option key={index} value={trigger.name}>{trigger.name}</option>
+                                                <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                             ))}
                                         </Form.Select>
                                     ) : selectedType === 'Append String to File' && field === 'stringToAppend' ? (
@@ -883,7 +884,21 @@ function Triggers() {
                                         <h5 className="card-title">{trigger.name}</h5>
                                         <p className="card-text">Type: {trigger.type}</p>
                                         <p className="card-text">Description: {trigger.value}</p>
-                                        <button onClick={() => {setTriggerToDelete(trigger.name); setShowDeleteModal(true);}}>Delete</button>
+                                        <div
+                                            className="position-absolute top-0 end-0"> {/* Add this div with classes */}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor"
+                                                 className="bi bi-trash cursor-pointer" viewBox="0 0 16 16"
+                                                 onClick={() => {
+                                                     setTriggerToDelete(trigger.name);
+                                                     setShowDeleteModal(true);
+                                                 }}>
+                                                <path
+                                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                                <path
+                                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                            </svg>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
