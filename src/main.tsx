@@ -8,7 +8,8 @@ import Home from "./Home";
 import NotFoundPage from "./NotFoundPage";
 import Rules from "./Rules";
 import Triggers from "./Triggers";
-import FileExplorer from "./FileExplorer"; // Import the Rules component
+import FileExplorer from "./FileExplorer";
+import Actions from "./Actions"; // Import the Rules component
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: "/triggers", // Add a new route for the Rules page
     element: <Triggers />,
+  },
+  {
+    path: "/actions", // Add a new route for the Rules page
+    element: <Actions />,
   },
   {
     path: "/file-explorer",

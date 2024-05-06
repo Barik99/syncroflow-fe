@@ -35,7 +35,6 @@ function Rules() {
   const [ruleToDelete, setRuleToDelete] = useState("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [sleepTime, setSleepTime] = useState("");
-  const [lastUse, setLastUse] = useState<Date | null>(null);
 
   const handleClose = () => {
     setShowModal(false);
@@ -46,7 +45,6 @@ function Rules() {
     setIsActive(false);
     setIsMultiUse(false);
     setFormErrors({});
-    setLastUse(null); // Reset the date picker
   };
   const handleShow = () => setShowModal(true);
   const email = window.localStorage.getItem('email');
@@ -105,7 +103,7 @@ function Rules() {
       active: isActive, // Replace with the actual active status
       multiUse: isMultiUse, // Replace with the actual multiUse status
       lastUse: null, // Replace with the actual lastUse value
-      sleepTime: 1000 // Replace with the actual sleepTime value
+      sleepTime: parseInt(sleepTime) // Replace with the actual sleepTime value
     };
 
     const response = await fetch(`/api/addRule/${email}`, {
@@ -193,14 +191,6 @@ function Rules() {
     validateField('sleepTime', event.target.value);
   }
 
-  const handleLastUseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-      setLastUse(new Date(event.target.value));
-    } else {
-      setLastUse(null);
-    }
-  }
-
   const handleDelete = async () => {
     const response = await fetch(`/api/removeRule/${email}/${ruleToDelete}`, {
       method: 'DELETE',
@@ -255,7 +245,7 @@ function Rules() {
         }
         break;
       case 'sleepTime':
-        if (!value || parseInt(value) < 1) {
+        if (isMultiUse && (!value || parseInt(value) < 1)) {
           errors.sleepTime = "Sleep time is required and must be greater than 0";
         } else {
           delete errors.sleepTime;
@@ -344,24 +334,6 @@ function Rules() {
                   </Form.Select>
                   {formErrors.selectedType && <div className="invalid-feedback">{formErrors.selectedType}</div>}
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="ruleLastUse" className="form-label">Last Use</label>
-                  <Form.Control
-                      type="date"
-                      value={lastUse ? lastUse.toISOString().split('T')[0] : ""}
-                      onChange={handleLastUseChange}
-                      className="form-control"
-                      id="ruleLastUse"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="ruleSleepTime" className="form-label">Sleep Time <span
-                      className="required">*</span></label>
-                  <input type="number" className={`form-control ${formErrors.sleepTime ? 'is-invalid' : ''}`}
-                         id="ruleSleepTime"
-                         onChange={handleSleepTimeChange} placeholder="Enter sleep time"/>
-                  {formErrors.sleepTime && <div className="invalid-feedback">{formErrors.sleepTime}</div>}
-                </div>
                 <div className="mb-3 form-check form-check-inline">
                   <input type="checkbox" className="form-check-input" id="ruleActive" checked={isActive}
                          onChange={handleActiveChange}/>
@@ -372,6 +344,16 @@ function Rules() {
                          onChange={handleMultiUseChange}/>
                   <label htmlFor="ruleMultiUse" className="form-check-label">Multi Use</label>
                 </div>
+                {isMultiUse && (
+                    <div className="mb-3">
+                      <label htmlFor="ruleSleepTime" className="form-label">Sleep Time <span
+                          className="required">*</span></label>
+                      <input type="number" className={`form-control ${formErrors.sleepTime ? 'is-invalid' : ''}`}
+                             id="ruleSleepTime"
+                             onChange={handleSleepTimeChange} placeholder="Enter sleep time"/>
+                      {formErrors.sleepTime && <div className="invalid-feedback">{formErrors.sleepTime}</div>}
+                    </div>
+                )}
               </form>
             </Modal.Body>
             <Modal.Footer>
@@ -395,9 +377,8 @@ function Rules() {
                           <p className="card-text">Action name: {rule.action}</p>
                           <p className="card-text">Trigger name: {rule.trigger}</p>
                           <p className="card-text">Active: {rule.active ? 'Yes' : 'No'}</p>
-                          <p className="card-text">Last Use: {rule.lastUse}</p>
                           <p className="card-text">Multi Use: {rule.multiUse ? 'Yes' : 'No'}</p>
-                          <p className="card-text">Sleep Time: {rule.sleepTime}</p>
+                          {rule.multiUse && <p className="card-text">Sleep Time: {rule.sleepTime}</p>}
                           <div className="position-absolute top-0 end-0"> {/* Add this div with classes */}
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                className="bi bi-trash cursor-pointer" viewBox="0 0 16 16" onClick={() => {

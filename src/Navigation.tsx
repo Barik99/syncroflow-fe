@@ -24,15 +24,15 @@ function Navigation() {
         let timeValue = selectedTime;
         if (selectedDuration === "1") { // If "Seconds" is selected
             // @ts-ignore
-            timeValue *= 1000;
+            timeValue *= 1;
         }
         if (selectedDuration === "2") { // If "Minutes" is selected
             // @ts-ignore
-            timeValue *= 60000;
+            timeValue *= 60;
         }
         if (selectedDuration === "3") { // If "Hours" is selected
             // @ts-ignore
-            timeValue *= 3600000;
+            timeValue *= 3600;
         }
 
         if (!isToggled) { // If the scheduler is not running, start it
@@ -106,7 +106,7 @@ function Navigation() {
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
                     <Form className="scheduler-container">
-                        <Form.Control type="number" placeholder="Scheduler time" disabled={isToggled} value={selectedTime} onChange={handleTimeChange}/>
+                        <Form.Control type="number" placeholder="Scheduler time" disabled={isToggled} value={selectedTime} onChange={handleTimeChange} min="1"/>
                         <Form.Select aria-label="Default select example" disabled={isToggled} value={selectedDuration} onChange={handleDurationChange}>
                             <option>Set Duration</option>
                             <option value="1">Seconds</option>
