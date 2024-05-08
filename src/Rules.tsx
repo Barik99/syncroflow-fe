@@ -219,6 +219,14 @@ function Rules() {
     }
   };
 
+  const handleKeyPressSleepTimeField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value + e.key;
+    // @ts-ignore
+    if (!Number.isInteger(Number(value)) || value < 1 || e.key === '0') {
+      e.preventDefault();
+    }
+  };
+
   const validateField = (fieldName: string, value: string) => {
     let errors = { ...formErrors };
 
@@ -350,7 +358,8 @@ function Rules() {
                           className="required">*</span></label>
                       <input type="number" className={`form-control ${formErrors.sleepTime ? 'is-invalid' : ''}`}
                              id="ruleSleepTime"
-                             onChange={handleSleepTimeChange} placeholder="Enter sleep time"/>
+                             onChange={handleSleepTimeChange} onKeyPress={handleKeyPressSleepTimeField}
+                             placeholder="Enter sleep time in seconds"/>
                       {formErrors.sleepTime && <div className="invalid-feedback">{formErrors.sleepTime}</div>}
                     </div>
                 )}

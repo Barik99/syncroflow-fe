@@ -460,7 +460,6 @@ function Triggers() {
         }
         if (selectedType === 'File Size') {
             setTempSizeThreshold(triggerFields['sizeThreshold']); // Store the current size threshold
-            setTempSizeThreshold(''); // Clear the size threshold
         }
         setTriggerName(""); // Clear the trigger name
         setSelectedType(""); // Clear the selected type
@@ -571,7 +570,43 @@ function Triggers() {
     const handleCloseFileExplorerModal = () => {
         setShowFileExplorerModal(false); // Close the 'Select File' modal
         setShowModal(true); // Open the 'Create Trigger' modal
+        setTriggerName(tempTriggerName); // Restore the trigger name
+        setSelectedType(tempSelectedType); // Restore the selected type
+        if (tempSelectedType === 'File Size') {
+            // Restore the sizeThreshold
+            setTriggerFields(prevFields => ({
+                ...prevFields,
+                'sizeThreshold': tempSizeThreshold
+            }));
+        }
     };
+
+    const handleKeyPressMinutesField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const value = e.currentTarget.value + e.key;
+        const zeroCount = (value.match(/0/g) || []).length;
+        // @ts-ignore
+        if (!Number.isInteger(Number(value)) || value < 0 || value > 59 || zeroCount > 2) {
+            e.preventDefault();
+        }
+    };
+
+    const handleKeyPressHoursField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const value = e.currentTarget.value + e.key;
+        const zeroCount = (value.match(/0/g) || []).length;
+        // @ts-ignore
+        if (!Number.isInteger(Number(value)) || value < 0 || value > 23 || zeroCount > 2) {
+            e.preventDefault();
+        }
+    };
+
+    const handleKeyPressDayOfMonthField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const value = e.currentTarget.value + e.key;
+        // @ts-ignore
+        if (!Number.isInteger(Number(value)) || value < 1 || value > 31) {
+            e.preventDefault();
+        }
+    };
+
 
     return (
     <div>
@@ -675,23 +710,41 @@ function Triggers() {
                                     </Form.Select>
                                 ) : selectedType === 'Time Of Day' && field === 'hours' ? (
                                     <div>
-                                        <Form.Control type="number" min="0" max="23" placeholder={`Enter a hour`}
-                                                      onChange={handleFieldChangeTimeOfDay(field)}
-                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                        <Form.Control
+                                            type="number"
+                                            min="0"
+                                            max="59"
+                                            placeholder={`Enter a hour`}
+                                            onChange={handleFieldChangeTimeOfDay(field)}
+                                            onKeyPress={handleKeyPressHoursField}
+                                            className={fieldValidation[field] ? 'is-invalid' : ''}
+                                        />
                                         {fieldValidation['hours'] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
                                 ): selectedType === 'Time Of Day' && field === 'minutes' ? (
                                     <div>
-                                        <Form.Control type="number" min="0" max="59" placeholder={`Enter a minute`}
-                                                      onChange={handleFieldChangeTimeOfDay(field)}
-                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                        <Form.Control
+                                            type="number"
+                                            min="0"
+                                            max="59"
+                                            placeholder={`Enter a minute`}
+                                            onChange={handleFieldChangeTimeOfDay(field)}
+                                            onKeyPress={handleKeyPressMinutesField}
+                                            className={fieldValidation[field] ? 'is-invalid' : ''}
+                                        />
                                         {fieldValidation['minutes'] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
                                 ) : selectedType === 'Day Of Month' && field === 'day' ? (
                                     <div>
-                                        <Form.Control type="number" min="1" max="31" placeholder={`Enter a ${field} of the month`}
-                                                      onChange={handleFieldChangeDayOfMonth}
-                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                        <Form.Control
+                                            type="number"
+                                            min="0"
+                                            max="59"
+                                            placeholder={`Enter a day`}
+                                            onChange={handleFieldChangeTimeOfDay(field)}
+                                            onKeyPress={handleKeyPressDayOfMonthField}
+                                            className={fieldValidation[field] ? 'is-invalid' : ''}
+                                        />
                                         {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
                                 ) : selectedType === 'File Size' && field === 'sizeThreshold' ? (
@@ -708,7 +761,7 @@ function Triggers() {
                                             Upload File
                                         </Button>
                                         <div className="file-path-container">
-                                            <div>File chosen: <strong>{selectedFilePath}</strong></div>
+                                            <div>File chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong></div>
                                         </div>
                                         {/* Display the selected file path */}
                                     </div>
@@ -731,20 +784,7 @@ function Triggers() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Modal show={showFileExplorerModal} onHide={() => {
-                setShowFileExplorerModal(false); // Close the 'Select File' modal
-                setShowModal(true); // Open the 'Create Trigger' modal
-                setTriggerName(tempTriggerName); // Restore the trigger name
-                setSelectedType(tempSelectedType); // Restore the selected type
-                if (tempSelectedType === 'External Program') {
-                    // Restore the commandLineArguments and exitStatus
-                    setTriggerFields(prevFields => ({
-                        ...prevFields,
-                        'commandLineArguments': tempCommandLineArguments,
-                        'exitStatus': tempExitStatus
-                    }));
-                }
-            }}>
+            <Modal show={showFileExplorerModal} onHide={handleCloseFileExplorerModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Select a File</Modal.Title>
                 </Modal.Header>
@@ -775,7 +815,8 @@ function Triggers() {
                                 <div className="card-body">
                                     <h5 className="card-title">{trigger.name}</h5>
                                     <p className="card-text">Type: {trigger.type}</p>
-                                    <p className="card-text">Description: {trigger.value}</p>
+                                    <p className="card-text">Description: {trigger.value.replace(/(Directory: ).*(FileDirectory\\)/, '$1Home\\')}
+                                    </p>
                                     <div
                                         className="position-absolute top-0 end-0"> {/* Add this div with classes */}
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"

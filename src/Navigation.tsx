@@ -92,6 +92,14 @@ function Navigation() {
         </Tooltip>
     );
 
+    const handleKeyPressSchedulerTimeField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const value = e.currentTarget.value + e.key;
+        // @ts-ignore
+        if (!Number.isInteger(Number(value)) || value < 1 || e.key === '0') {
+            e.preventDefault();
+        }
+    };
+
     return (
         <div>
             <Navbar bg="dark" variant="dark">
@@ -106,7 +114,7 @@ function Navigation() {
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
                     <Form className="scheduler-container">
-                        <Form.Control type="number" placeholder="Scheduler time" disabled={isToggled} value={selectedTime} onChange={handleTimeChange} min="1"/>
+                        <Form.Control type="number" onKeyPress={handleKeyPressSchedulerTimeField} placeholder="Scheduler time" disabled={isToggled} value={selectedTime} onChange={handleTimeChange} min="1"/>
                         <Form.Select aria-label="Default select example" disabled={isToggled} value={selectedDuration} onChange={handleDurationChange}>
                             <option>Set Duration</option>
                             <option value="1">Seconds</option>
