@@ -21,7 +21,6 @@ function App() {
           <Register onFormSwitch={toggleForm} />
         )}
       </div>
-      <Rules /> // Include the Rules component
     </div>
   );
 }

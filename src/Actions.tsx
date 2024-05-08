@@ -1,6 +1,6 @@
 import Navigation from "./Navigation";
 import {useEffect, useState} from "react";
-import { Button, Form, Modal, Toast } from "react-bootstrap";
+import {Button, Form, Modal, OverlayTrigger, Toast, Tooltip} from "react-bootstrap";
 import React from "react";
 import { Breadcrumb } from 'react-bootstrap';
 
@@ -54,6 +54,7 @@ function Triggers() {
     const [showDirectoryExplorerModal, setShowDirectoryExplorerModal] = useState(false);
     const [showDirectoryUploadButton, setShowDirectoryUploadButton] = useState(false);
     const [selectedDirectoryPath, setSelectedDirectoryPath] = useState("");
+    const [showNotification, setShowNotification] = useState(false);
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
@@ -65,6 +66,12 @@ function Triggers() {
     };
 
     useEffect(() => {
+        if (!email) {
+            console.log("User is not logged in. Skipping fetchRootDirectory API call.");
+            setShowNotification(true);
+            return;
+        }
+
         const fetchRootDirectory = async () => {
             const response = await fetch('/api/getDirectory');
             const data = await response.json();
@@ -192,6 +199,11 @@ function Triggers() {
     };
 
     const fetchTriggers = async () => {
+        if (!email) {
+            console.log("User is not logged in. Skipping fetchActions API call.");
+            return;
+        }
+
         const response = await fetch(`/api/actions/${email}`, {
             method: 'GET',
             headers: {
@@ -209,6 +221,11 @@ function Triggers() {
     };
 
     const fetchTriggerTypes = async () => {
+        if (!email) {
+            console.log("User is not logged in. Skipping fetchActions API call.");
+            return;
+        }
+
         const response = await fetch('/api/actionTypes', {
             method: 'GET',
             headers: {
@@ -658,6 +675,11 @@ function Triggers() {
     return (
         <div>
             <Navigation />
+            {showNotification &&
+                <div className="alert alert-warning" role="alert">
+                    You need to be logged in to see the actions.
+                </div>
+            }
             <Toast
                 className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Action removed') || toastMessage.includes('Action added') ? 'text-bg-success' : 'text-bg-danger'}`}
                 onClose={() => setShowToast(false)}
@@ -690,7 +712,23 @@ function Triggers() {
             </Modal>
             <div className="container">
                 <div className="d-flex justify-content-end">
-                    <button className="btn btn-primary my-3" onClick={handleShow}>Create Action</button>
+                    {email === null ? (
+                        <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={<Tooltip id="button-tooltip">You need to login to create an action</Tooltip>}
+                        >
+                <span className="d-inline-block">
+                    <Button className="btn btn-primary my-3" disabled style={{ pointerEvents: 'none' }}>
+                        Create Action
+                    </Button>
+                </span>
+                        </OverlayTrigger>
+                    ) : (
+                        <Button className="btn btn-primary my-3" onClick={handleShow}>
+                            Create trigger
+                        </Button>
+                    )}
                 </div>
                 <Modal show={showModal} onHide={handleClose}>
                     <Modal.Header closeButton>
@@ -731,7 +769,8 @@ function Triggers() {
                                                 Upload Directory
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>Directory chosen: <strong>{selectedDirectoryPath}</strong></div>
+                                                <div>Directory chosen: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Home')}</strong>
+                                                </div>
                                             </div>
                                         </div>
                                     ) :selectedType === 'Move File' && field === 'destinationPath' ? (
@@ -740,7 +779,7 @@ function Triggers() {
                                                 Upload Directory
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>Directory chosen: <strong>{selectedDirectoryPath}</strong></div>
+                                                <div>Directory chosen: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Home')}</strong></div>
                                             </div>
                                         </div>
                                     ) : selectedType === 'Paste File' && field === 'fileToPaste' ? (
@@ -750,7 +789,9 @@ function Triggers() {
                                                 Upload File
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>File chosen: <strong>{selectedFilePath}</strong></div>
+                                                <div>File
+                                                    chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong>
+                                                </div>
                                             </div>
                                             {/* Display the selected file path */}
                                         </div>
@@ -761,7 +802,9 @@ function Triggers() {
                                                 Upload File
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>File chosen: <strong>{selectedFilePath}</strong></div>
+                                                <div>File
+                                                    chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong>
+                                                </div>
                                             </div>
                                             {/* Display the selected file path */}
                                         </div>
@@ -790,7 +833,9 @@ function Triggers() {
                                                 Upload File
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>File chosen: <strong>{selectedFilePath}</strong></div>
+                                                <div>File
+                                                    chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong>
+                                                </div>
                                             </div>
                                             {/* Display the selected file path */}
                                         </div>
@@ -874,7 +919,7 @@ function Triggers() {
                     </Modal.Body>
                 </Modal>
                 {triggers.length === 0 ? (
-                    <p>No triggers available at the moment.</p>
+                    <p>No actions available at the moment.</p>
                 ) : (
                     <div className="row">
                         {triggers.map((trigger) => (
@@ -883,8 +928,9 @@ function Triggers() {
                                     <div className="card-body">
                                         <h5 className="card-title">{trigger.name}</h5>
                                         <p className="card-text">Type: {trigger.type}</p>
-                                        <p className="card-text">Description: {trigger.value}</p>
-                                        <div
+                                        <p className="card-text">Description: {trigger.value.replace(/(DestinationPath: ).*(FileDirectory\\)/, '$1Home\\')}
+                                        </p>
+                                            <div
                                             className="position-absolute top-0 end-0"> {/* Add this div with classes */}
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor"

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Form, OverlayTrigger, Tooltip, Navbar, Nav, Toast } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
+import { Dropdown } from 'react-bootstrap';
 
 function Navigation() {
-    const email = window.localStorage.getItem('email') || 'Login';
+    const email = window.localStorage.getItem('email');
     // @ts-ignore
     const [isToggled, setIsToggled] = useState(JSON.parse(localStorage.getItem('isToggled')) || false);
     const [selectedTime, setSelectedTime] = useState(localStorage.getItem('selectedTime') || "");
@@ -100,6 +101,13 @@ function Navigation() {
         }
     };
 
+    const handleLogout = () => {
+        // Clear the user's session
+        window.localStorage.removeItem('email');
+        // Redirect the user to the login page
+        window.location.href = '/login';
+    };
+
     return (
         <div>
             <Navbar bg="dark" variant="dark">
@@ -107,9 +115,15 @@ function Navigation() {
                     <img src="..\images\logo.png" alt="logo" className={"site-logo"}/>
                 </Navbar.Brand>
                 <Nav className="mr-auto">
-                    <Nav.Link href="/rules">Rules</Nav.Link>
-                    <Nav.Link href="/triggers">Triggers</Nav.Link>
-                    <Nav.Link href="/actions">Actions</Nav.Link>
+                    {email && (
+                        <Nav.Link href="/rules">Rules</Nav.Link>
+                    )}
+                    {email && (
+                        <Nav.Link href="/triggers">Triggers</Nav.Link>
+                    )}
+                    {email && (
+                        <Nav.Link href="/actions">Actions</Nav.Link>
+                    )}
                     <Nav.Link href="/file-explorer">File Explorer</Nav.Link>
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
@@ -121,21 +135,37 @@ function Navigation() {
                             <option value="2">Minutes</option>
                             <option value="3">Hours</option>
                         </Form.Select>
-                        {selectedDuration === "Set Duration" ? (
+                        {email === null ? (
+                            <OverlayTrigger
+                                placement="bottom"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={<Tooltip id="button-tooltip">You need to login to start the scheduler</Tooltip>}
+                            >
+                            <span className="d-inline-block">
+                                <Button
+                                    variant={isToggled ? "danger" : "success"}
+                                    onClick={handleToggle}
+                                    disabled={true}
+                                >
+                                    {isToggled ? "Stop" : "Start"}
+                                </Button>
+                            </span>
+                            </OverlayTrigger>
+                        ) : selectedDuration === "Set Duration" ? (
                             <OverlayTrigger
                                 placement="bottom"
                                 delay={{ show: 250, hide: 400 }}
                                 overlay={renderTooltip}
                             >
-                <span className="d-inline-block">
-                  <Button
-                      variant={isToggled ? "danger" : "success"}
-                      onClick={handleToggle}
-                      disabled={selectedDuration === "Set Duration" || selectedTime === ""}
-                  >
-                    {isToggled ? "Stop" : "Start"}
-                  </Button>
-                </span>
+                            <span className="d-inline-block">
+                                <Button
+                                    variant={isToggled ? "danger" : "success"}
+                                    onClick={handleToggle}
+                                    disabled={selectedDuration === "Set Duration" || selectedTime === ""}
+                                >
+                                    {isToggled ? "Stop" : "Start"}
+                                </Button>
+                            </span>
                             </OverlayTrigger>
                         ) : selectedTime === "" ? (
                             <OverlayTrigger
@@ -143,16 +173,17 @@ function Navigation() {
                                 delay={{ show: 250, hide: 400 }}
                                 overlay={renderTimeTooltip}
                             >
-                                <span className="d-inline-block">
-                                    <Button
-                                        variant={isToggled ? "danger" : "success"}
-                                        onClick={handleToggle}
-                                        disabled={selectedDuration === "Set Duration" || selectedTime === ""}
-                                    >
-                                        {isToggled ? "Stop" : "Start"}
-                                    </Button>
-                                </span>
-                            </OverlayTrigger>) : (
+                            <span className="d-inline-block">
+                                <Button
+                                    variant={isToggled ? "danger" : "success"}
+                                    onClick={handleToggle}
+                                    disabled={selectedDuration === "Set Duration" || selectedTime === ""}
+                                >
+                                    {isToggled ? "Stop" : "Start"}
+                                </Button>
+                            </span>
+                            </OverlayTrigger>
+                        ) : (
                             <Button
                                 variant={isToggled ? "danger" : "success"}
                                 onClick={handleToggle}
@@ -161,9 +192,22 @@ function Navigation() {
                                 {isToggled ? "Stop" : "Start"}
                             </Button>
                         )}
-                        <Nav.Link href="/login" className="login-button text-white">
-                            {email}
-                        </Nav.Link>
+                        {email === null ? (
+                            <Nav.Link href="/login">
+                                <Button className="login-button text-white" style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
+                                    Login
+                                </Button>
+                            </Nav.Link>
+                        ) : (
+                            <Dropdown>
+                                <Dropdown.Toggle id="dropdown-basic" className="login-button text-white" style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
+                                    {email}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        )}
                     </Form>
                 </Navbar.Collapse>
             </Navbar>

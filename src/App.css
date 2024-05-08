@@ -224,3 +224,12 @@ button{
 .required {
     color: red;
 }
+
+.custom-dropdown {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+.custom-dropdown:hover, .custom-dropdown:focus {
+    background-color: #292b2c;
+    border-color: #292b2c;
+}

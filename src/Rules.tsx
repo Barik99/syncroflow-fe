@@ -1,6 +1,6 @@
 import Navigation from "./Navigation";
 import React, {useEffect, useState} from "react";
-import {Button, Form, Modal, Toast} from "react-bootstrap";
+import {Button, Form, Modal, Toast, OverlayTrigger, Tooltip} from "react-bootstrap";
 
 interface Rule {
   id: string;
@@ -35,6 +35,7 @@ function Rules() {
   const [ruleToDelete, setRuleToDelete] = useState("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [sleepTime, setSleepTime] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);
@@ -48,11 +49,15 @@ function Rules() {
   };
   const handleShow = () => setShowModal(true);
   const email = window.localStorage.getItem('email');
-
+console.log(email);
   useEffect(() => {
-    fetchRules();
-    fetchTriggers();
-    fetchActions();
+    if (email !== null) {
+      fetchRules();
+      fetchTriggers();
+      fetchActions();
+    } else {
+      setShowNotification(true);
+    }
   }, []);
 
   const fetchRules = async () => {
@@ -270,6 +275,11 @@ function Rules() {
   return (
       <div>
         <Navigation />
+        {showNotification &&
+            <div className="alert alert-warning" role="alert">
+              You need to be logged in to see the rules.
+            </div>
+        }
         <div className="container">
           <Toast
               className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Rule removed') || toastMessage.includes('Rule added') ? 'text-bg-success' : 'text-bg-danger'}`}
@@ -286,7 +296,23 @@ function Rules() {
             </div>
           </Toast>
           <div className="d-flex justify-content-end">
-            <button className="btn btn-primary my-3" onClick={handleShow}>Create Rule</button>
+            {email === null ? (
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={<Tooltip id="button-tooltip">You need to login to create a rule</Tooltip>}
+                >
+                <span className="d-inline-block">
+                    <Button className="btn btn-primary my-3" disabled style={{ pointerEvents: 'none' }}>
+                        Create Rule
+                    </Button>
+                </span>
+                </OverlayTrigger>
+            ) : (
+                <Button className="btn btn-primary my-3" onClick={handleShow}>
+                  Create Rule
+                </Button>
+            )}
           </div>
           <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
               <Modal.Header closeButton>

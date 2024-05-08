@@ -1,6 +1,6 @@
 import Navigation from "./Navigation";
 import {useEffect, useState} from "react";
-import { Button, Form, Modal, Toast } from "react-bootstrap";
+import {Button, Form, Modal, OverlayTrigger, Toast, Tooltip} from "react-bootstrap";
 import React from "react";
 import { Breadcrumb } from 'react-bootstrap';
 
@@ -51,6 +51,8 @@ function Triggers() {
     const [tempSizeThreshold, setTempSizeThreshold] = useState("");
     const [tempCommandLineArguments, setTempCommandLineArguments] = useState("");
     const [tempExitStatus, setTempExitStatus] = useState("");
+    const [showLoginToast, setShowLoginToast] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
@@ -62,6 +64,12 @@ function Triggers() {
     };
 
     useEffect(() => {
+        if (!email) {
+            console.log("User is not logged in. Skipping fetchRootDirectory API call.");
+            setShowNotification(true); // Show the login toast
+            return;
+        }
+
         const fetchRootDirectory = async () => {
             const response = await fetch('/api/getDirectory');
             const data = await response.json();
@@ -200,6 +208,11 @@ function Triggers() {
     };
 
     const fetchTriggers = async () => {
+        if (!email) {
+            console.log("User is not logged in. Skipping fetchTriggers API call.");
+            return;
+        }
+
         const response = await fetch(`/api/triggers/${email}`, {
             method: 'GET',
             headers: {
@@ -217,6 +230,11 @@ function Triggers() {
     };
 
     const fetchTriggerTypes = async () => {
+        if (!email) {
+            console.log("User is not logged in. Skipping fetchTriggerTypes API call.");
+            return;
+        }
+
         const response = await fetch('/api/triggerTypes', {
             method: 'GET',
             headers: {
@@ -611,6 +629,11 @@ function Triggers() {
     return (
     <div>
         <Navigation />
+        {showNotification &&
+            <div className="alert alert-warning" role="alert">
+                You need to be logged in to see the triggers.
+            </div>
+        }
         <Toast
             className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Trigger removed') || toastMessage.includes('Trigger added') ? 'text-bg-success' : 'text-bg-danger'}`}
             onClose={() => setShowToast(false)}
@@ -643,7 +666,23 @@ function Triggers() {
         </Modal>
         <div className="container">
             <div className="d-flex justify-content-end">
-                <button className="btn btn-primary my-3" onClick={handleShow}>Create Trigger</button>
+                {email === null ? (
+                    <OverlayTrigger
+                        placement="bottom"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={<Tooltip id="button-tooltip">You need to login to create a trigger</Tooltip>}
+                    >
+                <span className="d-inline-block">
+                    <Button className="btn btn-primary my-3" disabled style={{ pointerEvents: 'none' }}>
+                        Create Trigger
+                    </Button>
+                </span>
+                    </OverlayTrigger>
+                ) : (
+                    <Button className="btn btn-primary my-3" onClick={handleShow}>
+                        Create trigger
+                    </Button>
+                )}
             </div>
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton>
