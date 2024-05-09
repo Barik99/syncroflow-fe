@@ -92,7 +92,7 @@ console.log(email);
     if (!selectedAction) {
       errors = { ...errors, selectedAction: "Action name is required" };
     }
-    if (!sleepTime || parseInt(sleepTime) < 1) {
+    if (isMultiUse && (!sleepTime || parseInt(sleepTime) < 1)) {
       errors = { ...errors, sleepTime: "Sleep time is required and must be greater than 0" };
     }
 
@@ -109,7 +109,7 @@ console.log(email);
       active: isActive, // Replace with the actual active status
       multiUse: isMultiUse, // Replace with the actual multiUse status
       lastUse: null, // Replace with the actual lastUse value
-      sleepTime: parseInt(sleepTime) // Replace with the actual sleepTime value
+      sleepTime: isMultiUse ? parseInt(sleepTime) : 0 // Set sleepTime to 0 if isMultiUse is not checked
     };
 
     const response = await fetch(`/api/addRule/${email}`, {

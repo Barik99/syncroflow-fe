@@ -171,6 +171,14 @@ function Triggers() {
         fetchTriggerTypes();
     }, []);
 
+    const handleKeyPressExitStatusField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const value = e.currentTarget.value + e.key;
+        // @ts-ignore
+        if (!Number.isInteger(Number(value)) || value < 0) {
+            e.preventDefault();
+        }
+    };
+
     const handleFileSelect = (fileName: string) => {
         console.log("Selected file:", fileName);
         let filePath = path.join('/') + '/' + fileName;
@@ -681,7 +689,7 @@ function Triggers() {
                     </OverlayTrigger>
                 ) : (
                     <Button className="btn btn-primary my-3" onClick={handleShow}>
-                        Create trigger
+                        Create Trigger
                     </Button>
                 )}
             </div>
@@ -771,6 +779,7 @@ function Triggers() {
                                             onChange={handleFieldChangeTimeOfDay(field)}
                                             onKeyPress={handleKeyPressMinutesField}
                                             className={fieldValidation[field] ? 'is-invalid' : ''}
+                                            value={triggerFields['minutes']}
                                         />
                                         {fieldValidation['minutes'] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
@@ -778,12 +787,13 @@ function Triggers() {
                                     <div>
                                         <Form.Control
                                             type="number"
-                                            min="0"
-                                            max="59"
+                                            min="1"
+                                            max="31"
                                             placeholder={`Enter a day`}
-                                            onChange={handleFieldChangeTimeOfDay(field)}
+                                            onChange={handleFieldChangeDayOfMonth}
                                             onKeyPress={handleKeyPressDayOfMonthField}
                                             className={fieldValidation[field] ? 'is-invalid' : ''}
+                                            value={triggerFields['day']}
                                         />
                                         {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
@@ -791,7 +801,32 @@ function Triggers() {
                                     <div>
                                         <Form.Control type="number" min="0" placeholder={`Enter ${field}`}
                                                       onChange={handleFieldChangeSizeThreshold}
-                                                      className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                                      className={fieldValidation[field] ? 'is-invalid' : ''}
+                                                      value={triggerFields['sizeThreshold']}
+                                        />
+                                        {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                    </div>
+                                ) : selectedType === 'External Program' && field === 'exitStatus' ? (
+                                    <div>
+                                        <Form.Control
+                                            type="number"
+                                            placeholder={`Enter exit status`}
+                                            onChange={handleFieldChange(field)}
+                                            onKeyPress={handleKeyPressExitStatusField}
+                                            className={fieldValidation[field] ? 'is-invalid' : ''}
+                                            value={triggerFields['exitStatus']}
+                                        />
+                                        {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                    </div>
+                                ) : selectedType === 'External Program' && field === 'commandLineArguments' ? (
+                                    <div>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder={`Enter command line arguments`}
+                                            onChange={handleFieldChange(field)}
+                                            className={fieldValidation[field] ? 'is-invalid' : ''}
+                                            value={triggerFields['commandLineArguments']}
+                                        />
                                         {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                     </div>
                                 ) : selectedType === 'File Existence' && field === 'file' || selectedType === 'File Size' && field === 'file' || selectedType === 'External Program' && field === 'externalProgram' ? (

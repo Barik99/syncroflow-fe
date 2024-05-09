@@ -55,6 +55,7 @@ function Triggers() {
     const [showDirectoryUploadButton, setShowDirectoryUploadButton] = useState(false);
     const [selectedDirectoryPath, setSelectedDirectoryPath] = useState("");
     const [showNotification, setShowNotification] = useState(false);
+    const [tempStringToAppend, setTempStringToAppend] = useState("");
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
@@ -97,17 +98,17 @@ function Triggers() {
     const handleFieldChangeSizeThreshold = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value;
         if (value.trim() === '') {
-            setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
-            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'This field is required'}));
+            setFieldValidation(prev => ({...prev, 'stringToAppend': true}));
+            setFieldErrorMessage(prev => ({...prev, 'stringToAppend': 'This field is required'}));
         } else {
             const numValue = parseInt(value);
             if (numValue < 0) {
-                setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
-                setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Size threshold must be greater than 0'}));
+                setFieldValidation(prev => ({...prev, 'stringToAppend': true}));
+                setFieldErrorMessage(prev => ({...prev, 'stringToAppend': 'Size threshold must be greater than 0'}));
             } else {
-                setFieldValidation(prev => ({...prev, 'sizeThreshold': false}));
-                setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': ''}));
-                setTriggerFields(prevFields => ({...prevFields, 'sizeThreshold': value}));
+                setFieldValidation(prev => ({...prev, 'stringToAppend': false}));
+                setFieldErrorMessage(prev => ({...prev, 'stringToAppend': ''}));
+                setTriggerFields(prevFields => ({...prevFields, 'stringToAppend': value}));
             }
         }
     }
@@ -165,7 +166,6 @@ function Triggers() {
                 'commandLineArguments': tempCommandLineArguments
             }));
             console.log('Restored commandLineArguments:', tempCommandLineArguments); // Log the restored commandLineArguments
-            console.log('Restored exitStatus:', tempExitStatus); // Log the restored exitStatus
         } else if (tempSelectedType === 'Delete File') {
             // Set the fileToDelete field to the selected file path
             setTriggerFields(prevFields => ({
@@ -176,8 +176,8 @@ function Triggers() {
             // Set the fileToDelete field to the selected file path
             setTriggerFields(prevFields => ({
                 ...prevFields,
-                'stringToAppend': tempSizeThreshold,
-                'file': filePath
+                'file': filePath,
+                'stringToAppend': tempStringToAppend
             }));
         } else if (tempSelectedType === 'Paste File') {
             // Set the fileToDelete field to the selected file path
@@ -452,17 +452,17 @@ function Triggers() {
             // Reset the selected file path if the 'File Existence' trigger type is selected
             if (selectedOption === 'Delete File') {
                 setSelectedFilePath('');
-            } else if (selectedOption === "File Size") {
-                // Initialize triggerFields with the fields of the selected type
-                const fields = triggerTypes[selectedOption];
-                let initialTriggerFields: {[key: string]: string} = {};
-                for (const field in fields) {
-                    initialTriggerFields[field] = '';
-                }
-                setTriggerFields(initialTriggerFields);
+            } else if (selectedOption === "Append String To File") {
+                    // Initialize triggerFields with the fields of the selected type
+                    const fields = triggerTypes[selectedOption];
+                    let initialTriggerFields: {[key: string]: string} = {};
+                    for (const field in fields) {
+                        initialTriggerFields[field] = '';
+                    }
+                    setTriggerFields(initialTriggerFields);
 
-                // Reset the selected file path if the 'File Size' trigger type is selected
-                setSelectedFilePath('');
+                    // Reset the selected file path if the 'File Size' trigger type is selected
+                    setSelectedFilePath('');
             } else if (selectedOption === "Start External Program") {
                 setSelectedFilePath(''); // Reset the selected file path
                 // Initialize triggerFields with the fields of the selected type
@@ -492,10 +492,9 @@ function Triggers() {
         setSelectedFile(""); // Reset the selected file
         setTempTriggerName(triggerName); // Store the current trigger name
         setTempSelectedType(selectedType); // Store the current selected type
-        if (selectedType === 'External Program') {
+        if (tempSelectedType === 'Start External Program') {
             // Store the current commandLineArguments and exitStatus
             setTempCommandLineArguments(triggerFields['commandLineArguments']);
-            setTempExitStatus(triggerFields['exitStatus']);
         }
         if (selectedType === 'File Size') {
             setTempSizeThreshold(triggerFields['sizeThreshold']); // Store the current size threshold
@@ -503,7 +502,6 @@ function Triggers() {
         }
         if (selectedType === 'Append File To String') {
             setTempSizeThreshold(triggerFields['stringToAppend']); // Store the current string to append
-            setTempSizeThreshold(''); // Clear the string to append
         }
         setTriggerName(""); // Clear the trigger name
         setSelectedType(""); // Clear the selected type
@@ -727,7 +725,7 @@ function Triggers() {
                         </OverlayTrigger>
                     ) : (
                         <Button className="btn btn-primary my-3" onClick={handleShow}>
-                            Create trigger
+                            Create Action
                         </Button>
                     )}
                 </div>
@@ -818,11 +816,26 @@ function Triggers() {
                                                 <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                             ))}
                                         </Form.Select>
-                                    ) : selectedType === 'Append String to File' && field === 'stringToAppend' ? (
+                                    ) : selectedType === 'Start External Program' && field === 'commandLineArguments' ? (
                                         <div>
-                                            <Form.Control placeholder={`Enter ${field}`}
-                                                          onChange={handleFieldChangeSizeThreshold}
-                                                          className={fieldValidation[field] ? 'is-invalid' : ''}/>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder={`Enter command line arguments`}
+                                                onChange={handleFieldChange(field)}
+                                                className={fieldValidation[field] ? 'is-invalid' : ''}
+                                                value={triggerFields['commandLineArguments']}
+                                            />
+                                            {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                        </div>
+                                    ) : selectedType === 'Append String To File' && field === 'stringToAppend' ? (
+                                        <div>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder={`Enter string to append`}
+                                                onChange={handleFieldChange(field)}
+                                                className={fieldValidation[field] ? 'is-invalid' : ''}
+                                                value={triggerFields['stringToAppend']}
+                                            />
                                             {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                         </div>
                                     ) : selectedType === 'Delete File' && field === 'fileToDelete' ||
@@ -859,20 +872,23 @@ function Triggers() {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <Modal show={showFileExplorerModal} onHide={() => {
-                    setShowFileExplorerModal(false); // Close the 'Select File' modal
-                    setShowModal(true); // Open the 'Create Trigger' modal
-                    setTriggerName(tempTriggerName); // Restore the trigger name
-                    setSelectedType(tempSelectedType); // Restore the selected type
-                    if (tempSelectedType === 'External Program') {
-                        // Restore the commandLineArguments and exitStatus
-                        setTriggerFields(prevFields => ({
-                            ...prevFields,
-                            'commandLineArguments': tempCommandLineArguments,
-                            'exitStatus': tempExitStatus
-                        }));
-                    }
-                }}>
+                <Modal
+                    show={showFileExplorerModal}
+                    onHide={() => {
+                        setShowFileExplorerModal(false); // Close the 'Select File' modal
+                        setShowModal(true); // Open the 'Create Trigger' modal
+                        setTriggerName(tempTriggerName); // Restore the trigger name
+                        setSelectedType(tempSelectedType); // Restore the selected type
+                        if (tempSelectedType === 'Append String To File') {
+                            // Restore the stringToAppend
+                            setTriggerFields(prevFields => ({
+                                ...prevFields,
+                                'stringToAppend': tempStringToAppend
+                            }));
+                            console.log("Restored String to Append: ", triggerFields['stringToAppend']);
+                        }
+                    }}
+                >
                     <Modal.Header closeButton>
                         <Modal.Title>Select a File</Modal.Title>
                     </Modal.Header>
