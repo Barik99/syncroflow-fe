@@ -73,7 +73,8 @@ console.log(email);
 
       // Check if data is an array before setting it
       if (Array.isArray(data)) {
-        setRules(data);
+        const sortedRules = data.sort((a, b) => a.name.localeCompare(b.name));
+        setRules(sortedRules);
       } else {
         console.error('Error: Expected array from API, received:', data);
       }

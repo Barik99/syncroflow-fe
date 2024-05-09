@@ -214,7 +214,8 @@ function Triggers() {
         const data = await response.json();
 
         if (Array.isArray(data)) {
-            setTriggers(data);
+            const sortedRules = data.sort((a, b) => a.name.localeCompare(b.name));
+            setTriggers(sortedRules);
         } else {
             console.error('Error: Expected array from API, received:', data);
         }
