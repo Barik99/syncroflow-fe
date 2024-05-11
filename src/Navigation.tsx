@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, OverlayTrigger, Tooltip, Navbar, Nav, Toast } from "react-bootstrap";
+import { Form, OverlayTrigger, Tooltip, Navbar, Nav, Toast, Offcanvas } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import { Dropdown } from 'react-bootstrap';
 
@@ -11,6 +11,10 @@ function Navigation() {
     const [selectedDuration, setSelectedDuration] = useState(localStorage.getItem('selectedDuration') || "Set Duration");
     const [toastMessage, setToastMessage] = useState("");
     const [showToast, setShowToast] = useState(false);
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
 
     useEffect(() => {
         // Save to localStorage whenever selectedTime, selectedDuration or isToggled changes
@@ -18,6 +22,19 @@ function Navigation() {
         localStorage.setItem('selectedDuration', selectedDuration);
         localStorage.setItem('isToggled', JSON.stringify(isToggled));
     }, [selectedTime, selectedDuration, isToggled]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Clean up event listener on component unmount
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const handleToggle = () => {
         setIsToggled(!isToggled);
@@ -110,27 +127,96 @@ function Navigation() {
 
     return (
         <div>
-            <Navbar bg="dark" variant="dark">
-                <Navbar.Brand href="/">
-                    <img src="..\images\logo.png" alt="logo" className={"site-logo"}/>
-                </Navbar.Brand>
-                <Nav className="mr-auto">
-                    {email && (
-                        <Nav.Link href="/rules">Rules</Nav.Link>
-                    )}
-                    {email && (
-                        <Nav.Link href="/triggers">Triggers</Nav.Link>
-                    )}
-                    {email && (
-                        <Nav.Link href="/actions">Actions</Nav.Link>
-                    )}
-                    <Nav.Link href="/file-explorer">File Explorer</Nav.Link>
-                </Nav>
-                <Navbar.Collapse className="justify-content-end">
-                    <Form className="scheduler-container">
-                        <Form.Control type="number" onKeyPress={handleKeyPressSchedulerTimeField} placeholder="Scheduler time" disabled={isToggled} value={selectedTime} onChange={handleTimeChange} min="1"/>
-                        <Form.Select aria-label="Default select example" disabled={isToggled} value={selectedDuration} onChange={handleDurationChange}>
-                            <option>Set Duration</option>
+            {isMobile ? (
+                <>
+                    <Button variant="primary" onClick={() => setShow(true)} className="me-2">
+                        &#9776;
+                    </Button>
+
+                    <Offcanvas show={show} onHide={() => setShow(false)} className="offcanvas-dark">
+                        <Offcanvas.Header closeButton>
+                            <Offcanvas.Title>
+                                <img src="..\images\logo.png" alt="logo" className={"site-logo"} style={{paddingLeft: '0.5rem'}}/>
+                            </Offcanvas.Title>
+                        </Offcanvas.Header>
+                        <Offcanvas.Body className="d-flex flex-column justify-content-between">
+                            <Nav className="flex-column offcanvas-dark">
+                                {email && (
+                                    <>
+                                        <Nav.Link href="/rules" className="transparent-button">Rules</Nav.Link>
+                                        <Nav.Link href="/triggers" className="transparent-button">Triggers</Nav.Link>
+                                        <Nav.Link href="/actions" className="transparent-button">Actions</Nav.Link>
+                                    </>
+                                )}
+                                <Nav.Link href="/file-explorer" className="transparent-button">File Explorer</Nav.Link>
+                            </Nav>
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '1rem',
+                                left: 0,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                padding: '0 1rem'
+                            }}>
+                                {email ? (
+                                    <>
+                                        <Navbar.Text className="login-button text-white"
+                                                     style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none', paddingLeft: '0.3rem'}}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person" viewBox="0 0 16 16" style={{marginRight: '0.5rem'}}>
+                                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                                            </svg>
+                                            {email}
+                                        </Navbar.Text>
+                                        <Nav.Link onClick={handleLogout}
+                                                  style={{padding: '0.25rem 0.5rem', marginRight: '0.5rem'}}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" className="bi bi-box-arrow-right"
+                                                 viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                      d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                                <path fill-rule="evenodd"
+                                                      d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                                            </svg>
+                                        </Nav.Link>
+                                    </>
+                                ) : (
+                                    <Nav.Link href="/login">
+                                        <Button className="login-button text-white"
+                                                style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
+                                            Login
+                                        </Button>
+                                    </Nav.Link>
+                                )}
+                            </div>
+                        </Offcanvas.Body>
+                    </Offcanvas>
+                </>
+            ) : (
+                <Navbar bg="dark" variant="dark">
+                    <Navbar.Brand href="/">
+                        <img src="..\images\logo.png" alt="logo" className={"site-logo"}/>
+                    </Navbar.Brand>
+                    <Nav className="mr-auto">
+                        {email && (
+                            <Nav.Link href="/rules">Rules</Nav.Link>
+                        )}
+                        {email && (
+                            <Nav.Link href="/triggers">Triggers</Nav.Link>
+                        )}
+                        {email && (
+                            <Nav.Link href="/actions">Actions</Nav.Link>
+                        )}
+                        <Nav.Link href="/file-explorer">File Explorer</Nav.Link>
+                    </Nav>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Form className="scheduler-container">
+                            <Form.Control type="number" onKeyPress={handleKeyPressSchedulerTimeField}
+                                          placeholder="Scheduler time" disabled={isToggled} value={selectedTime}
+                                          onChange={handleTimeChange} min="1"/>
+                            <Form.Select aria-label="Default select example" disabled={isToggled}
+                                         value={selectedDuration} onChange={handleDurationChange}>
+                                <option>Set Duration</option>
                             <option value="1">Seconds</option>
                             <option value="2">Minutes</option>
                             <option value="3">Hours</option>
@@ -211,6 +297,7 @@ function Navigation() {
                     </Form>
                 </Navbar.Collapse>
             </Navbar>
+            )}
             <Toast
                 className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage === 'Scheduler started' ||
                 toastMessage === 'Scheduler stopped' ? 'text-bg-success' : 'text-bg-danger'}`}

@@ -233,3 +233,13 @@ button{
     background-color: #292b2c;
     border-color: #292b2c;
 }
+
+.offcanvas-dark {
+    background-color: #343a40 !important; /* This is the color for the dark theme in Bootstrap */
+    color: #ffffff !important; /* This will make the text color white */
+}
+
+.transparent-button.nav-link {
+    background-color: #343a40 !important; /* This is the color for the dark theme in Bootstrap */
+    color: #ffffff !important; /* This will make the text color white */
+}
