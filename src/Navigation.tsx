@@ -129,7 +129,7 @@ function Navigation() {
         <div>
             {isMobile ? (
                 <>
-                    <Button variant="primary" onClick={() => setShow(true)} className="me-2">
+                    <Button variant="primary" onClick={() => setShow(true)} className="me-2" style={{marginTop: '1rem', marginLeft: '2rem'}}>
                         &#9776;
                     </Button>
 
