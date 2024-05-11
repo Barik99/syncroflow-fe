@@ -93,6 +93,12 @@ function Triggers() {
 
     const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         setTriggerFields(prevFields => ({...prevFields, [field]: e.target.value}));
+        if (field === 'stringToAppend' && selectedType === 'Append String To File') {
+            console.log('stringToAppend:', e.target.value);
+        }
+        if (field === 'commandLineArguments' && selectedType === 'Start External Program') {
+            console.log('commandLineArguments:', e.target.value);
+        }
     };
 
     const handleFieldChangeSizeThreshold = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,8 +168,7 @@ function Triggers() {
             // Restore the commandLineArguments and exitStatus
             setTriggerFields(prevFields => ({
                 ...prevFields,
-                'externalProgram': filePath,
-                'commandLineArguments': tempCommandLineArguments
+                'externalProgram': filePath
             }));
             console.log('Restored commandLineArguments:', tempCommandLineArguments); // Log the restored commandLineArguments
         } else if (tempSelectedType === 'Delete File') {
@@ -176,8 +181,7 @@ function Triggers() {
             // Set the fileToDelete field to the selected file path
             setTriggerFields(prevFields => ({
                 ...prevFields,
-                'file': filePath,
-                'stringToAppend': tempStringToAppend
+                'file': filePath
             }));
         } else if (tempSelectedType === 'Paste File') {
             // Set the fileToDelete field to the selected file path
@@ -909,12 +913,15 @@ function Triggers() {
                         </Form>
                     </Modal.Body>
                 </Modal>
-                <Modal show={showDirectoryExplorerModal} onHide={() => {
-                    setShowFileExplorerModal(false); // Close the 'Select File' modal
-                    setShowModal(true); // Open the 'Create Trigger' modal
-                    setTriggerName(tempTriggerName); // Restore the trigger name
-                    setSelectedType(tempSelectedType); // Restore the selected type
-                }}>
+                <Modal
+                    show={showDirectoryExplorerModal}
+                    onHide={() => {
+                        setShowDirectoryExplorerModal(false); // Close the 'Select Directory' modal
+                        setShowModal(true); // Open the 'Create Trigger' modal
+                        setTriggerName(tempTriggerName); // Restore the trigger name
+                        setSelectedType(tempSelectedType); // Restore the selected type
+                    }}
+                >
                     <Modal.Header closeButton>
                         <Modal.Title>Select a Directory</Modal.Title>
                     </Modal.Header>
