@@ -19,7 +19,7 @@ const FileExplorer: React.FC = () => {
     const [directories, setDirectories] = useState<DirectoryProps | null>(null);
     const [currentDirectory, setCurrentDirectory] = useState<DirectoryProps | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [path, setPath] = useState<string[]>(['home']);
+    const [path, setPath] = useState<string[]>(['Acasă']);
     const [showModal, setShowModal] = useState(false);
     const [directoryName, setDirectoryName] = useState('');
     const [selectedDirectory, setSelectedDirectory] = useState('');
@@ -55,7 +55,7 @@ const FileExplorer: React.FC = () => {
 
         const formData = new FormData();
         formData.append('file', uploadedFile);
-        const modifiedPath = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/');
+        const modifiedPath = path.map(dir => dir === 'Acasă' ? 'FileDirectory' : dir).join('/');
         formData.append('path', modifiedPath);
 
         const response = await fetch('/api/addFile', {
@@ -94,7 +94,7 @@ const FileExplorer: React.FC = () => {
             return;
         }
         setIsValid(true);
-        const parentDirectory = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/');
+        const parentDirectory = path.map(dir => dir === 'Acasă' ? 'FileDirectory' : dir).join('/');
         const response = await fetch('/api/addDirectory', {
             method: 'POST',
             headers: {
@@ -133,7 +133,7 @@ const FileExplorer: React.FC = () => {
     };
 
     const handleDeleteDirectory = async () => {
-        const directoryToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedDirectory;
+        const directoryToDelete = path.map(dir => dir === 'Acasă' ? 'FileDirectory' : dir).join('/') + '/' + selectedDirectory;
         const response = await fetch(`/api/removeDirectory`, {
             method: 'DELETE',
             headers: {
@@ -166,7 +166,7 @@ const FileExplorer: React.FC = () => {
     };
 
     const handleDeleteFileConfirmation = async () => {
-        const fileToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedFile;
+        const fileToDelete = path.map(dir => dir === 'Acasă' ? 'FileDirectory' : dir).join('/') + '/' + selectedFile;
         const response = await fetch(`/api/removeFile`, {
             method: 'DELETE',
             headers: {
@@ -201,7 +201,7 @@ const FileExplorer: React.FC = () => {
     };
 
     const handleDeleteFile = async () => {
-        const fileToDelete = path.map(dir => dir === 'home' ? 'FileDirectory' : dir).join('/') + '/' + selectedFile;
+        const fileToDelete = path.map(dir => dir === 'Acasă' ? 'FileDirectory' : dir).join('/') + '/' + selectedFile;
         const response = await fetch(`/api/removeFile`, {
             method: 'DELETE',
             headers: {
@@ -297,7 +297,7 @@ const FileExplorer: React.FC = () => {
                                 d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
                         </svg>
                         <div>
-                            No Directories Found
+                            Nu s-au găsit directoare
                         </div>
                     </div>
                     <button type="button" className="btn btn-close"
@@ -341,7 +341,7 @@ const FileExplorer: React.FC = () => {
                                 d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
                         </svg>
                         <div>
-                            No Files Found
+                            Nu s-au găsit fișiere
                         </div>
                     </div>
                     <button type="button" className="btn btn-close" onClick={() => setShowNoFilesAlert(false)}></button>
@@ -382,7 +382,7 @@ const FileExplorer: React.FC = () => {
                 <path d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"/>
                 <path d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"/>
             </svg>
-            Add Directory
+            Adaugă Director
         </Button>
     </div>
     <div style={{marginBottom: '0.5rem'}}>
@@ -391,7 +391,7 @@ const FileExplorer: React.FC = () => {
                 placement="left"
                 overlay={
                     <Tooltip id="tooltip-disabled">
-                        You need to select a directory to delete first.
+                        Selectați un director pentru a-l șterge.
                     </Tooltip>
                 }
             >
@@ -401,7 +401,7 @@ const FileExplorer: React.FC = () => {
                     <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181L15.546 8H14.54l.265-2.91A1 1 0 0 0 13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91H9v1H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zm6.339-1.577A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/>
                     <path d="M11.854 10.146a.5.5 0 0 0-.707.708L12.293 12l-1.146 1.146a.5.5 0 0 0 .707.708L13 12.707l1.146 1.147a.5.5 0 0 0 .708-.708L13.707 12l1.147-1.146a.5.5 0 0 0-.707-.708L13 11.293z"/>
                 </svg>
-                Delete Directory
+                Șterge Director
             </Button>
         </span>
             </OverlayTrigger>
@@ -411,7 +411,7 @@ const FileExplorer: React.FC = () => {
                     <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181L15.546 8H14.54l.265-2.91A1 1 0 0 0 13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91H9v1H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zm6.339-1.577A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/>
                     <path d="M11.854 10.146a.5.5 0 0 0-.707.708L12.293 12l-1.146 1.146a.5.5 0 0 0 .707.708L13 12.707l1.146 1.147a.5.5 0 0 0 .708-.708L13.707 12l1.147-1.146a.5.5 0 0 0-.707-.708L13 11.293z"/>
                 </svg>
-                Delete Directory
+                Șterge Director
             </Button>
         )}
     </div>
@@ -425,7 +425,7 @@ const FileExplorer: React.FC = () => {
                     <path
                         d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
                 </svg>
-                Add File
+                Adaugă Fișier
             </Button>
         </div>
     </div>
@@ -435,7 +435,7 @@ const FileExplorer: React.FC = () => {
                                 placement="left"
                                 overlay={
                                     <Tooltip id="tooltip-disabled">
-                                        You need to select a file to delete first.
+                                        Selectați un fișier pentru a-l șterge.
                                     </Tooltip>
                                 }
                             >
@@ -446,7 +446,7 @@ const FileExplorer: React.FC = () => {
                     <path d="M6.854 7.146a.5.5 0 1 0-.708.708L7.293 9l-1.147 1.146a.5.5 0 0 0 .708.708L8 9.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 9l1.147-1.146a.5.5 0 0 0-.708-.708L8 8.293z"/>
                     <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
                 </svg>
-                Delete File
+                Șterge Fișier
             </Button>
         </span>
             </OverlayTrigger>
@@ -456,7 +456,7 @@ const FileExplorer: React.FC = () => {
                     <path d="M6.854 7.146a.5.5 0 1 0-.708.708L7.293 9l-1.147 1.146a.5.5 0 0 0 .708.708L8 9.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 9l1.147-1.146a.5.5 0 0 0-.708-.708L8 8.293z"/>
                     <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
                 </svg>
-                Delete File
+                Șterge Fișier
             </Button>
         )}
     </div>
@@ -464,32 +464,32 @@ const FileExplorer: React.FC = () => {
 
                 <Modal show={showModal} onHide={() => { setShowModal(false); setDirectoryName(''); setIsValid(true); setIsSubmitted(false); }}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Add Directory</Modal.Title>
+                        <Modal.Title>Adaugă director</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <p>You are adding a new directory in the path: {path.join('/')}</p>
+                        <p>Directorul va fi adaugat la locația: <strong>{path.join('/')}</strong></p>
                         <Form>
                             <Form.Group controlId="formDirectoryName">
-                                <Form.Label>Directory Name</Form.Label>
+                                <Form.Label>Nume director</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Enter directory name"
+                                    placeholder="Introduceți numele directorului"
                                     value={directoryName}
                                     onChange={(e) => setDirectoryName(e.target.value)}
                                     isInvalid={!isValid && isSubmitted}
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    Directory name is required.
+                                    Numele directorului este obligatoriu.
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => { setShowModal(false); setDirectoryName(''); setIsValid(true); setIsSubmitted(false); }}>
-                            Cancel
+                            Anulează
                         </Button>
                         <Button variant="primary" onClick={() => { handleAddDirectory(); setDirectoryName(''); }}>
-                            Create
+                            Adaugă
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -498,68 +498,68 @@ const FileExplorer: React.FC = () => {
 
                 <Modal show={showFileModal} onHide={() => { setShowFileModal(false); setUploadedFile(null); setIsFileValid(true); setIsSubmitted(false); }}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Add File</Modal.Title>
+                        <Modal.Title>Adaugă fișier</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <p>You are adding a new file in the path: {path.join('/')}</p>
+                        <p>Fișierul va fi adaugat la locația: <strong>{path.join('/')}</strong></p>
                         <Form>
                             <Form.Group controlId="formFileUpload">
-                                <Form.Label>Upload File</Form.Label>
+                                <Form.Label>Încărcați fișier</Form.Label>
                                 <Form.Control
                                     type="file"
                                     onChange={handleFileUpload}
                                     isInvalid={!isFileValid && isSubmitted}
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                    File is required.
+                                    Fișierul este obligatoriu.
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => { setShowFileModal(false); setUploadedFile(null); setIsFileValid(true); setIsSubmitted(false); }}>
-                            Cancel
+                            Anulează
                         </Button>
                         <Button variant="primary" onClick={() => { handleAddFile(); setUploadedFile(null); }}>
-                            Confirm
+                            Adaugă
                         </Button>
                     </Modal.Footer>
                 </Modal>
 
                 <Modal show={showDeleteDirectoryModal} onHide={() => setShowDeleteDirectoryModal(false)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete</Modal.Title>
+                        <Modal.Title>Ștergere director</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        Are you sure you want to delete this directory?
+                        Sunteți sigur că doriți să ștergeți acest director?
                         <br/>
-                        Location: <strong>{path.join('/')}/{selectedDirectory}</strong>
+                        Locație: <strong>{path.join('/')}/{selectedDirectory}</strong>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowDeleteDirectoryModal(false)}>
-                            No
+                            Nu
                         </Button>
                         <Button variant="danger" onClick={handleDeleteDirectoryConfirmation}>
-                            Yes
+                            Da
                         </Button>
                     </Modal.Footer>
                 </Modal>
 
                 <Modal show={showDeleteFileModal} onHide={() => setShowDeleteFileModal(false)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete</Modal.Title>
+                        <Modal.Title>Ștergere fișier</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        Are you sure you want to delete this file?
+                        Sunteți sigur că doriți să ștergeți acest fișier?
                         <br/>
-                        Location: <strong>{path.join('/')}/{selectedFile}</strong>
+                        Locație: <strong>{path.join('/')}/{selectedFile}</strong>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowDeleteFileModal(false)}>
-                            No
+                            Nu
                         </Button>
                         <Button variant="danger" onClick={handleDeleteFileConfirmation}>
-                            Yes
+                            Da
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -611,7 +611,7 @@ const FileExplorer: React.FC = () => {
                                         <path
                                             d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z"/>
                                     </svg>
-                                    Directories
+                                    Directoare
                                 </h2>
                                 {renderDirectories(currentDirectory.children)}
                                 <h2 className="text-black mt-4">
@@ -621,7 +621,7 @@ const FileExplorer: React.FC = () => {
                                         <path
                                             d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
                                     </svg>
-                                    Files
+                                    Fișiere
                                 </h2>
                                 {renderFiles(currentDirectory.children)}
                             </>

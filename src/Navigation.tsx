@@ -100,13 +100,13 @@ function Navigation() {
 // @ts-ignore
     const renderTooltip = (props) => (
         <Tooltip id="button-tooltip" {...props}>
-            You need to select a time frame
+            Trebuie să selectezi durata de timp
         </Tooltip>
     );
 // @ts-ignore
     const renderTimeTooltip = (props) => (
         <Tooltip id="button-tooltip" {...props}>
-            You need to enter the time amount
+            Trebuie să introduci o perioadă de timp
         </Tooltip>
     );
 
@@ -143,12 +143,12 @@ function Navigation() {
                             <Nav className="flex-column offcanvas-dark">
                                 {email && (
                                     <>
-                                        <Nav.Link href="/rules" className="transparent-button">Rules</Nav.Link>
-                                        <Nav.Link href="/triggers" className="transparent-button">Triggers</Nav.Link>
-                                        <Nav.Link href="/actions" className="transparent-button">Actions</Nav.Link>
+                                        <Nav.Link href="/rules" className="transparent-button">Reguli</Nav.Link>
+                                        <Nav.Link href="/triggers" className="transparent-button">Declanșatori</Nav.Link>
+                                        <Nav.Link href="/actions" className="transparent-button">Acțiuni</Nav.Link>
                                     </>
                                 )}
-                                <Nav.Link href="/file-explorer" className="transparent-button">File Explorer</Nav.Link>
+                                <Nav.Link href="/file-explorer" className="transparent-button">Fișiere și Directoare</Nav.Link>
                             </Nav>
                             <div style={{
                                 position: 'absolute',
@@ -184,7 +184,7 @@ function Navigation() {
                                     <Nav.Link href="/login">
                                         <Button className="login-button text-white"
                                                 style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
-                                            Login
+                                            Autentificare
                                         </Button>
                                     </Nav.Link>
                                 )}
@@ -199,33 +199,33 @@ function Navigation() {
                     </Navbar.Brand>
                     <Nav className="mr-auto">
                         {email && (
-                            <Nav.Link href="/rules">Rules</Nav.Link>
+                            <Nav.Link href="/rules">Reguli</Nav.Link>
                         )}
                         {email && (
-                            <Nav.Link href="/triggers">Triggers</Nav.Link>
+                            <Nav.Link href="/triggers">Declanșatori</Nav.Link>
                         )}
                         {email && (
-                            <Nav.Link href="/actions">Actions</Nav.Link>
+                            <Nav.Link href="/actions">Acțiuni</Nav.Link>
                         )}
-                        <Nav.Link href="/file-explorer">File Explorer</Nav.Link>
+                        <Nav.Link href="/file-explorer">Fișiere și Directoare</Nav.Link>
                     </Nav>
                     <Navbar.Collapse className="justify-content-end">
                         <Form className="scheduler-container">
                             <Form.Control type="number" onKeyPress={handleKeyPressSchedulerTimeField}
-                                          placeholder="Scheduler time" disabled={isToggled} value={selectedTime}
+                                          placeholder="Timp programator" disabled={isToggled} value={selectedTime}
                                           onChange={handleTimeChange} min="1"/>
                             <Form.Select aria-label="Default select example" disabled={isToggled}
                                          value={selectedDuration} onChange={handleDurationChange}>
-                                <option>Set Duration</option>
-                            <option value="1">Seconds</option>
-                            <option value="2">Minutes</option>
-                            <option value="3">Hours</option>
+                                <option>Setează durata</option>
+                            <option value="1">Secunde</option>
+                            <option value="2">Minute</option>
+                            <option value="3">Ore</option>
                         </Form.Select>
                         {email === null ? (
                             <OverlayTrigger
                                 placement="bottom"
                                 delay={{ show: 250, hide: 400 }}
-                                overlay={<Tooltip id="button-tooltip">You need to login to start the scheduler</Tooltip>}
+                                overlay={<Tooltip id="button-tooltip">Trebuie să te autentifici pentru a porni programarea</Tooltip>}
                             >
                             <span className="d-inline-block">
                                 <Button
@@ -233,11 +233,11 @@ function Navigation() {
                                     onClick={handleToggle}
                                     disabled={true}
                                 >
-                                    {isToggled ? "Stop" : "Start"}
+                                    {isToggled ? "Oprește" : "Pornește"}
                                 </Button>
                             </span>
                             </OverlayTrigger>
-                        ) : selectedDuration === "Set Duration" ? (
+                        ) : selectedDuration === "Setează durata" ? (
                             <OverlayTrigger
                                 placement="bottom"
                                 delay={{ show: 250, hide: 400 }}
@@ -247,9 +247,9 @@ function Navigation() {
                                 <Button
                                     variant={isToggled ? "danger" : "success"}
                                     onClick={handleToggle}
-                                    disabled={selectedDuration === "Set Duration" || selectedTime === ""}
+                                    disabled={selectedDuration === "Setează durata" || selectedTime === ""}
                                 >
-                                    {isToggled ? "Stop" : "Start"}
+                                    {isToggled ? "Oprește" : "Pornește"}
                                 </Button>
                             </span>
                             </OverlayTrigger>
@@ -263,9 +263,9 @@ function Navigation() {
                                 <Button
                                     variant={isToggled ? "danger" : "success"}
                                     onClick={handleToggle}
-                                    disabled={selectedDuration === "Set Duration" || selectedTime === ""}
+                                    disabled={selectedDuration === "Setează durata" || selectedTime === ""}
                                 >
-                                    {isToggled ? "Stop" : "Start"}
+                                    {isToggled ? "Oprește" : "Pornește"}
                                 </Button>
                             </span>
                             </OverlayTrigger>
@@ -273,15 +273,15 @@ function Navigation() {
                             <Button
                                 variant={isToggled ? "danger" : "success"}
                                 onClick={handleToggle}
-                                disabled={selectedDuration === "Set Duration" || selectedTime === ""}
+                                disabled={selectedDuration === "Setează durata" || selectedTime === ""}
                             >
-                                {isToggled ? "Stop" : "Start"}
+                                {isToggled ? "Oprește" : "Pornește"}
                             </Button>
                         )}
                         {email === null ? (
                             <Nav.Link href="/login">
                                 <Button className="login-button text-white" style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
-                                    Login
+                                    Autentificare
                                 </Button>
                             </Nav.Link>
                         ) : (
@@ -290,7 +290,7 @@ function Navigation() {
                                     {email}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                                    <Dropdown.Item onClick={handleLogout}>Deconectează-te</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         )}
