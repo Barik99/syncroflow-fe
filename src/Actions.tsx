@@ -23,7 +23,7 @@ interface FileItem {
     // include other properties of the file item if there are any
 }
 
-function Triggers() {
+function Actions() {
     const [triggers, setTriggers] = useState<Trigger[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedType, setSelectedType] = useState("");
@@ -40,7 +40,7 @@ function Triggers() {
     const [showFileExplorerModal, setShowFileExplorerModal] = useState(false);
     const [fileExplorerData, setFileExplorerData] = useState<DirectoryProps | null>(null);
     const [selectedFile, setSelectedFile] = React.useState("");
-    const [path, setPath] = useState<string[]>(["Home"]);
+    const [path, setPath] = useState<string[]>(["Acasă"]);
     const [currentDirectory, setCurrentDirectory] = useState<DirectoryProps | null>(null);
     const [directoryContent, setDirectoryContent] = useState<FileItem[]>([]);
     const [selectedFilePath, setSelectedFilePath] = useState("");
@@ -61,8 +61,8 @@ function Triggers() {
     const handleShow = () => {
         resetModal();
         // Reset the firstTrigger and secondTrigger states
-        setFirstTrigger('Select a trigger');
-        setSecondTrigger('Select a trigger');
+        setFirstTrigger('Selectează un declanșator');
+        setSecondTrigger('Selectează un declanșator');
         setShowModal(true);
     };
 
@@ -101,45 +101,6 @@ function Triggers() {
         }
     };
 
-    const handleFieldChangeSizeThreshold = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value;
-        if (value.trim() === '') {
-            setFieldValidation(prev => ({...prev, 'stringToAppend': true}));
-            setFieldErrorMessage(prev => ({...prev, 'stringToAppend': 'This field is required'}));
-        } else {
-            const numValue = parseInt(value);
-            if (numValue < 0) {
-                setFieldValidation(prev => ({...prev, 'stringToAppend': true}));
-                setFieldErrorMessage(prev => ({...prev, 'stringToAppend': 'Size threshold must be greater than 0'}));
-            } else {
-                setFieldValidation(prev => ({...prev, 'stringToAppend': false}));
-                setFieldErrorMessage(prev => ({...prev, 'stringToAppend': ''}));
-                setTriggerFields(prevFields => ({...prevFields, 'stringToAppend': value}));
-            }
-        }
-    }
-
-    const handleFieldChangeTimeOfDay = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value;
-        if (value.trim() === '') {
-            setFieldValidation(prev => ({...prev, [field]: true}));
-            setFieldErrorMessage(prev => ({...prev, [field]: 'This field is required'}));
-        } else {
-            const numValue = parseInt(value);
-            if (field === 'hours' && (numValue < 0 || numValue > 23)) {
-                setFieldValidation(prev => ({...prev, 'hours': true}));
-                setFieldErrorMessage(prev => ({...prev, 'hours': 'Hours must be between 0 and 23'}));
-            } else if (field === 'minutes' && (numValue < 0 || numValue > 59)) {
-                setFieldValidation(prev => ({...prev, 'minutes': true}));
-                setFieldErrorMessage(prev => ({...prev, 'minutes': 'Minutes must be between 0 and 59'}));
-            } else {
-                setFieldValidation(prev => ({...prev, [field]: false}));
-                setFieldErrorMessage(prev => ({...prev, [field]: ''}));
-                setTriggerFields(prevFields => ({...prevFields, [field]: value}));
-            }
-        }
-    };
-
     const handleFieldChangeNotOrAnd = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.value;
         setTriggerFields(prevFields => ({...prevFields, [field]: value}));
@@ -162,7 +123,7 @@ function Triggers() {
     const handleFileSelect = (fileName: string) => {
         console.log("Selected file:", fileName);
         let filePath = path.join('/') + '/' + fileName;
-        filePath = filePath.replace("Home", "FileDirectory"); // Replace "Home" with "FileDirectory"
+        filePath = filePath.replace("Acasă", "FileDirectory"); // Replace "Acasă" with "FileDirectory"
         setSelectedFilePath(filePath); // Set the selected file path
         if (tempSelectedType === 'Start External Program') {
             // Restore the commandLineArguments and exitStatus
@@ -277,7 +238,7 @@ function Triggers() {
 
         if (selectedType === 'File Size' && (!triggerFields['sizeThreshold'] || triggerFields['sizeThreshold'].trim() === '')) {
             setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
-            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'SizeThreshold is required'}));
+            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Dimensiunea fișierului este obligatorie'}));
             return;
         }
 
@@ -289,68 +250,36 @@ function Triggers() {
             if (!selectedFilePath) {
                 console.error('Error: No file selected');
                 // Display an error message to the user
-                setToastMessage('Error: No file selected for ' + selectedType + ' action type');
+                setToastMessage('Niciun fișier nu a fost selectat pentru acțiunea ' + selectedType);
                 setShowToast(true);
                 // Prevent the creation of the trigger
                 return;
             }
-            trigger.file = selectedFilePath.replace("Home", "FileDirectory");
+            trigger.file = selectedFilePath.replace("Acasă", "FileDirectory");
         } else if (selectedType === 'Paste File' || selectedType === 'Move File') {
             console.log("Selected directory path:", selectedDirectoryPath);
             if (!selectedDirectoryPath) {
                 console.error('Error: No directory selected');
                 // Display an error message to the user
-                setToastMessage('Error: No directory selected for ' + selectedType + ' action type');
+                setToastMessage('Niciun fișier nu a fost selectat pentru acțiunea ' + selectedType);
                 setShowToast(true);
                 // Prevent the creation of the trigger
                 return;
             }
-            trigger.destinationPath = selectedDirectoryPath.replace("Home", "FileDirectory");
+            trigger.destinationPath = selectedDirectoryPath.replace("Acasă", "FileDirectory");
             console.log("Trigger object after setting destinationPath:", trigger);
             if (!selectedFilePath) {
                 console.error('Error: No file selected');
                 // Display an error message to the user
-                setToastMessage('Error: No file selected for ' + selectedType + ' action type');
+                setToastMessage('Niciun fișier nu a fost selectat pentru acțiunea ' + selectedType);
                 setShowToast(true);
                 // Prevent the creation of the trigger
                 return;
             }
-            trigger.file = selectedFilePath.replace("Home", "FileDirectory");
+            trigger.file = selectedFilePath.replace("Acasă", "FileDirectory");
         }
 
-        if (selectedType === 'Day Of Month' && (!triggerFields['day'] || triggerFields['day'].trim() === '')) {
-            setFieldValidation(prev => ({...prev, 'day': true}));
-            setFieldErrorMessage(prev => ({...prev, 'day': 'Day is required'}));
-            return;
-        }
-
-        if (selectedType === 'AND' || selectedType === 'OR') {
-            if (firstTrigger === 'Select a trigger') {
-                setFieldValidation(prev => ({...prev, 'firstTrigger': true}));
-                setFieldErrorMessage(prev => ({...prev, 'firstTrigger': 'This field is required'}));
-                return;
-            } else {
-                setFieldValidation(prev => ({...prev, 'firstTrigger': false}));
-            }
-
-            if (secondTrigger === 'Select a trigger') {
-                setFieldValidation(prev => ({...prev, 'secondTrigger': true}));
-                setFieldErrorMessage(prev => ({...prev, 'secondTrigger': 'This field is required'}));
-                return;
-            } else {
-                setFieldValidation(prev => ({...prev, 'secondTrigger': false}));
-            }
-        } else if (selectedType === 'NOT') {
-            if (triggerFields['trigger'] === 'Select a trigger') {
-                setFieldValidation(prev => ({...prev, 'trigger': true}));
-                setFieldErrorMessage(prev => ({...prev, 'trigger': 'This field is required'}));
-                return;
-            } else {
-                setFieldValidation(prev => ({...prev, 'trigger': false}));
-            }
-        }
-
-        console.log("Trigger object after file existence check:", trigger);
+        console.log("Action object after file existence check:", trigger);
 
         const fields = triggerTypes[selectedType];
         console.log("Fields:", fields);
@@ -402,48 +331,6 @@ function Triggers() {
         setSelectedType(selectedOption);
         if (selectedOption === "Select a type") {
             resetModal();
-        } else if (selectedOption === "AND") {
-            // Initialize triggerFields with the fields of the selected type
-            const fields = triggerTypes[selectedOption];
-            let initialTriggerFields: {[key: string]: string} = {};
-            for (const field in fields) {
-                initialTriggerFields[field] = triggerFields[field] || '';
-            }
-            setTriggerFields(initialTriggerFields);
-        } else if (selectedOption === "OR") {
-            // Initialize triggerFields with the fields of the selected type
-            const fields = triggerTypes[selectedOption];
-            let initialTriggerFields: {[key: string]: string} = {};
-            for (const field in fields) {
-                initialTriggerFields[field] = triggerFields[field] || '';
-            }
-            setTriggerFields(initialTriggerFields);
-
-            // Update the validation state for the firstTrigger and secondTrigger fields
-            setFieldValidation(prev => ({...prev, 'firstTrigger': false, 'secondTrigger': false}));
-        } else if (selectedOption === "NOT") {
-            // Initialize triggerFields with the fields of the selected type
-            const fields = triggerTypes[selectedOption];
-            let initialTriggerFields: {[key: string]: string} = {};
-            for (const field in fields) {
-                initialTriggerFields[field] = triggerFields[field] || '';
-            }
-            setTriggerFields(initialTriggerFields);
-
-            // Reset the firstTrigger and secondTrigger states
-            setFirstTrigger('Select a trigger');
-            setSecondTrigger('Select a trigger');
-
-            // Update the validation state for the trigger field
-            setFieldValidation(prev => ({...prev, 'trigger': false}));
-        } else if (selectedOption === "Day Of Month" || selectedOption === "Time Of Day") {
-            // Initialize triggerFields with the fields of the selected type
-            const fields = triggerTypes[selectedOption];
-            let initialTriggerFields: {[key: string]: string} = {};
-            for (const field in fields) {
-                initialTriggerFields[field] = '';
-            }
-            setTriggerFields(initialTriggerFields);
         } else {
             // Initialize triggerFields with the fields of the selected type
             const fields = triggerTypes[selectedOption];
@@ -513,7 +400,7 @@ function Triggers() {
         setShowFileExplorerModal(true); // Open the 'Select File' modal
         setCurrentDirectory(data);
         setDirectoryContent(data.children || []);
-        setPath(["Home"]); // Reset the path to "Home"
+        setPath(["Acasă"]); // Reset the path to "Acasă"
     };
 
     const deleteTrigger = async () => {
@@ -597,7 +484,7 @@ function Triggers() {
     const handleDirectorySelect = (directoryName: string) => {
         console.log("Selected directory:", directoryName);
         let directoryPath = path.join('/') + '/' + directoryName;
-        directoryPath = directoryPath.replace("Home", "FileDirectory"); // Replace "Home" with "FileDirectory"
+        directoryPath = directoryPath.replace("Acasă", "FileDirectory"); // Replace "Acasă" with "FileDirectory"
         setSelectedDirectoryPath(directoryPath); // Set the selected directory path
         console.log("Selected directory path:", directoryPath);
         if (tempSelectedType === 'Paste File' || tempSelectedType === 'Move File') {
@@ -651,12 +538,12 @@ function Triggers() {
         setShowDirectoryExplorerModal(true); // Open the 'Select Directory' modal
         setCurrentDirectory(data);
         setDirectoryContent(data.children || []);
-        setPath(["Home"]); // Reset the path to "Home"
+        setPath(["Acasă"]); // Reset the path to "Acasă"
     };
 
     const handleCheckboxClick = (directoryName: string) => {
         let directoryPath = path.join('/') + '/' + directoryName;
-        directoryPath = directoryPath.replace("Home", "FileDirectory"); // Replace "Home" with "FileDirectory"
+        directoryPath = directoryPath.replace("Acasă", "FileDirectory"); // Replace "Acasă" with "FileDirectory"
         setSelectedDirectoryPath(directoryPath); // Set the selected directory path
         setShowDirectoryExplorerModal(false); // Close the 'Select Directory' modal
         setShowModal(true); // Re-open the 'Create Trigger' modal
@@ -680,7 +567,7 @@ function Triggers() {
             <Navigation />
             {showNotification &&
                 <div className="alert alert-warning" role="alert">
-                    You need to be logged in to see the actions.
+                    Trebuie să vă conectați pentru vedea acțiunile.
                 </div>
             }
             <Toast
@@ -699,17 +586,17 @@ function Triggers() {
             </Toast>
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Confirm Deletion</Modal.Title>
+                    <Modal.Title>Șterge acțiunea</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Are you sure you want to delete this trigger?
+                    Sunteți sigur că doriți să ștergeți acțiunea?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                        Cancel
+                        Anulează
                     </Button>
                     <Button variant="danger" onClick={deleteTrigger}>
-                        Proceed
+                        Șterge
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -719,28 +606,28 @@ function Triggers() {
                         <OverlayTrigger
                             placement="bottom"
                             delay={{ show: 250, hide: 400 }}
-                            overlay={<Tooltip id="button-tooltip">You need to login to create an action</Tooltip>}
+                            overlay={<Tooltip id="button-tooltip">Trebuie să vă contectați pentru a adăuga o acțiune</Tooltip>}
                         >
                 <span className="d-inline-block">
                     <Button className="btn btn-primary my-3" disabled style={{ pointerEvents: 'none' }}>
-                        Create Action
+                        Adaugă acțiune
                     </Button>
                 </span>
                         </OverlayTrigger>
                     ) : (
                         <Button className="btn btn-primary my-3" onClick={handleShow}>
-                            Create Action
+                            Adaugă acțiune
                         </Button>
                     )}
                 </div>
                 <Modal show={showModal} onHide={handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Create Action</Modal.Title>
+                        <Modal.Title>Adaugă acțiune</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
                             <Form.Group className="mb-3">
-                                <Form.Label>Name</Form.Label>
+                                <Form.Label>Nume</Form.Label>
                                 <Form.Control
                                     type="text"
                                     placeholder="Enter trigger name"
@@ -750,17 +637,17 @@ function Triggers() {
                                     maxLength={20}
                                     className={nameValidation ? 'is-invalid' : ''}
                                 />
-                                {nameValidation && <div className="invalid-feedback">Name is required</div>}
+                                {nameValidation && <div className="invalid-feedback">Numele acțiunii este obligatoriu</div>}
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label>Type</Form.Label>
                                 <Form.Select onChange={(e) => handleTypeChange(e.target.value)} className={typeValidation ? 'is-invalid' : ''} value={selectedType}>
-                                    <option>Select a type</option>
+                                    <option>Alegeți un tip de acțiune</option>
                                     {Object.keys(triggerTypes).map((type, index) => (
                                         <option key={index} value={type}>{type}</option>
                                     ))}
                                 </Form.Select>
-                                {typeValidation && <div className="invalid-feedback">Type is required</div>}
+                                {typeValidation && <div className="invalid-feedback">Tipul acțiunii este obligatoriu</div>}
                             </Form.Group>
                             {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
                                 <Form.Group key={index} className="mb-3">
@@ -769,32 +656,30 @@ function Triggers() {
                                     {selectedType === 'Paste File' && field === 'destinationPath' ? (
                                         <div>
                                             <Button variant="primary" onClick={handleDirectoryChange}>
-                                                Upload Directory
+                                                Încarcă director
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>Directory chosen: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Home')}</strong>
+                                                <div>Directorul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
                                         </div>
                                     ) :selectedType === 'Move File' && field === 'destinationPath' ? (
                                         <div>
                                             <Button variant="primary" onClick={handleDirectoryChange}>
-                                                Upload Directory
+                                                Încarcă director
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>Directory chosen: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Home')}</strong></div>
+                                                <div>Directorul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong></div>
                                             </div>
                                         </div>
                                     ) : selectedType === 'Paste File' && field === 'fileToPaste' ? (
                                         <div>
                                             <Button variant="primary" onClick={handleFileChange}
                                                     className={fieldValidation['fileToDelete'] ? 'is-invalid' : ''}>
-                                                Upload File
+                                                Încarcă fișier
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>File
-                                                    chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong>
-                                                </div>
+                                                <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong></div>
                                             </div>
                                             {/* Display the selected file path */}
                                         </div>
@@ -802,11 +687,11 @@ function Triggers() {
                                         <div>
                                             <Button variant="primary" onClick={handleFileChange}
                                                     className={fieldValidation['fileToDelete'] ? 'is-invalid' : ''}>
-                                                Upload File
+                                                Încarcă fișier
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>File
-                                                    chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong>
+                                                <div>Fișierul
+                                                    ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
                                             {/* Display the selected file path */}
@@ -815,7 +700,7 @@ function Triggers() {
                                         <Form.Select onChange={handleFieldChangeNotOrAnd(field)}
                                                      className={fieldValidation[field] ? 'is-invalid' : ''}
                                                      value={field === 'firstAction' ? firstTrigger : secondTrigger}>
-                                            <option>Select an action</option>
+                                            <option>Selectează o acțiune</option>
                                             {triggers.filter(trigger => trigger.name !== (field === 'firstAction' ? secondTrigger : firstTrigger)).map((trigger, index) => (
                                                 <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                             ))}
@@ -824,7 +709,7 @@ function Triggers() {
                                         <div>
                                             <Form.Control
                                                 type="text"
-                                                placeholder={`Enter command line arguments`}
+                                                placeholder={`Introduceți argumentele liniei de comandă`}
                                                 onChange={handleFieldChange(field)}
                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
                                                 value={triggerFields['commandLineArguments']}
@@ -835,7 +720,7 @@ function Triggers() {
                                         <div>
                                             <Form.Control
                                                 type="text"
-                                                placeholder={`Enter string to append`}
+                                                placeholder={`Introduceți șirul de caractere de adăugat`}
                                                 onChange={handleFieldChange(field)}
                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
                                                 value={triggerFields['stringToAppend']}
@@ -848,31 +733,30 @@ function Triggers() {
                                         <div>
                                             <Button variant="primary" onClick={handleFileChange}
                                                     className={fieldValidation['fileToDelete'] ? 'is-invalid' : ''}>
-                                                Upload File
+                                                Încarcă fișier
                                             </Button>
                                             <div className="file-path-container">
-                                                <div>File
-                                                    chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong>
+                                                <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
                                             {/* Display the selected file path */}
                                         </div>
                                     ) : (
-                                        <Form.Control type="text" placeholder={`Enter ${field}`}
+                                        <Form.Control type="text" placeholder={`Introduceți ${field}`}
                                                       onChange={handleFieldChange(field)}
                                                       className={fieldValidation[field] ? 'is-invalid' : ''}/>
                                     )}
-                                    {fieldValidation[field] && <div className="invalid-feedback">{field} is required</div>}
+                                    {fieldValidation[field] && <div className="invalid-feedback">{field} este obligatoriu</div>}
                                 </Form.Group>
                             ))}
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
-                            Cancel
+                            Anulează
                         </Button>
                         <Button variant="primary" onClick={createTrigger}>
-                            Create
+                            Adaugă
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -894,7 +778,7 @@ function Triggers() {
                     }}
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Select a File</Modal.Title>
+                        <Modal.Title>Selectează un fișier</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -906,9 +790,9 @@ function Triggers() {
                                     </Breadcrumb.Item>
                                 ))}
                             </Breadcrumb>
-                            <h3>Directories</h3>
+                            <h3>Directoare</h3>
                             {renderDirectories(directoryContent)}
-                            <h3>Files</h3>
+                            <h3>Fișiere</h3>
                             {renderFiles(directoryContent)}
                         </Form>
                     </Modal.Body>
@@ -923,7 +807,7 @@ function Triggers() {
                     }}
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Select a Directory</Modal.Title>
+                        <Modal.Title>Selectează un director</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -935,15 +819,15 @@ function Triggers() {
                                     </Breadcrumb.Item>
                                 ))}
                             </Breadcrumb>
-                            <h3>Directories</h3>
+                            <h3>Directoare</h3>
                             {renderDirectoriesForUpload(directoryContent)}
-                            <h3>Files</h3>
+                            <h3>Fișiere</h3>
                             {renderFilesForDirectories(directoryContent)}
                         </Form>
                     </Modal.Body>
                 </Modal>
                 {triggers.length === 0 ? (
-                    <p>No actions available at the moment.</p>
+                    <p>Nu sunt acțiuni disponibile pentru moment.</p>
                 ) : (
                     <div className="row">
                         {triggers.map((trigger) => (
@@ -951,8 +835,8 @@ function Triggers() {
                                 <div className="card mb-3">
                                     <div className="card-body">
                                         <h5 className="card-title">{trigger.name}</h5>
-                                        <p className="card-text">Type: {trigger.type}</p>
-                                        <p className="card-text">Description: {trigger.value.replace(/(DestinationPath: ).*(FileDirectory\\)/, '$1Home\\')}
+                                        <p className="card-text">Tip: {trigger.type}</p>
+                                        <p className="card-text">Descriere: {trigger.value.replace(/(DestinationPath: ).*(FileDirectory\\)/, '$1Acasă\\')}
                                         </p>
                                             <div
                                             className="position-absolute top-0 end-0"> {/* Add this div with classes */}
@@ -980,4 +864,4 @@ function Triggers() {
     );
 }
 
-export default Triggers;
+export default Actions;
