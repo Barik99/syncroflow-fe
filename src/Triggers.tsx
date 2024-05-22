@@ -40,7 +40,7 @@ function Triggers() {
     const [showFileExplorerModal, setShowFileExplorerModal] = useState(false);
     const [fileExplorerData, setFileExplorerData] = useState<DirectoryProps | null>(null);
     const [selectedFile, setSelectedFile] = React.useState("");
-    const [path, setPath] = useState<string[]>(["Home"]);
+    const [path, setPath] = useState<string[]>(["Acasă"]);
     const [currentDirectory, setCurrentDirectory] = useState<DirectoryProps | null>(null);
     const [directoryContent, setDirectoryContent] = useState<FileItem[]>([]);
     const [selectedFilePath, setSelectedFilePath] = useState("");
@@ -58,8 +58,8 @@ function Triggers() {
     const handleShow = () => {
         resetModal();
         // Reset the firstTrigger and secondTrigger states
-        setFirstTrigger('Select a trigger');
-        setSecondTrigger('Select a trigger');
+        setFirstTrigger('Selectați un declanșator');
+        setSecondTrigger('Selectați un declanșator');
         setShowModal(true);
     };
 
@@ -96,12 +96,12 @@ function Triggers() {
         let value = e.target.value;
         if (value.trim() === '') {
             setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
-            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'This field is required'}));
+            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Acest câmp este obligatoriu'}));
         } else {
             const numValue = parseInt(value);
             if (numValue < 0) {
                 setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
-                setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Size threshold must be greater than 0'}));
+                setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Dimensiunea fișierului trebuie să fie mai mare sau egală cu 0'}));
             } else {
                 setFieldValidation(prev => ({...prev, 'sizeThreshold': false}));
                 setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': ''}));
@@ -114,15 +114,15 @@ function Triggers() {
         let value = e.target.value;
         if (value.trim() === '') {
             setFieldValidation(prev => ({...prev, [field]: true}));
-            setFieldErrorMessage(prev => ({...prev, [field]: 'This field is required'}));
+            setFieldErrorMessage(prev => ({...prev, [field]: 'Acest câmp este obligatoriu'}));
         } else {
             const numValue = parseInt(value);
             if (field === 'hours' && (numValue < 0 || numValue > 23)) {
                 setFieldValidation(prev => ({...prev, 'hours': true}));
-                setFieldErrorMessage(prev => ({...prev, 'hours': 'Hours must be between 0 and 23'}));
+                setFieldErrorMessage(prev => ({...prev, 'hours': 'Orele trebuie să fie între 0 și 23'}));
             } else if (field === 'minutes' && (numValue < 0 || numValue > 59)) {
                 setFieldValidation(prev => ({...prev, 'minutes': true}));
-                setFieldErrorMessage(prev => ({...prev, 'minutes': 'Minutes must be between 0 and 59'}));
+                setFieldErrorMessage(prev => ({...prev, 'minutes': 'Minutele trebuie să fie între 0 și 59'}));
             } else {
                 setFieldValidation(prev => ({...prev, [field]: false}));
                 setFieldErrorMessage(prev => ({...prev, [field]: ''}));
@@ -158,7 +158,7 @@ function Triggers() {
         const numValue = parseInt(value);
         if (numValue < 1 || numValue > 31) {
             setFieldValidation(prev => ({...prev, 'day': true}));
-            setFieldErrorMessage(prev => ({...prev, 'day': 'Day must be between 1 and 31'}));
+            setFieldErrorMessage(prev => ({...prev, 'day': 'Ziua trebuie să fie între 1 și 31'}));
         } else {
             setFieldValidation(prev => ({...prev, 'day': false}));
             setFieldErrorMessage(prev => ({...prev, 'day': ''}));
@@ -182,7 +182,7 @@ function Triggers() {
     const handleFileSelect = (fileName: string) => {
         console.log("Selected file:", fileName);
         let filePath = path.join('/') + '/' + fileName;
-        filePath = filePath.replace("Home", "FileDirectory"); // Replace "Home" with "FileDirectory"
+        filePath = filePath.replace("Acasă", "FileDirectory"); // Replace "Acasă" with "FileDirectory"
         setSelectedFilePath(filePath); // Set the selected file path
         if (tempSelectedType === 'External Program') {
             // Restore the commandLineArguments and exitStatus
@@ -290,7 +290,7 @@ function Triggers() {
 
         if (selectedType === 'File Size' && (!triggerFields['sizeThreshold'] || triggerFields['sizeThreshold'].trim() === '')) {
             setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
-            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'SizeThreshold is required'}));
+            setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Dimensiunea fișierului este obligatorie'}));
             return;
         }
 
@@ -301,40 +301,40 @@ function Triggers() {
             if (!selectedFilePath) {
                 console.error('Error: No file selected');
                 // Display an error message to the user
-                setToastMessage('Error: No file selected for ' + selectedType + ' trigger type');
+                setToastMessage('Fișierul nu a fost selectat pentru declanșatorul de tipul ' + selectedType);
                 setShowToast(true);
                 // Prevent the creation of the trigger
                 return;
             }
-            trigger.file = selectedFilePath.replace("Home", "FileDirectory");
+            trigger.file = selectedFilePath.replace("Acasă", "FileDirectory");
         }
 
         if (selectedType === 'Day Of Month' && (!triggerFields['day'] || triggerFields['day'].trim() === '')) {
             setFieldValidation(prev => ({...prev, 'day': true}));
-            setFieldErrorMessage(prev => ({...prev, 'day': 'Day is required'}));
+            setFieldErrorMessage(prev => ({...prev, 'day': 'Ziua este obligatorie'}));
             return;
         }
 
         if (selectedType === 'AND' || selectedType === 'OR') {
-            if (firstTrigger === 'Select a trigger') {
+            if (firstTrigger === 'Selectați un declanșator') {
                 setFieldValidation(prev => ({...prev, 'firstTrigger': true}));
-                setFieldErrorMessage(prev => ({...prev, 'firstTrigger': 'This field is required'}));
+                setFieldErrorMessage(prev => ({...prev, 'firstTrigger': 'Acest câmp este obligatoriu'}));
                 return;
             } else {
                 setFieldValidation(prev => ({...prev, 'firstTrigger': false}));
             }
 
-            if (secondTrigger === 'Select a trigger') {
+            if (secondTrigger === 'Selectați un declanșator') {
                 setFieldValidation(prev => ({...prev, 'secondTrigger': true}));
-                setFieldErrorMessage(prev => ({...prev, 'secondTrigger': 'This field is required'}));
+                setFieldErrorMessage(prev => ({...prev, 'secondTrigger': 'Acest câmp este obligatoriu'}));
                 return;
             } else {
                 setFieldValidation(prev => ({...prev, 'secondTrigger': false}));
             }
         } else if (selectedType === 'NOT') {
-            if (triggerFields['trigger'] === 'Select a trigger') {
+            if (triggerFields['trigger'] === 'Selectați un declanșator') {
                 setFieldValidation(prev => ({...prev, 'trigger': true}));
-                setFieldErrorMessage(prev => ({...prev, 'trigger': 'This field is required'}));
+                setFieldErrorMessage(prev => ({...prev, 'trigger': 'Acest câmp este obligatoriu'}));
                 return;
             } else {
                 setFieldValidation(prev => ({...prev, 'trigger': false}));
@@ -382,7 +382,7 @@ function Triggers() {
 
             // Close the modal and display a success toast message
             handleClose();
-            setToastMessage('Trigger added successfully!');
+            setToastMessage(responseText);
             setShowToast(true);
             await fetchTriggers();
         }
@@ -390,7 +390,7 @@ function Triggers() {
 
     const handleTypeChange = (selectedOption: string) => {
         setSelectedType(selectedOption);
-        if (selectedOption === "Select a type") {
+        if (selectedOption === "Selectați un tip") {
             resetModal();
         } else if (selectedOption === "AND") {
             // Initialize triggerFields with the fields of the selected type
@@ -421,8 +421,8 @@ function Triggers() {
             setTriggerFields(initialTriggerFields);
 
             // Reset the firstTrigger and secondTrigger states
-            setFirstTrigger('Select a trigger');
-            setSecondTrigger('Select a trigger');
+            setFirstTrigger('Selectați un declanșator');
+            setSecondTrigger('Selectați un declanșator');
 
             // Update the validation state for the trigger field
             setFieldValidation(prev => ({...prev, 'trigger': false}));
@@ -494,7 +494,7 @@ function Triggers() {
         setShowFileExplorerModal(true); // Open the 'Select File' modal
         setCurrentDirectory(data);
         setDirectoryContent(data.children || []);
-        setPath(["Home"]); // Reset the path to "Home"
+        setPath(["Acasă"]); // Reset the path to "Acasă"
     };
 
     const deleteTrigger = async () => {
@@ -640,7 +640,7 @@ function Triggers() {
         <Navigation />
         {showNotification &&
             <div className="alert alert-warning" role="alert">
-                You need to be logged in to see the triggers.
+                Trebuie să vă conectați pentru a vedea declanșatoarele create.
             </div>
         }
         <Toast
@@ -659,17 +659,17 @@ function Triggers() {
         </Toast>
         <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
             <Modal.Header closeButton>
-                <Modal.Title>Confirm Deletion</Modal.Title>
+                <Modal.Title>Confirmă ștergerea</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Are you sure you want to delete this trigger?
+                Sunteți sigur că doriți să ștergeți acest declanșator?
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                    Cancel
+                    Anulează
                 </Button>
                 <Button variant="danger" onClick={deleteTrigger}>
-                    Proceed
+                    Șterge
                 </Button>
             </Modal.Footer>
         </Modal>
@@ -679,28 +679,28 @@ function Triggers() {
                     <OverlayTrigger
                         placement="bottom"
                         delay={{ show: 250, hide: 400 }}
-                        overlay={<Tooltip id="button-tooltip">You need to login to create a trigger</Tooltip>}
+                        overlay={<Tooltip id="button-tooltip">Trebuie să vă conectați pentru a crea un declanșator</Tooltip>}
                     >
                 <span className="d-inline-block">
                     <Button className="btn btn-primary my-3" disabled style={{ pointerEvents: 'none' }}>
-                        Create Trigger
+                        Adaugă declanșator
                     </Button>
                 </span>
                     </OverlayTrigger>
                 ) : (
                     <Button className="btn btn-primary my-3" onClick={handleShow}>
-                        Create Trigger
+                        Adaugă declanșator
                     </Button>
                 )}
             </div>
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Create Trigger</Modal.Title>
+                    <Modal.Title>Adaugă declanșator</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>Nume</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="Enter trigger name"
@@ -710,17 +710,17 @@ function Triggers() {
                                 value={triggerName} // Set the value to triggerName
                                 className={nameValidation ? 'is-invalid' : ''}
                             />
-                            {nameValidation && <div className="invalid-feedback">Name is required</div>}
+                            {nameValidation && <div className="invalid-feedback">Numele declanșatorului este obligatoriu</div>}
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Type</Form.Label>
+                            <Form.Label>Tipul declanșatorului</Form.Label>
                             <Form.Select onChange={(e) => handleTypeChange(e.target.value)} className={typeValidation ? 'is-invalid' : ''} value={selectedType}>
-                                <option>Select a type</option>
+                                <option>Selectați un tip</option>
                                 {Object.keys(triggerTypes).map((type, index) => (
                                     <option key={index} value={type}>{type}</option>
                                 ))}
                             </Form.Select>
-                            {typeValidation && <div className="invalid-feedback">Type is required</div>}
+                            {typeValidation && <div className="invalid-feedback">Tipul declanșatorului este obligatoriu</div>}
                         </Form.Group>
                         {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
                             <Form.Group key={index} className="mb-3">
@@ -730,7 +730,7 @@ function Triggers() {
                                     <Form.Select onChange={handleFieldChangeNotOrAnd('trigger')}
                                                  className={fieldValidation['trigger'] ? 'is-invalid' : ''}
                                                  value={triggerFields['trigger']}>
-                                        <option>Select a trigger</option>
+                                        <option>Selectați un declanșator</option>
                                         {triggers.map((trigger, index) => (
                                             <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                         ))}
@@ -739,7 +739,7 @@ function Triggers() {
                                     <Form.Select onChange={handleFieldChangeNotOrAnd(field)}
                                                  className={fieldValidation[field] ? 'is-invalid' : ''}
                                                  value={field === 'firstTrigger' ? firstTrigger : secondTrigger}>
-                                        <option>Select a trigger</option>
+                                        <option>Selectați un declanșator</option>
                                         {triggers.filter(trigger => trigger.name !== (field === 'firstTrigger' ? secondTrigger : firstTrigger)).map((trigger, index) => (
                                             <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                         ))}
@@ -747,14 +747,14 @@ function Triggers() {
                                 ) : selectedType === 'Day Of Week' && field === 'day' ? (
                                     <Form.Select onChange={handleFieldChangeForDaysOfWeek(field)}
                                                  className={fieldValidation[field] ? 'is-invalid' : ''}>
-                                        <option>Select a day</option>
-                                        <option value="SUNDAY">SUNDAY</option>
-                                        <option value="MONDAY">MONDAY</option>
-                                        <option value="TUESDAY">TUESDAY</option>
-                                        <option value="WEDNESDAY">WEDNESDAY</option>
-                                        <option value="THURSDAY">THURSDAY</option>
-                                        <option value="FRIDAY">FRIDAY</option>
-                                        <option value="SATURDAY">SATURDAY</option>
+                                        <option>Selectați o zi</option>
+                                        <option value="MONDAY">Luni</option>
+                                        <option value="TUESDAY">Marți</option>
+                                        <option value="WEDNESDAY">Miercuri</option>
+                                        <option value="THURSDAY">Joi</option>
+                                        <option value="FRIDAY">Vineri</option>
+                                        <option value="SATURDAY">Sâmbătă</option>
+                                        <option value="SUNDAY">Duminică</option>
                                     </Form.Select>
                                 ) : selectedType === 'Time Of Day' && field === 'hours' ? (
                                     <div>
@@ -762,7 +762,7 @@ function Triggers() {
                                             type="number"
                                             min="0"
                                             max="59"
-                                            placeholder={`Enter a hour`}
+                                            placeholder={`Introduceți ora`}
                                             onChange={handleFieldChangeTimeOfDay(field)}
                                             onKeyPress={handleKeyPressHoursField}
                                             className={fieldValidation[field] ? 'is-invalid' : ''}
@@ -775,7 +775,7 @@ function Triggers() {
                                             type="number"
                                             min="0"
                                             max="59"
-                                            placeholder={`Enter a minute`}
+                                            placeholder={`Introduceți minutele`}
                                             onChange={handleFieldChangeTimeOfDay(field)}
                                             onKeyPress={handleKeyPressMinutesField}
                                             className={fieldValidation[field] ? 'is-invalid' : ''}
@@ -789,7 +789,7 @@ function Triggers() {
                                             type="number"
                                             min="1"
                                             max="31"
-                                            placeholder={`Enter a day`}
+                                            placeholder={`Introduceți ziua lunii`}
                                             onChange={handleFieldChangeDayOfMonth}
                                             onKeyPress={handleKeyPressDayOfMonthField}
                                             className={fieldValidation[field] ? 'is-invalid' : ''}
@@ -799,7 +799,7 @@ function Triggers() {
                                     </div>
                                 ) : selectedType === 'File Size' && field === 'sizeThreshold' ? (
                                     <div>
-                                        <Form.Control type="number" min="0" placeholder={`Enter ${field}`}
+                                        <Form.Control type="number" min="0" placeholder={`Introduceți dimensiunea fișierului`}
                                                       onChange={handleFieldChangeSizeThreshold}
                                                       className={fieldValidation[field] ? 'is-invalid' : ''}
                                                       value={triggerFields['sizeThreshold']}
@@ -810,7 +810,7 @@ function Triggers() {
                                     <div>
                                         <Form.Control
                                             type="number"
-                                            placeholder={`Enter exit status`}
+                                            placeholder={`Introduceți codul de ieșire`}
                                             onChange={handleFieldChange(field)}
                                             onKeyPress={handleKeyPressExitStatusField}
                                             className={fieldValidation[field] ? 'is-invalid' : ''}
@@ -822,7 +822,7 @@ function Triggers() {
                                     <div>
                                         <Form.Control
                                             type="text"
-                                            placeholder={`Enter command line arguments`}
+                                            placeholder={`Introduceți argumentele liniei de comandă`}
                                             onChange={handleFieldChange(field)}
                                             className={fieldValidation[field] ? 'is-invalid' : ''}
                                             value={triggerFields['commandLineArguments']}
@@ -833,35 +833,35 @@ function Triggers() {
                                     <div>
                                         <Button variant="primary" onClick={handleFileChange}
                                                 className={fieldValidation['file'] ? 'is-invalid' : ''}>
-                                            Upload File
+                                            Încarcă fișier
                                         </Button>
                                         <div className="file-path-container">
-                                            <div>File chosen: <strong>{selectedFilePath.replace(/FileDirectory/, 'Home')}</strong></div>
+                                            <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong></div>
                                         </div>
                                         {/* Display the selected file path */}
                                     </div>
                                 ) : (
-                                    <Form.Control type="text" placeholder={`Enter ${field}`}
+                                    <Form.Control type="text" placeholder={`Introduceți ${field}`}
                                                   onChange={handleFieldChange(field)}
                                                   className={fieldValidation[field] ? 'is-invalid' : ''}/>
                                 )}
-                                {fieldValidation[field] && <div className="invalid-feedback">{field} is required</div>}
+                                {fieldValidation[field] && <div className="invalid-feedback">{field} este obligatoriu</div>}
                             </Form.Group>
                         ))}
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Cancel
+                        Anulează
                     </Button>
                     <Button variant="primary" onClick={createTrigger}>
-                        Create
+                        Adaugă
                     </Button>
                 </Modal.Footer>
             </Modal>
             <Modal show={showFileExplorerModal} onHide={handleCloseFileExplorerModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Select a File</Modal.Title>
+                    <Modal.Title>Selectează un fișier</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -873,9 +873,9 @@ function Triggers() {
                                 </Breadcrumb.Item>
                             ))}
                         </Breadcrumb>
-                        <h3>Directories</h3>
+                        <h3>Directoare</h3>
                         {renderDirectories(directoryContent)}
-                        <h3>Files</h3>
+                        <h3>Fișiere</h3>
                         {renderFiles(directoryContent)}
                     </Form>
                 </Modal.Body>
@@ -889,8 +889,8 @@ function Triggers() {
                             <div className="card mb-3">
                                 <div className="card-body">
                                     <h5 className="card-title">{trigger.name}</h5>
-                                    <p className="card-text">Type: {trigger.type}</p>
-                                    <p className="card-text">Description: {trigger.value.replace(/(Directory: ).*(FileDirectory\\)/, '$1Home\\')}
+                                    <p className="card-text">Tip: {trigger.type}</p>
+                                    <p className="card-text">Descriere: {trigger.value.replace(/(Directory: ).*(FileDirectory\\)/, '$1Acasă\\')}
                                     </p>
                                     <div
                                         className="position-absolute top-0 end-0"> {/* Add this div with classes */}
