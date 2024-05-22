@@ -329,7 +329,7 @@ function Actions() {
 
     const handleTypeChange = (selectedOption: string) => {
         setSelectedType(selectedOption);
-        if (selectedOption === "Select a type") {
+        if (selectedOption === "Alegeți un tip de acțiune") {
             resetModal();
         } else {
             // Initialize triggerFields with the fields of the selected type
