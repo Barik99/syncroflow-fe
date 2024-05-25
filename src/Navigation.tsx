@@ -149,6 +149,25 @@ function Navigation() {
                                     </>
                                 )}
                                 <Nav.Link href="/file-explorer" className="transparent-button">Foldere și fișiere</Nav.Link>
+                                <Form className="scheduler-container-vertical">
+                                    <Form.Control type="number" onKeyPress={handleKeyPressSchedulerTimeField}
+                                                  placeholder="Timp programator" disabled={isToggled} value={selectedTime}
+                                                  onChange={handleTimeChange} min="1"/>
+                                    <Form.Select aria-label="Default select example" disabled={isToggled}
+                                                 value={selectedDuration} onChange={handleDurationChange}>
+                                        <option>Setează durata</option>
+                                        <option value="1">Secunde</option>
+                                        <option value="2">Minute</option>
+                                        <option value="3">Ore</option>
+                                    </Form.Select>
+                                    <Button
+                                        variant={isToggled ? "danger" : "success"}
+                                        onClick={handleToggle}
+                                        disabled={selectedDuration === "Setează durata" || selectedTime === ""}
+                                    >
+                                        {isToggled ? "Oprește" : "Pornește"}
+                                    </Button>
+                                </Form>
                             </Nav>
                             <div style={{
                                 position: 'absolute',

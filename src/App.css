@@ -251,3 +251,20 @@ button{
 .file-selected-spacing {
     margin-top: 5px;
 }
+
+.scheduler-container-vertical .form-control {
+    width: 11rem;
+}
+
+.scheduler-container-vertical .form-select {
+    width: 11rem;
+}
+
+.scheduler-container-vertical .form-control:first-child {
+    margin-top: 1rem;
+}
+
+.scheduler-container-vertical .form-control,
+.scheduler-container-vertical .form-select {
+    margin-bottom: 1rem;
+}
