@@ -666,7 +666,7 @@ function Actions() {
                             {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
                                 <Form.Group key={index} className="mb-3">
                                     <Form.Label className="label-spacing">
-                                        {selectedType === 'Paste File' && field === 'destinationPath' ? 'Directorul de destinație' :
+                                        {selectedType === 'Paste File' && field === 'destinationPath' ? 'Folderul de destinație' :
                                             selectedType === 'Paste File' && field === 'fileToPaste' ? 'Fișierul de lipit' :
                                                 selectedType === 'Append String To File' && field === 'stringToAppend' ? 'Șirul de caractere de adăugat' :
                                                     selectedType === 'Append String To File' && field === 'file' ? 'Fișierul la care se adaugă șirul' :
@@ -675,27 +675,27 @@ function Actions() {
                                                                 selectedType === 'Delete File' && field === 'fileToDelete' ? 'Fișierul de șters' :
                                                                     selectedType === 'Combined Actions' && field === 'secondAction' ? 'Prima acțiune' :
                                                                         selectedType === 'Combined Actions' && field === 'firstAction' ? 'A doua acțiune' :
-                                                                            selectedType === 'Move File' && field === 'destinationPath' ? 'Directorul de destinație' :
+                                                                            selectedType === 'Move File' && field === 'destinationPath' ? 'Folderul de destinație' :
                                                                                 selectedType === 'Move File' && field === 'fileToMove' ? 'Fișierul de mutat' : field}
                                     </Form.Label>
                                     <br/>
                                     {selectedType === 'Paste File' && field === 'destinationPath' ? (
                                         <div>
                                             <Button variant="primary" onClick={handleDirectoryChange}>
-                                                Încarcă director
+                                                Încarcă folderul
                                             </Button>
                                             <div className="file-path-container file-selected-spacing">
-                                                <div>Directorul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong>
+                                                <div>Folderul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
                                         </div>
                                     ) :selectedType === 'Move File' && field === 'destinationPath' ? (
                                         <div>
                                             <Button variant="primary" onClick={handleDirectoryChange}>
-                                                Încarcă director
+                                                Încarcă folderul
                                             </Button>
                                             <div className="file-path-container file-selected-spacing">
-                                                <div>Directorul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong></div>
+                                                <div>Folderul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong></div>
                                             </div>
                                         </div>
                                     ) : selectedType === 'Paste File' && field === 'fileToPaste' ? (
@@ -816,7 +816,7 @@ function Actions() {
                                     </Breadcrumb.Item>
                                 ))}
                             </Breadcrumb>
-                            <h3>Directoare</h3>
+                            <h3>Foldere</h3>
                             {renderDirectories(directoryContent)}
                             <h3>Fișiere</h3>
                             {renderFiles(directoryContent)}
@@ -833,7 +833,7 @@ function Actions() {
                     }}
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Selectează un director</Modal.Title>
+                        <Modal.Title>Selectează un folder</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
@@ -845,7 +845,7 @@ function Actions() {
                                     </Breadcrumb.Item>
                                 ))}
                             </Breadcrumb>
-                            <h3>Directoare</h3>
+                            <h3>Foldere</h3>
                             {renderDirectoriesForUpload(directoryContent)}
                             <h3>Fișiere</h3>
                             {renderFilesForDirectories(directoryContent)}

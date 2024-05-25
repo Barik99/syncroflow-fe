@@ -920,7 +920,7 @@ function Triggers() {
                                 </Breadcrumb.Item>
                             ))}
                         </Breadcrumb>
-                        <h3>Directoare</h3>
+                        <h3>Foldere</h3>
                         {renderDirectories(directoryContent)}
                         <h3>Fișiere</h3>
                         {renderFiles(directoryContent)}

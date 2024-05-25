@@ -148,7 +148,7 @@ function Navigation() {
                                         <Nav.Link href="/actions" className="transparent-button">Acțiuni</Nav.Link>
                                     </>
                                 )}
-                                <Nav.Link href="/file-explorer" className="transparent-button">Fișiere și Directoare</Nav.Link>
+                                <Nav.Link href="/file-explorer" className="transparent-button">Foldere și fișiere</Nav.Link>
                             </Nav>
                             <div style={{
                                 position: 'absolute',
@@ -207,7 +207,7 @@ function Navigation() {
                         {email && (
                             <Nav.Link href="/actions">Acțiuni</Nav.Link>
                         )}
-                        <Nav.Link href="/file-explorer">Fișiere și Directoare</Nav.Link>
+                        <Nav.Link href="/file-explorer">Foldere și fișiere</Nav.Link>
                     </Nav>
                     <Navbar.Collapse className="justify-content-end">
                         <Form className="scheduler-container">
@@ -299,8 +299,8 @@ function Navigation() {
             </Navbar>
             )}
             <Toast
-                className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage === 'Scheduler started' ||
-                toastMessage === 'Scheduler stopped' ? 'text-bg-success' : 'text-bg-danger'}`}
+                className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage === 'Planificator a pornit cu succes!' ||
+                toastMessage === 'Planificator a fost oprit cu succes!' ? 'text-bg-success' : 'text-bg-danger'}`}
                 onClose={() => setShowToast(false)}
                 show={showToast}
                 delay={5000}
