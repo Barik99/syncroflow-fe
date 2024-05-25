@@ -600,7 +600,7 @@ function Triggers() {
 
     const renderDirectories = (items: FileItem[]) => {
         return items.filter(item => item.isDirectory).map((item, index) => (
-            <div key={index} onDoubleClick={() => handleDirectoryDoubleClick(item.name)}>
+            <div key={index} onClick={() => handleDirectoryDoubleClick(item.name)}>
                 {item.name}
             </div>
         ));
