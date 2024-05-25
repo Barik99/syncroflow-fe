@@ -122,7 +122,7 @@ function Rules() {
 
     const data = await response.text();
 
-    if (response.status === 200) {
+    if (response.ok) {
       setToastMessage(data);
       setShowToast(true);
       handleClose();
@@ -320,7 +320,7 @@ function Rules() {
                 <Modal.Title>Șterge regulă</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                Ești sigur că vrei să ștergi regula cu numele <strong>{ruleToDelete}</strong>?
+                Sunteți sigur că vreți să ștergi regula cu numele <strong>{ruleToDelete}</strong>?
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>

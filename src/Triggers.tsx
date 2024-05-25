@@ -22,6 +22,35 @@ interface FileItem {
     children?: FileItem[];
     // include other properties of the file item if there are any
 }
+interface TriggerTypeMapping {
+    [key: string]: string;
+}
+
+const triggerTypeMapping: TriggerTypeMapping = {
+    "File Existence": "Existența Fișierului",
+    "File Size": "Dimensiunea Fișierului",
+    "External Program": "Program Extern",
+    "Day Of Month": "Ziua Lunii",
+    "Time Of Day": "Ora Zilei",
+    "Day Of Week": "Ziua Săptămânii",
+    "AND": "ȘI",
+    "OR": "SAU",
+    "NOT": "NU"
+};
+
+interface DayOfWeekMapping {
+    [key: string]: string;
+}
+
+const dayOfWeekMapping: DayOfWeekMapping = {
+    "MONDAY": "Luni",
+    "TUESDAY": "Marți",
+    "WEDNESDAY": "Miercuri",
+    "THURSDAY": "Joi",
+    "FRIDAY": "Vineri",
+    "SATURDAY": "Sâmbătă",
+    "SUNDAY": "Duminică"
+};
 
 function Triggers() {
     const [triggers, setTriggers] = useState<Trigger[]>([]);
@@ -644,7 +673,7 @@ function Triggers() {
             </div>
         }
         <Toast
-            className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Trigger removed') || toastMessage.includes('Trigger added') ? 'text-bg-success' : 'text-bg-danger'}`}
+            className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Declașatorul a fost șters cu succes!') || toastMessage.includes('Declașatorul a fost adăugat cu succes!') ? 'text-bg-success' : 'text-bg-danger'}`}
             onClose={() => setShowToast(false)}
             show={showToast}
             delay={5000}
@@ -662,7 +691,7 @@ function Triggers() {
                 <Modal.Title>Confirmă ștergerea</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Sunteți sigur că doriți să ștergeți acest declanșator?
+                Sunteți sigur că vreți să ștergi regula cu numele <strong>{triggerToDelete}</strong>?
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
@@ -703,7 +732,7 @@ function Triggers() {
                             <Form.Label>Nume</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Enter trigger name"
+                                placeholder="Introduceți numele declanșatorului"
                                 onKeyPress={handleKeyPress}
                                 onChange={handleNameChange}
                                 maxLength={20}
@@ -717,14 +746,32 @@ function Triggers() {
                             <Form.Select onChange={(e) => handleTypeChange(e.target.value)} className={typeValidation ? 'is-invalid' : ''} value={selectedType}>
                                 <option>Selectați un tip</option>
                                 {Object.keys(triggerTypes).map((type, index) => (
-                                    <option key={index} value={type}>{type}</option>
+                                    <option key={index} value={type}>{triggerTypeMapping[type]}</option>
                                 ))}
                             </Form.Select>
                             {typeValidation && <div className="invalid-feedback">Tipul declanșatorului este obligatoriu</div>}
                         </Form.Group>
                         {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
                             <Form.Group key={index} className="mb-3">
-                                <Form.Label>{field}</Form.Label>
+                                <Form.Label className="label-spacing">
+                                    <Form.Label className="label-spacing">
+                                        {selectedType === 'Time Of Day' && field === 'hours' ? 'Ora zilei' :
+                                            selectedType === 'Time Of Day' && field === 'minutes' ? 'Minutul zilei' :
+                                                selectedType === 'Day Of Week' && field === 'day' ? 'Ziua săptămânii' :
+                                                    selectedType === 'NOT' && field === 'trigger' ? 'Declanșatorul negat' :
+                                                        selectedType === 'AND' && field === 'firstTrigger' ? 'Al doilea declanșator' :
+                                                            selectedType === 'AND' && field === 'secondTrigger' ? 'Primul declanșator' :
+                                                                selectedType === 'OR' && field === 'firstTrigger' ? 'Al doilea declanșator' :
+                                                                    selectedType === 'OR' && field === 'secondTrigger' ? 'Primul declanșator' :
+                                                                        selectedType === 'File Size' && field === 'sizeThreshold' ? 'Dimensiunea fișieului' :
+                                                                            selectedType === 'File Size' && field === 'file' ? 'Fișierul de verificat' :
+                                                                                selectedType === 'External Program' && field === 'commandLineArguments' ? 'Argumentele liniei de comandă' :
+                                                                                selectedType === 'External Program' && field === 'externalProgram' ? 'Programul extern' :
+                                                                                selectedType === 'External Program' && field === 'exitStatus' ? 'Codul de ieșire' :
+                                                                                    selectedType === 'File Existence' && field === 'file' ? 'Fișierul de verificat' :
+                                                                                    selectedType === 'Day Of Month' && field === 'day' ? 'Ziua lunii' : field}
+                                    </Form.Label>
+                                </Form.Label>
                                 <br/>
                                 {selectedType === 'NOT' ? (
                                     <Form.Select onChange={handleFieldChangeNotOrAnd('trigger')}
@@ -735,12 +782,14 @@ function Triggers() {
                                             <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                         ))}
                                     </Form.Select>
-                                ) : (selectedType === 'AND' && (field === 'firstTrigger' || field === 'secondTrigger')) || (selectedType === 'OR' && (field === 'firstTrigger' || field === 'secondTrigger')) ? (
+                                ) : (selectedType === 'AND' && (field === 'firstTrigger' || field === 'secondTrigger')) ||
+                                (selectedType === 'OR' && (field === 'firstTrigger' || field === 'secondTrigger')) ? (
                                     <Form.Select onChange={handleFieldChangeNotOrAnd(field)}
                                                  className={fieldValidation[field] ? 'is-invalid' : ''}
                                                  value={field === 'firstTrigger' ? firstTrigger : secondTrigger}>
                                         <option>Selectați un declanșator</option>
-                                        {triggers.filter(trigger => trigger.name !== (field === 'firstTrigger' ? secondTrigger : firstTrigger)).map((trigger, index) => (
+                                        {triggers.filter(trigger => trigger.name !== (field === 'firstTrigger' ?
+                                            secondTrigger : firstTrigger)).map((trigger, index) => (
                                             <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                         ))}
                                     </Form.Select>
@@ -835,7 +884,7 @@ function Triggers() {
                                                 className={fieldValidation['file'] ? 'is-invalid' : ''}>
                                             Încarcă fișier
                                         </Button>
-                                        <div className="file-path-container">
+                                        <div className="file-path-container file-selected-spacing">
                                             <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong></div>
                                         </div>
                                         {/* Display the selected file path */}
@@ -889,8 +938,15 @@ function Triggers() {
                             <div className="card mb-3">
                                 <div className="card-body">
                                     <h5 className="card-title">{trigger.name}</h5>
-                                    <p className="card-text">Tip: {trigger.type}</p>
-                                    <p className="card-text">Descriere: {trigger.value.replace(/(Directory: ).*(FileDirectory\\)/, '$1Acasă\\')}
+                                    <p className="card-text">Tip: {triggerTypeMapping[trigger.type]}</p>
+                                    <p className="card-text">
+                                        Descriere: {
+                                        trigger.value
+                                            .replace(/(Directory: ).*(FileDirectory\\)/, '$1Acasă\\')
+                                            .split(' ')
+                                            .map(word => dayOfWeekMapping[word.toUpperCase()] || word)
+                                            .join(' ')
+                                    }
                                     </p>
                                     <div
                                         className="position-absolute top-0 end-0"> {/* Add this div with classes */}
