@@ -23,6 +23,20 @@ interface FileItem {
     // include other properties of the file item if there are any
 }
 
+interface ActionTypeMapping {
+    [key: string]: string;
+}
+
+const actionTypeMapping: ActionTypeMapping = {
+    "Paste File": "Lipire fișier",
+    "File Size": "Dimensiune fișier",
+    "Append String To File": "Adăugare șir la fișier",
+    "Start External Program": "Pornire program extern",
+    "Delete File": "Ștergere fișier",
+    "Combined Actions": "Acțiuni combinate",
+    "Move File": "Mutare fișier"
+};
+
 function Actions() {
     const [triggers, setTriggers] = useState<Trigger[]>([]);
     const [showModal, setShowModal] = useState(false);
@@ -571,7 +585,7 @@ function Actions() {
                 </div>
             }
             <Toast
-                className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Action removed') || toastMessage.includes('Action added') ? 'text-bg-success' : 'text-bg-danger'}`}
+                className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Acțiunea a fost ștearsă cu succes!') || toastMessage.includes('Acțiunea a fost adăugată cu succes!') ? 'text-bg-success' : 'text-bg-danger'}`}
                 onClose={() => setShowToast(false)}
                 show={showToast}
                 delay={5000}
@@ -644,21 +658,33 @@ function Actions() {
                                 <Form.Select onChange={(e) => handleTypeChange(e.target.value)} className={typeValidation ? 'is-invalid' : ''} value={selectedType}>
                                     <option>Alegeți un tip de acțiune</option>
                                     {Object.keys(triggerTypes).map((type, index) => (
-                                        <option key={index} value={type}>{type}</option>
+                                        <option key={index} value={type}>{actionTypeMapping[type]}</option>
                                     ))}
                                 </Form.Select>
                                 {typeValidation && <div className="invalid-feedback">Tipul acțiunii este obligatoriu</div>}
                             </Form.Group>
                             {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
                                 <Form.Group key={index} className="mb-3">
-                                    <Form.Label>{field}</Form.Label>
+                                    <Form.Label className="label-spacing">
+                                        {selectedType === 'Paste File' && field === 'destinationPath' ? 'Directorul de destinație' :
+                                            selectedType === 'Paste File' && field === 'fileToPaste' ? 'Fișierul de lipit' :
+                                                selectedType === 'Append String To File' && field === 'stringToAppend' ? 'Șirul de caractere de adăugat' :
+                                                    selectedType === 'Append String To File' && field === 'file' ? 'Fișierul la care se adaugă șirul' :
+                                                        selectedType === 'Start External Program' && field === 'commandLineArguments' ? 'Argumentele liniei de comandă' :
+                                                            selectedType === 'Start External Program' && field === 'externalProgram' ? 'Programul extern' :
+                                                                selectedType === 'Delete File' && field === 'fileToDelete' ? 'Fișierul de șters' :
+                                                                    selectedType === 'Combined Actions' && field === 'secondAction' ? 'Prima acțiune' :
+                                                                        selectedType === 'Combined Actions' && field === 'firstAction' ? 'A doua acțiune' :
+                                                                            selectedType === 'Move File' && field === 'destinationPath' ? 'Directorul de destinație' :
+                                                                                selectedType === 'Move File' && field === 'fileToMove' ? 'Fișierul de mutat' : field}
+                                    </Form.Label>
                                     <br/>
                                     {selectedType === 'Paste File' && field === 'destinationPath' ? (
                                         <div>
                                             <Button variant="primary" onClick={handleDirectoryChange}>
                                                 Încarcă director
                                             </Button>
-                                            <div className="file-path-container">
+                                            <div className="file-path-container file-selected-spacing">
                                                 <div>Directorul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
@@ -668,7 +694,7 @@ function Actions() {
                                             <Button variant="primary" onClick={handleDirectoryChange}>
                                                 Încarcă director
                                             </Button>
-                                            <div className="file-path-container">
+                                            <div className="file-path-container file-selected-spacing">
                                                 <div>Directorul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong></div>
                                             </div>
                                         </div>
@@ -678,7 +704,7 @@ function Actions() {
                                                     className={fieldValidation['fileToDelete'] ? 'is-invalid' : ''}>
                                                 Încarcă fișier
                                             </Button>
-                                            <div className="file-path-container">
+                                            <div className="file-path-container file-selected-spacing">
                                                 <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong></div>
                                             </div>
                                             {/* Display the selected file path */}
@@ -689,7 +715,7 @@ function Actions() {
                                                     className={fieldValidation['fileToDelete'] ? 'is-invalid' : ''}>
                                                 Încarcă fișier
                                             </Button>
-                                            <div className="file-path-container">
+                                            <div className="file-path-container file-selected-spacing">
                                                 <div>Fișierul
                                                     ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
@@ -735,7 +761,7 @@ function Actions() {
                                                     className={fieldValidation['fileToDelete'] ? 'is-invalid' : ''}>
                                                 Încarcă fișier
                                             </Button>
-                                            <div className="file-path-container">
+                                            <div className="file-path-container file-selected-spacing">
                                                 <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
@@ -835,7 +861,7 @@ function Actions() {
                                 <div className="card mb-3">
                                     <div className="card-body">
                                         <h5 className="card-title">{trigger.name}</h5>
-                                        <p className="card-text">Tip: {trigger.type}</p>
+                                        <p className="card-text">Tip: {actionTypeMapping[trigger.type]}</p>
                                         <p className="card-text">Descriere: {trigger.value.replace(/(DestinationPath: ).*(FileDirectory\\)/, '$1Acasă\\')}
                                         </p>
                                             <div

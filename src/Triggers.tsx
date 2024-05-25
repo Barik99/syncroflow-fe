@@ -27,12 +27,12 @@ interface TriggerTypeMapping {
 }
 
 const triggerTypeMapping: TriggerTypeMapping = {
-    "File Existence": "Existența Fișierului",
-    "File Size": "Dimensiunea Fișierului",
-    "External Program": "Program Extern",
-    "Day Of Month": "Ziua Lunii",
-    "Time Of Day": "Ora Zilei",
-    "Day Of Week": "Ziua Săptămânii",
+    "File Existence": "Existența fișierului",
+    "File Size": "Dimensiunea fișierului",
+    "External Program": "Program extern",
+    "Day Of Month": "Ziua lunii",
+    "Time Of Day": "Ora zilei",
+    "Day Of Week": "Ziua săptămânii",
     "AND": "ȘI",
     "OR": "SAU",
     "NOT": "NU"
@@ -753,7 +753,6 @@ function Triggers() {
                         </Form.Group>
                         {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
                             <Form.Group key={index} className="mb-3">
-                                <Form.Label className="label-spacing">
                                     <Form.Label className="label-spacing">
                                         {selectedType === 'Time Of Day' && field === 'hours' ? 'Ora zilei' :
                                             selectedType === 'Time Of Day' && field === 'minutes' ? 'Minutul zilei' :
@@ -771,7 +770,6 @@ function Triggers() {
                                                                                     selectedType === 'File Existence' && field === 'file' ? 'Fișierul de verificat' :
                                                                                     selectedType === 'Day Of Month' && field === 'day' ? 'Ziua lunii' : field}
                                     </Form.Label>
-                                </Form.Label>
                                 <br/>
                                 {selectedType === 'NOT' ? (
                                     <Form.Select onChange={handleFieldChangeNotOrAnd('trigger')}
