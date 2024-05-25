@@ -862,9 +862,15 @@ function Actions() {
                                     <div className="card-body">
                                         <h5 className="card-title">{trigger.name}</h5>
                                         <p className="card-text">Tip: {actionTypeMapping[trigger.type]}</p>
-                                        <p className="card-text">Descriere: {trigger.value.replace(/(DestinationPath: ).*(FileDirectory\\)/, '$1Acasă\\')}
+                                        <p className="card-text">
+                                            Descriere: {
+                                            trigger.value
+                                                .replace(/(folderul |fișierul |extern ).*(FileDirectory\\)/, '$1Acasă\\')
+                                                .split(' ')
+                                                .join(' ')
+                                        }
                                         </p>
-                                            <div
+                                        <div
                                             className="position-absolute top-0 end-0"> {/* Add this div with classes */}
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor"

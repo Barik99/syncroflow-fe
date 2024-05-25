@@ -940,7 +940,7 @@ function Triggers() {
                                     <p className="card-text">
                                         Descriere: {
                                         trigger.value
-                                            .replace(/(Directory: ).*(FileDirectory\\)/, '$1Acasă\\')
+                                            .replace(/(folderul |fișierului |extern ).*(FileDirectory\\)/, '$1Acasă\\')
                                             .split(' ')
                                             .map(word => dayOfWeekMapping[word.toUpperCase()] || word)
                                             .join(' ')
