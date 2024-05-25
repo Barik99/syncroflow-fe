@@ -122,14 +122,14 @@ function Rules() {
 
     const data = await response.text();
 
-    if (data === 'Rule added') {
-      handleClose();
+    if (response.status === 200) {
       setToastMessage(data);
       setShowToast(true);
+      handleClose();
       await fetchRules();
     } else {
       setShowToast(true);
-      console.error('Error: Rule not added. Received:', data);
+      setToastMessage(data);
     }
   };
 
@@ -283,7 +283,7 @@ function Rules() {
         }
         <div className="container">
           <Toast
-              className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Rule removed') || toastMessage.includes('Rule added') ? 'text-bg-success' : 'text-bg-danger'}`}
+              className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Regula a fost ștearsă cu succes!') || toastMessage.includes('Regula a fost adăugată cu succes!') ? 'text-bg-success' : 'text-bg-danger'}`}
               onClose={() => setShowToast(false)}
               show={showToast}
               delay={5000}
@@ -341,7 +341,7 @@ function Rules() {
                   <label htmlFor="ruleName" className="form-label">Numele regulii <span
                       className="required">*</span></label>
                   <input type="text" className={`form-control ${formErrors.ruleName ? 'is-invalid' : ''}`} id="ruleName"
-                         maxLength={20} placeholder="Introdu numele regulii"
+                         maxLength={20} placeholder="Introduceți numele regulii"
                          onKeyPress={handleKeyPress} onChange={handleNameChange}/>
                   {formErrors.ruleName && <div className="invalid-feedback">{formErrors.ruleName}</div>}
                 </div>
@@ -372,12 +372,12 @@ function Rules() {
                 <div className="mb-3 form-check form-check-inline">
                   <input type="checkbox" className="form-check-input" id="ruleActive" checked={isActive}
                          onChange={handleActiveChange}/>
-                  <label htmlFor="ruleActive" className="form-check-label">Active</label>
+                  <label htmlFor="ruleActive" className="form-check-label">Activă</label>
                 </div>
                 <div className="mb-3 form-check form-check-inline">
                   <input type="checkbox" className="form-check-input" id="ruleMultiUse" checked={isMultiUse}
                          onChange={handleMultiUseChange}/>
-                  <label htmlFor="ruleMultiUse" className="form-check-label">Multi Use</label>
+                  <label htmlFor="ruleMultiUse" className="form-check-label">Multifuncțională</label>
                 </div>
                 {isMultiUse && (
                     <div className="mb-3">
@@ -386,7 +386,7 @@ function Rules() {
                       <input type="number" className={`form-control ${formErrors.sleepTime ? 'is-invalid' : ''}`}
                              id="ruleSleepTime"
                              onChange={handleSleepTimeChange} onKeyPress={handleKeyPressSleepTimeField}
-                             placeholder="Introdu timpul de așteptare"/>
+                             placeholder="Introduceți timpul de așteptare"/>
                       {formErrors.sleepTime && <div className="invalid-feedback">{formErrors.sleepTime}</div>}
                     </div>
                 )}
