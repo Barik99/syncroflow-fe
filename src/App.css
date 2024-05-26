@@ -275,3 +275,37 @@ button{
         display: none;
     }
 }
+
+/* Ascundeți checkbox-ul original */
+.custom-checkbox input[type="checkbox"] {
+    content: '';
+    display: inline-block;
+    position: relative;
+    top: 5px;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5em;
+    border: 1px solid #adb5bd;
+    border-radius: 0.25em;
+    background-color: #fff;
+    vertical-align: top;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* Stilul pentru checkbox când este bifat */
+.custom-checkbox input[type="checkbox"]:checked + label:before {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    box-shadow: inset 0 0 0 0.2em #fff;
+}
+
+/* Stilul pentru checkbox când este bifat și dezactivat */
+.custom-checkbox input[type="checkbox"]:checked:disabled + label:before {
+    background-color: rgba(0,123,255,.5);
+}
+
+/* Stilul pentru checkbox când este dezactivat */
+.custom-checkbox input[type="checkbox"]:disabled + label:before {
+    background-color: #e9ecef;
+}

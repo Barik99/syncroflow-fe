@@ -488,11 +488,15 @@ function Actions() {
     };
 
     const renderDirectories = (items: FileItem[]) => {
-        return items.filter(item => item.isDirectory).map((item, index) => (
-            <div key={index} onDoubleClick={() => handleDirectoryDoubleClick(item.name)}>
-                {item.name}
-            </div>
-        ));
+        return (
+            <ul className="list-group list-group-flush">
+                {items.filter(item => item.isDirectory).map((item, index) => (
+                    <li key={item.name} className="list-group-item" onClick={() => handleDirectoryDoubleClick(item.name)}>
+                        {item.name}
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     const handleDirectorySelect = (directoryName: string) => {
@@ -516,28 +520,40 @@ function Actions() {
     };
 
     const renderFiles = (items: FileItem[]) => {
-        return items.filter(item => !item.isDirectory).map((item, index) => (
-            <li key={item.name} className="list-group-item">
-                <input
-                    className="form-check-input me-1"
-                    type="checkbox"
-                    id={item.name}
-                    name="file"
-                    value={item.name}
-                    checked={selectedFile === item.name}
-                    onChange={() => handleFileSelect(item.name)}
-                />
-                <label className="form-check-label" htmlFor={item.name}>{item.name}</label>
-            </li>
-        ));
+        return (
+            <ul className="list-group list-group-flush">
+                {items.filter(item => !item.isDirectory).map((item, index) => (
+                    <li key={item.name} className="list-group-item">
+                        <input
+                            className="form-check-input me-1"
+                            type="checkbox"
+                            id={item.name}
+                            name="file"
+                            value={item.name}
+                            checked={selectedFile === item.name}
+                            onChange={() => handleFileSelect(item.name)}
+                        />
+                        <label className="form-check-label" htmlFor={item.name}>{item.name}</label>
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     const renderFilesForDirectories = (items: FileItem[]) => {
-        return items.filter(item => !item.isDirectory).map((item, index) => (
-            <li key={item.name} className="list-group-item">
-                {item.name}
-            </li>
-        ));
+        return (
+            <ul className="list-group list-group-flush">
+                {items.filter(item => !item.isDirectory).map((item, index) => (
+                    <li key={item.name} className="list-group-item">
+                        <div key={index} className="d-flex justify-content-between align-items-center">
+                            <div>
+                                {item.name}
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     const handleDirectoryChange = async () => {
@@ -566,19 +582,35 @@ function Actions() {
     };
 
     const renderDirectoriesForUpload = (items: FileItem[]) => {
-        return items.filter(item => item.isDirectory).map((item, index) => (
-            <div key={index} className="form-check">
-                <input type="checkbox" className="form-check-input" id={item.name} name={item.name} onChange={() => handleDirectorySelect(item.name)}/>
-                <label className="form-check-label" htmlFor={item.name}
-                       onClick={(e) => e.preventDefault()}
-                       onDoubleClick={() => handleDirectoryDoubleClick(item.name)}>{item.name}</label>
-            </div>
-        ));
+        return (
+            <ul className="list-group list-group-flush">
+                {items.filter(item => item.isDirectory).map((item, index) => (
+                    <li key={item.name} className="list-group-item" onClick={() => handleDirectoryDoubleClick(item.name)}>
+                        <div key={index} className="d-flex align-items-center">
+                            <div className="form-check">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id={item.name}
+                                    name={item.name}
+                                    onChange={() => handleDirectorySelect(item.name)}
+                                />
+                                <label className="form-check-label" htmlFor={item.name}>
+                                    <div>
+                                        {item.name}
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     return (
         <div>
-            <Navigation />
+            <Navigation/>
             {showNotification &&
                 <div className="alert alert-warning" role="alert">
                     Trebuie să vă conectați pentru vedea acțiunile.
