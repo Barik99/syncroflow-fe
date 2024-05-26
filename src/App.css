@@ -268,3 +268,10 @@ button{
 .scheduler-container-vertical .form-select {
     margin-bottom: 1rem;
 }
+
+/* CSS */
+@media (max-width: 767px) {
+    .hide-on-mobile {
+        display: none;
+    }
+}

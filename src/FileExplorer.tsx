@@ -375,7 +375,7 @@ const FileExplorer: React.FC = () => {
         <div>
             <Navigation />
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh'}}>
-                <div style={{marginRight: '20px'}}>
+                <div style={{marginRight: '20px'}} className="hide-on-mobile">
     <div style={{marginBottom: '0.5rem'}}>
         <Button variant="primary" onClick={() => setShowModal(true)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-folder-plus me-2" viewBox="0 0 16 16">
@@ -396,7 +396,7 @@ const FileExplorer: React.FC = () => {
                 }
             >
         <span className="d-inline-block">
-            <Button variant="secondary" disabled={!selectedDirectory} onClick={handleDeleteDirectory} style={{ pointerEvents: 'none' }}>
+            <Button variant="danger" disabled={!selectedDirectory} onClick={handleDeleteDirectory} style={{ pointerEvents: 'none' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-folder-x me-2" viewBox="0 0 16 16">
                     <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181L15.546 8H14.54l.265-2.91A1 1 0 0 0 13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91H9v1H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zm6.339-1.577A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/>
                     <path d="M11.854 10.146a.5.5 0 0 0-.707.708L12.293 12l-1.146 1.146a.5.5 0 0 0 .707.708L13 12.707l1.146 1.147a.5.5 0 0 0 .708-.708L13.707 12l1.147-1.146a.5.5 0 0 0-.707-.708L13 11.293z"/>
@@ -406,7 +406,7 @@ const FileExplorer: React.FC = () => {
         </span>
             </OverlayTrigger>
         ) : (
-            <Button variant="outline-danger" onClick={() => setShowDeleteDirectoryModal(true)}>
+            <Button variant="danger" onClick={() => setShowDeleteDirectoryModal(true)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-folder-x me-2" viewBox="0 0 16 16">
                     <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181L15.546 8H14.54l.265-2.91A1 1 0 0 0 13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91H9v1H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zm6.339-1.577A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/>
                     <path d="M11.854 10.146a.5.5 0 0 0-.707.708L12.293 12l-1.146 1.146a.5.5 0 0 0 .707.708L13 12.707l1.146 1.147a.5.5 0 0 0 .708-.708L13.707 12l1.147-1.146a.5.5 0 0 0-.707-.708L13 11.293z"/>
@@ -440,7 +440,7 @@ const FileExplorer: React.FC = () => {
                                 }
                             >
         <span className="d-inline-block">
-            <Button variant="secondary" disabled={!selectedFile} onClick={handleDeleteFile}
+            <Button variant="danger" disabled={!selectedFile} onClick={handleDeleteFile}
                     style={{pointerEvents: 'none'}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-file-earmark-x me-2" viewBox="0 0 16 16">
                     <path d="M6.854 7.146a.5.5 0 1 0-.708.708L7.293 9l-1.147 1.146a.5.5 0 0 0 .708.708L8 9.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 9l1.147-1.146a.5.5 0 0 0-.708-.708L8 8.293z"/>
@@ -451,7 +451,7 @@ const FileExplorer: React.FC = () => {
         </span>
             </OverlayTrigger>
         ) : (
-                <Button variant="outline-danger" onClick={() => setShowDeleteFileModal(true)}>
+                <Button variant="danger" onClick={() => setShowDeleteFileModal(true)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" className="bi bi-file-earmark-x me-2" viewBox="0 0 16 16">
                     <path d="M6.854 7.146a.5.5 0 1 0-.708.708L7.293 9l-1.147 1.146a.5.5 0 0 0 .708.708L8 9.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 9l1.147-1.146a.5.5 0 0 0-.708-.708L8 8.293z"/>
                     <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
@@ -591,6 +591,48 @@ const FileExplorer: React.FC = () => {
                                 </Breadcrumb.Item>
                             ))}
                         </Breadcrumb>
+                    </div>
+                    <div className="d-sm-block d-md-none">
+                        <Button variant="primary" onClick={() => setShowModal(true)} className="me-3 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                                 className="bi bi-folder-plus me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"/>
+                                <path
+                                    d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"/>
+                            </svg>
+                            Adaugă Folder
+                        </Button>
+                        <Button variant="danger" disabled={!selectedDirectory} onClick={() => setShowDeleteDirectoryModal(true)} className="me-4 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                                 className="bi bi-folder-x me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181L15.546 8H14.54l.265-2.91A1 1 0 0 0 13.81 4H2.19a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91H9v1H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zm6.339-1.577A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z"/>
+                                <path
+                                    d="M11.854 10.146a.5.5 0 0 0-.707.708L12.293 12l-1.146 1.146a.5.5 0 0 0 .707.708L13 12.707l1.146 1.147a.5.5 0 0 0 .708-.708L13.707 12l1.147-1.146a.5.5 0 0 0-.707-.708L13 11.293z"/>
+                            </svg>
+                            Șterge Folder
+                        </Button>
+                        <Button variant="primary" onClick={() => setShowFileModal(true)} className="me-4 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                                 className="bi bi-file-earmark-plus me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5"/>
+                                <path
+                                    d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                            </svg>
+                            Adaugă Fișier
+                        </Button>
+                        <Button variant="danger" disabled={!selectedFile} onClick={() => setShowDeleteFileModal(true)} className="mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
+                                 className="bi bi-file-earmark-x me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M6.854 7.146a.5.5 0 1 0-.708.708L7.293 9l-1.147 1.146a.5.5 0 0 0 .707.708L8 9.707l1.146 1.147a.5.5 0 0 0 .708-.708L8.707 9l1.147-1.146a.5.5 0 0 0-.707-.708L8 8.293z"/>
+                                <path
+                                    d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                            </svg>
+                            Șterge Fișier
+                        </Button>
                     </div>
 
                     {isLoading ? (
