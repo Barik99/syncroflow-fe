@@ -599,28 +599,36 @@ function Triggers() {
     };
 
     const renderDirectories = (items: FileItem[]) => {
-        return items.filter(item => item.isDirectory).map((item, index) => (
-            <div key={index} onClick={() => handleDirectoryDoubleClick(item.name)}>
-                {item.name}
-            </div>
-        ));
+        return (
+            <ul className="list-group list-group-flush">
+                {items.filter(item => item.isDirectory).map((item, index) => (
+                    <li key={item.name} className="list-group-item" onClick={() => handleDirectoryDoubleClick(item.name)}>
+                        {item.name}
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     const renderFiles = (items: FileItem[]) => {
-        return items.filter(item => !item.isDirectory).map((item, index) => (
-            <li key={item.name} className="list-group-item">
-                <input
-                    className="form-check-input me-1"
-                    type="checkbox"
-                    id={item.name}
-                    name="file"
-                    value={item.name}
-                    checked={selectedFile === item.name}
-                    onChange={() => handleFileSelect(item.name)}
-                />
-                <label className="form-check-label" htmlFor={item.name}>{item.name}</label>
-            </li>
-        ));
+        return (
+            <ul className="list-group list-group-flush">
+                {items.filter(item => !item.isDirectory).map((item, index) => (
+                    <li key={item.name} className="list-group-item">
+                        <input
+                            className="form-check-input me-1"
+                            type="checkbox"
+                            id={item.name}
+                            name="file"
+                            value={item.name}
+                            checked={selectedFile === item.name}
+                            onChange={() => handleFileSelect(item.name)}
+                        />
+                        <label className="form-check-label" htmlFor={item.name}>{item.name}</label>
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     const handleCloseFileExplorerModal = () => {

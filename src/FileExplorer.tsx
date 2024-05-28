@@ -308,20 +308,28 @@ const FileExplorer: React.FC = () => {
 
         return (
             <ul className="list-group list-group-flush">
-                {directories.map(item => (
-                    <li key={item.path} className="list-group-item" onDoubleClick={() => handleDirectoryClick(item)}>
-                        <input
-                            className="form-check-input me-1"
-                            type="checkbox"
-                            name="listGroupCheckbox"
-                            value={item.name}
-                            id={item.name}
-                            checked={selectedDirectory === item.name}
-                            onChange={() => handleDirectorySelect(item.name)}
-                        />
-                        <label className="form-check-label" htmlFor={item.name}>
-                            {item.name}
-                        </label>
+                {items.filter(item => item.isDirectory).map((item, index) => (
+                    <li key={item.name} className="list-group-item" onClick={(e) => {
+                        if ((e.target as Element).tagName !== 'INPUT') {
+                            handleDirectoryClick(item);
+                        }
+                    }}>
+                        <div key={index} className="d-flex align-items-center">
+                            <div className="form-check">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id={item.name}
+                                    name={item.name}
+                                    onChange={() => handleDirectorySelect(item.name)}
+                                />
+                                <label className="form-check-label" htmlFor={item.name}>
+                                    <div>
+                                        {item.name}
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
                     </li>
                 ))}
             </ul>
@@ -581,7 +589,7 @@ const FileExplorer: React.FC = () => {
                     </div>
                 </Toast>
 
-                <div style={{borderLeft: '1px solid black', paddingLeft: '20px', marginTop: '20px'}}>
+                <div style={{paddingLeft: '20px', marginTop: '20px'}} className="border-left-div">
                     <div>
                         <Breadcrumb>
                             {path.map((dir, index) => (

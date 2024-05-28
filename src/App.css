@@ -309,3 +309,15 @@ button{
 .custom-checkbox input[type="checkbox"]:disabled + label:before {
     background-color: #e9ecef;
 }
+
+.border-left-div {
+    border-left: 1px solid black;
+    padding-left: 20px;
+    margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .border-left-div {
+        border-left: none;
+    }
+}
