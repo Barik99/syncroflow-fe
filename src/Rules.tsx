@@ -36,6 +36,8 @@ function Rules() {
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [sleepTime, setSleepTime] = useState("");
   const [showNotification, setShowNotification] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [allRules, setAllRules] = useState<Rule[]>([]);
 
   const handleClose = () => {
     setShowModal(false);
@@ -47,6 +49,16 @@ function Rules() {
     setIsMultiUse(false);
     setFormErrors({});
   };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearch = () => {
+    const filteredRules = allRules.filter(rule => rule.name.includes(searchTerm));
+    setRules(filteredRules);
+  };
+
   const handleShow = () => setShowModal(true);
   const email = window.localStorage.getItem('email');
   console.log(email);
@@ -60,6 +72,12 @@ function Rules() {
     }
   }, []);
 
+  useEffect(() => {
+    if (searchTerm === "") {
+      setRules(allRules);
+    }
+  }, [searchTerm, allRules]);
+
   const fetchRules = async () => {
     const response = await fetch(`/api/rules/${email}`, {
       method: 'GET',
@@ -69,12 +87,11 @@ function Rules() {
     });
 
     const data = await response.json();
-    console.log(data);
 
-    // Check if data is an array before setting it
     if (Array.isArray(data)) {
       const sortedRules = data.sort((a, b) => a.name.localeCompare(b.name));
       setRules(sortedRules);
+      setAllRules(sortedRules); // Set allRules with the fetched data
     } else {
       console.error('Error: Expected array from API, received:', data);
     }
@@ -197,6 +214,11 @@ function Rules() {
     validateField('sleepTime', event.target.value);
   }
 
+  const resetSearch = () => {
+    setSearchTerm("");
+    setRules(allRules);
+  };
+
   const handleDelete = async () => {
     const response = await fetch(`/api/removeRule/${email}/${ruleToDelete}`, {
       method: 'DELETE',
@@ -293,18 +315,40 @@ function Rules() {
               <div className="toast-body">
                 {toastMessage}
               </div>
-              <button type="button" className="btn-close btn-close-white me-2 m-auto" onClick={() => setShowToast(false)} aria-label="Close"></button>
+              <button type="button" className="btn-close btn-close-white me-2 m-auto"
+                      onClick={() => setShowToast(false)} aria-label="Close"></button>
             </div>
           </Toast>
+          <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center my-3 w-50">
+              <Form.Control
+                  type="search"
+                  placeholder="Caută o regulă"
+                  onChange={handleSearchChange}
+                  value={searchTerm}
+                  className="me-2"
+                  onKeyPress={handleKeyPress}
+                  maxLength={20} // Add this line
+              />
+              <Button variant="primary" onClick={handleSearch}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     className="bi bi-search" viewBox="0 0 16 16">
+                  <path
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+              </Button>
+            </div>
+          </div>
           <div className="d-flex justify-content-end">
             {email === null ? (
                 <OverlayTrigger
                     placement="bottom"
-                    delay={{ show: 250, hide: 400 }}
-                    overlay={<Tooltip id="button-tooltip">Trebuie să fiți autentificat pentru a adăuga o regulă.</Tooltip>}
+                    delay={{show: 250, hide: 400}}
+                    overlay={<Tooltip id="button-tooltip">Trebuie să fiți autentificat pentru a adăuga o
+                      regulă.</Tooltip>}
                 >
                 <span className="d-inline-block">
-                    <Button className="btn btn-primary my-3" disabled style={{ pointerEvents: 'none' }}>
+                    <Button className="btn btn-primary my-3" disabled style={{pointerEvents: 'none'}}>
                         Adaugă regulă
                     </Button>
                 </span>
@@ -316,20 +360,20 @@ function Rules() {
             )}
           </div>
           <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-              <Modal.Header closeButton>
-                <Modal.Title>Șterge regulă</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                Sunteți sigur că vreți să ștergi regula cu numele <strong>{ruleToDelete}</strong>?
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                  Anulează
-                </Button>
-                <Button variant="danger" onClick={handleDelete}>
-                  Șterge
-                </Button>
-              </Modal.Footer>
+            <Modal.Header closeButton>
+              <Modal.Title>Șterge regulă</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Sunteți sigur că vreți să ștergi regula cu numele <strong>{ruleToDelete}</strong>?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                Anulează
+              </Button>
+              <Button variant="danger" onClick={handleDelete}>
+                Șterge
+              </Button>
+            </Modal.Footer>
           </Modal>
           <Modal show={showModal} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -416,16 +460,16 @@ function Rules() {
                           <p className="card-text">Multifuncțională: {rule.multiUse ? 'Da' : 'Nu'}</p>
                           {rule.multiUse && <p className="card-text">Timp de așteptare: {rule.sleepTime} s</p>}
                           <div className="position-absolute top-0 end-0"> {/* Add this div with classes */}
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                               className="bi bi-trash cursor-pointer" viewBox="0 0 16 16" onClick={() => {
-                            setRuleToDelete(rule.name);
-                            setShowDeleteModal(true);
-                          }}>
-                            <path
-                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                            <path
-                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                          </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 className="bi bi-trash cursor-pointer" viewBox="0 0 16 16" onClick={() => {
+                              setRuleToDelete(rule.name);
+                              setShowDeleteModal(true);
+                            }}>
+                              <path
+                                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                              <path
+                                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg>
                           </div>
                         </div>
                       </div>

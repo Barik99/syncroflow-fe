@@ -4,7 +4,7 @@ import {Button, Form, Modal, OverlayTrigger, Toast, Tooltip} from "react-bootstr
 import React from "react";
 import { Breadcrumb } from 'react-bootstrap';
 
-interface Trigger {
+interface Action {
     id: string;
     name: string;
     type: string;
@@ -38,7 +38,7 @@ const actionTypeMapping: ActionTypeMapping = {
 };
 
 function Actions() {
-    const [triggers, setTriggers] = useState<Trigger[]>([]);
+    const [triggers, setActions] = useState<Action[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedType, setSelectedType] = useState("");
     const [triggerTypes, setTriggerTypes] = useState<any>({});
@@ -70,6 +70,25 @@ function Actions() {
     const [selectedDirectoryPath, setSelectedDirectoryPath] = useState("");
     const [showNotification, setShowNotification] = useState(false);
     const [tempStringToAppend, setTempStringToAppend] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [allActions, setAllActions] = useState<Action[]>([]);
+
+    const handleSearchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+        if (event.target.value === "") {
+            await fetchActions();
+        }
+    };
+
+    const handleSearch = () => {
+        const filteredActions = allActions.filter(action => action.name.includes(searchTerm));
+        setActions(filteredActions);
+    };
+
+    const handleResetSearch = () => {
+        setSearchTerm("");
+        setActions(allActions);
+    };
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
@@ -130,8 +149,8 @@ function Actions() {
 
 
     useEffect(() => {
-        fetchTriggers();
-        fetchTriggerTypes();
+        fetchActions();
+        fetchActionTypes();
     }, []);
 
     const handleFileSelect = (fileName: string) => {
@@ -177,7 +196,7 @@ function Actions() {
         setShowModal(true); // Re-open the 'Create Trigger' modal
     };
 
-    const fetchTriggers = async () => {
+    const fetchActions = async () => {
         if (!email) {
             console.log("User is not logged in. Skipping fetchActions API call.");
             return;
@@ -194,13 +213,14 @@ function Actions() {
 
         if (Array.isArray(data)) {
             const sortedRules = data.sort((a, b) => a.name.localeCompare(b.name));
-            setTriggers(sortedRules);
+            setActions(sortedRules);
+            setAllActions(sortedRules);
         } else {
             console.error('Error: Expected array from API, received:', data);
         }
     };
 
-    const fetchTriggerTypes = async () => {
+    const fetchActionTypes = async () => {
         if (!email) {
             console.log("User is not logged in. Skipping fetchActions API call.");
             return;
@@ -337,7 +357,7 @@ function Actions() {
             handleClose();
             setToastMessage(responseText);
             setShowToast(true);
-            await fetchTriggers();
+            await fetchActions();
         }
     };
 
@@ -423,7 +443,7 @@ function Actions() {
         });
         const responseText = await response.text();
         if (response.ok) {
-            await fetchTriggers();
+            await fetchActions();
             setToastMessage(responseText);
             setShowToast(true);
         } else {
@@ -627,9 +647,30 @@ function Actions() {
                     <div className="toast-body">
                         {toastMessage}
                     </div>
-                    <button type="button" className="btn-close btn-close-white me-2 m-auto" onClick={() => setShowToast(false)} aria-label="Close"></button>
+                    <button type="button" className="btn-close btn-close-white me-2 m-auto"
+                            onClick={() => setShowToast(false)} aria-label="Close"></button>
                 </div>
             </Toast>
+            <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center my-3 w-50">
+                    <Form.Control
+                        type="search"
+                        placeholder="Caută o acțiune"
+                        onChange={handleSearchChange}
+                        value={searchTerm}
+                        className="me-2"
+                        onKeyPress={handleKeyPress}
+                        maxLength={20}
+                    />
+                    <Button onClick={handleSearch}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             className="bi bi-search" viewBox="0 0 16 16">
+                            <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </Button>
+                </div>
+            </div>
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Șterge acțiunea</Modal.Title>
@@ -651,11 +692,12 @@ function Actions() {
                     {email === null ? (
                         <OverlayTrigger
                             placement="bottom"
-                            delay={{ show: 250, hide: 400 }}
-                            overlay={<Tooltip id="button-tooltip">Trebuie să vă contectați pentru a adăuga o acțiune</Tooltip>}
+                            delay={{show: 250, hide: 400}}
+                            overlay={<Tooltip id="button-tooltip">Trebuie să vă contectați pentru a adăuga o
+                                acțiune</Tooltip>}
                         >
                 <span className="d-inline-block">
-                    <Button className="btn btn-primary my-3" disabled style={{ pointerEvents: 'none' }}>
+                    <Button className="btn btn-primary my-3" disabled style={{pointerEvents: 'none'}}>
                         Adaugă acțiune
                     </Button>
                 </span>
@@ -683,19 +725,22 @@ function Actions() {
                                     maxLength={20}
                                     className={nameValidation ? 'is-invalid' : ''}
                                 />
-                                {nameValidation && <div className="invalid-feedback">Numele acțiunii este obligatoriu</div>}
+                                {nameValidation &&
+                                    <div className="invalid-feedback">Numele acțiunii este obligatoriu</div>}
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label>Type</Form.Label>
-                                <Form.Select onChange={(e) => handleTypeChange(e.target.value)} className={typeValidation ? 'is-invalid' : ''} value={selectedType}>
+                                <Form.Select onChange={(e) => handleTypeChange(e.target.value)}
+                                             className={typeValidation ? 'is-invalid' : ''} value={selectedType}>
                                     <option>Alegeți un tip de acțiune</option>
                                     {Object.keys(triggerTypes).map((type, index) => (
                                         <option key={index} value={type}>{actionTypeMapping[type]}</option>
                                     ))}
                                 </Form.Select>
-                                {typeValidation && <div className="invalid-feedback">Tipul acțiunii este obligatoriu</div>}
+                                {typeValidation &&
+                                    <div className="invalid-feedback">Tipul acțiunii este obligatoriu</div>}
                             </Form.Group>
-                            {selectedType && Object.keys(triggerTypes[selectedType]).map((field : string, index : number) => (
+                            {selectedType && Object.keys(triggerTypes[selectedType]).map((field: string, index: number) => (
                                 <Form.Group key={index} className="mb-3">
                                     <Form.Label className="label-spacing">
                                         {selectedType === 'Paste File' && field === 'destinationPath' ? 'Folderul de destinație' :
@@ -717,17 +762,20 @@ function Actions() {
                                                 Încarcă folderul
                                             </Button>
                                             <div className="file-path-container file-selected-spacing">
-                                                <div>Folderul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong>
+                                                <div>Folderul
+                                                    ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
                                         </div>
-                                    ) :selectedType === 'Move File' && field === 'destinationPath' ? (
+                                    ) : selectedType === 'Move File' && field === 'destinationPath' ? (
                                         <div>
                                             <Button variant="primary" onClick={handleDirectoryChange}>
                                                 Încarcă folderul
                                             </Button>
                                             <div className="file-path-container file-selected-spacing">
-                                                <div>Folderul ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong></div>
+                                                <div>Folderul
+                                                    ales: <strong>{selectedDirectoryPath.replace(/FileDirectory/, 'Acasă')}</strong>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : selectedType === 'Paste File' && field === 'fileToPaste' ? (
@@ -737,7 +785,9 @@ function Actions() {
                                                 Încarcă fișier
                                             </Button>
                                             <div className="file-path-container file-selected-spacing">
-                                                <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong></div>
+                                                <div>Fișierul
+                                                    ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong>
+                                                </div>
                                             </div>
                                             {/* Display the selected file path */}
                                         </div>
@@ -760,7 +810,8 @@ function Actions() {
                                                      value={field === 'firstAction' ? firstTrigger : secondTrigger}>
                                             <option>Selectează o acțiune</option>
                                             {triggers.filter(trigger => trigger.name !== (field === 'firstAction' ? secondTrigger : firstTrigger)).map((trigger, index) => (
-                                                <option key={index} value={trigger.name}>{trigger.name} ({trigger.type})</option>
+                                                <option key={index}
+                                                        value={trigger.name}>{trigger.name} ({trigger.type})</option>
                                             ))}
                                         </Form.Select>
                                     ) : selectedType === 'Start External Program' && field === 'commandLineArguments' ? (
@@ -772,7 +823,8 @@ function Actions() {
                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
                                                 value={triggerFields['commandLineArguments']}
                                             />
-                                            {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                            {fieldValidation[field] &&
+                                                <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                         </div>
                                     ) : selectedType === 'Append String To File' && field === 'stringToAppend' ? (
                                         <div>
@@ -783,7 +835,8 @@ function Actions() {
                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
                                                 value={triggerFields['stringToAppend']}
                                             />
-                                            {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                            {fieldValidation[field] &&
+                                                <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                         </div>
                                     ) : selectedType === 'Delete File' && field === 'fileToDelete' ||
                                     selectedType === 'Append String To File' && field === 'file' ||
@@ -794,7 +847,8 @@ function Actions() {
                                                 Încarcă fișier
                                             </Button>
                                             <div className="file-path-container file-selected-spacing">
-                                                <div>Fișierul ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong>
+                                                <div>Fișierul
+                                                    ales: <strong>{selectedFilePath.replace(/FileDirectory/, 'Acasă')}</strong>
                                                 </div>
                                             </div>
                                             {/* Display the selected file path */}
@@ -804,7 +858,8 @@ function Actions() {
                                                       onChange={handleFieldChange(field)}
                                                       className={fieldValidation[field] ? 'is-invalid' : ''}/>
                                     )}
-                                    {fieldValidation[field] && <div className="invalid-feedback">{field} este obligatoriu</div>}
+                                    {fieldValidation[field] &&
+                                        <div className="invalid-feedback">{field} este obligatoriu</div>}
                                 </Form.Group>
                             ))}
                         </Form>
