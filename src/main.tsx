@@ -9,6 +9,7 @@ import Rules from "./Rules";
 import Triggers from "./Triggers";
 import FileExplorer from "./FileExplorer";
 import Actions from "./Actions"; // Import the Rules component
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -17,20 +18,20 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
   },
   {
-    path: "/rules", // Add a new route for the Rules page
-    element: <Rules />,
+    path: "/rules",
+    element: <ProtectedRoute><Rules /></ProtectedRoute>,
   },
   {
-    path: "/triggers", // Add a new route for the Rules page
-    element: <Triggers />,
+    path: "/triggers",
+    element: <ProtectedRoute><Triggers /></ProtectedRoute>,
   },
   {
-    path: "/actions", // Add a new route for the Rules page
-    element: <Actions />,
+    path: "/actions",
+    element: <ProtectedRoute><Actions /></ProtectedRoute>,
   },
   {
     path: "/file-explorer",
-    element: <FileExplorer />,
+    element: <ProtectedRoute><FileExplorer /></ProtectedRoute>,
   }
 ]);
 
