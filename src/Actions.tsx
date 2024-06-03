@@ -72,27 +72,30 @@ function Actions() {
     const [tempStringToAppend, setTempStringToAppend] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [allActions, setAllActions] = useState<Action[]>([]);
+    const [searchActionType, setSearchActionType] = useState("");
 
-    const handleSearchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-        if (event.target.value === "") {
-            await fetchActions();
-        }
     };
 
     const handleSearch = () => {
-        const filteredActions = allActions.filter(action => action.name.includes(searchTerm));
+        const filteredActions = allActions.filter(action =>
+            action.name.includes(searchTerm) &&
+            (searchActionType === "" || action.type === searchActionType)
+        );
         setActions(filteredActions);
     };
 
-    const handleResetSearch = () => {
+    const handleReset = async () => {
         setSearchTerm("");
-        setActions(allActions);
+        setSearchActionType("");
+        await fetchActions();
     };
 
     const handleClose = () => setShowModal(false);
     const handleShow = () => {
         resetModal();
+
         // Reset the firstTrigger and secondTrigger states
         setFirstTrigger('Selectează un declanșator');
         setSecondTrigger('Selectează un declanșator');
@@ -437,13 +440,15 @@ function Actions() {
         setPath(["Acasă"]); // Reset the path to "Acasă"
     };
 
-    const deleteTrigger = async () => {
+    const deleteAction = async () => {
         const response = await fetch(`/api/removeAction/${email}/${triggerToDelete}`, {
             method: 'DELETE',
         });
         const responseText = await response.text();
         if (response.ok) {
             await fetchActions();
+            setSearchTerm(""); // Reset the search term
+            setSearchActionType(""); // Reset the search action type
             setToastMessage(responseText);
             setShowToast(true);
         } else {
@@ -652,7 +657,7 @@ function Actions() {
                 </div>
             </Toast>
             <div className="d-flex justify-content-center">
-                <div className="d-flex justify-content-center my-3 w-50">
+                <div className="search-reset-container">
                     <Form.Control
                         type="search"
                         placeholder="Caută o acțiune"
@@ -662,11 +667,26 @@ function Actions() {
                         onKeyPress={handleKeyPress}
                         maxLength={20}
                     />
+                    <Form.Select
+                        value={searchActionType}
+                        onChange={(e) => setSearchActionType(e.target.value)}
+                        className="me-2"
+                    >
+                        <option value="">Tip acțiune</option>
+                        {Object.keys(actionTypeMapping).map((type, index) => (
+                            <option key={index} value={type}>{actionTypeMapping[type]}</option>
+                        ))}
+                    </Form.Select>
                     <Button onClick={handleSearch}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              className="bi bi-search" viewBox="0 0 16 16">
                             <path
                                 d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </Button>
+                    <Button className="reset-button" onClick={handleReset}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
                     </Button>
                 </div>
@@ -682,7 +702,7 @@ function Actions() {
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                         Anulează
                     </Button>
-                    <Button variant="danger" onClick={deleteTrigger}>
+                    <Button variant="danger" onClick={deleteAction}>
                         Șterge
                     </Button>
                 </Modal.Footer>

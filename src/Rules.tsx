@@ -228,7 +228,7 @@ function Rules() {
     });
 
     const data = await response.text();
-
+    setSearchTerm("");
     setToastMessage(data); // Set the toast message to the text from the API response
     setShowToast(true); // Show the toast message
 
@@ -295,6 +295,11 @@ function Rules() {
   };
 
 
+  const handleReset = () => {
+    setSearchTerm("");
+    fetchRules(); // presupunând că aveți o funcție similară cu fetchTriggers pentru reguli
+  };
+
   return (
       <div>
         <Navigation />
@@ -328,13 +333,18 @@ function Rules() {
                   value={searchTerm}
                   className="me-2"
                   onKeyPress={handleKeyPress}
-                  maxLength={20} // Add this line
+                  maxLength={20}
               />
-              <Button variant="primary" onClick={handleSearch}>
+              <Button onClick={handleSearch}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      className="bi bi-search" viewBox="0 0 16 16">
                   <path
                       d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+              </Button>
+              <Button className="reset-button" onClick={handleReset}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
+                  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                 </svg>
               </Button>
             </div>

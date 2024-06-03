@@ -321,3 +321,53 @@ button{
         border-left: none;
     }
 }
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+}
+
+input[type="search"]::-ms-clear {
+    display: none;
+}
+
+.no-clear-button::-webkit-search-cancel-button,
+.no-clear-button::-webkit-search-decoration,
+.no-clear-button::-webkit-search-results-button,
+.no-clear-button::-webkit-search-results-decoration {
+    display: none;
+}
+
+.no-clear-button::-ms-clear {
+    display: none;
+}
+.reset-button {
+    margin-left: 10px; /* Ajustați această valoare după cum este necesar */
+    background-color: #ffffff;
+}
+
+@media (max-width: 600px) {
+    .search-reset-container {
+        flex-direction: column;
+    }
+    .search-reset-container > * {
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 601px) {
+    .search-reset-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.search-reset-container {
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}

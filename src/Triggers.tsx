@@ -84,12 +84,10 @@ function Triggers() {
     const [showNotification, setShowNotification] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [allTriggers, setAllTriggers] = useState<Trigger[]>([]);
+    const [searchTriggerType, setSearchTriggerType] = useState("");
 
-    const handleSearchChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-        if (event.target.value === "") {
-            await fetchTriggers();
-        }
     };
 
 
@@ -544,6 +542,8 @@ function Triggers() {
         const responseText = await response.text();
         if (response.ok) {
             await fetchTriggers();
+            setSearchTerm(""); // Reset the search term
+            setSearchTriggerType(""); // Reset the search action type
             setToastMessage(responseText);
             setShowToast(true);
         } else {
@@ -683,14 +683,18 @@ function Triggers() {
     };
 
     const handleSearch = () => {
-        const filteredTriggers = allTriggers.filter(trigger => trigger.name.includes(searchTerm));
+        const filteredTriggers = allTriggers.filter(trigger =>
+            trigger.name.includes(searchTerm) &&
+            (searchTriggerType === "" || trigger.type === searchTriggerType)
+        );
         setTriggers(filteredTriggers);
     };
 
 
-    const handleResetSearch = () => {
+    const handleReset = () => {
         setSearchTerm("");
-        setTriggers(allTriggers);
+        setSearchTriggerType("");
+        fetchTriggers(); // presupunând că aveți o funcție similară cu fetchActions pentru declanșatori
     };
 
     return (
@@ -717,7 +721,7 @@ function Triggers() {
                 </div>
             </Toast>
             <div className="d-flex justify-content-center">
-                <div className="d-flex justify-content-center my-3 w-50">
+                <div className="search-reset-container">
                     <Form.Control
                         type="search"
                         placeholder="Caută un declanșator"
@@ -727,11 +731,26 @@ function Triggers() {
                         onKeyPress={handleKeyPress}
                         maxLength={20}
                     />
+                    <Form.Select
+                        value={searchTriggerType}
+                        onChange={(e) => setSearchTriggerType(e.target.value)}
+                        className="me-2"
+                    >
+                        <option value="">Tip declanșator</option>
+                        {Object.keys(triggerTypeMapping).map((type, index) => (
+                            <option key={index} value={type}>{triggerTypeMapping[type]}</option>
+                        ))}
+                    </Form.Select>
                     <Button onClick={handleSearch}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              className="bi bi-search" viewBox="0 0 16 16">
                             <path
                                 d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                    </Button>
+                    <Button className="reset-button" onClick={handleReset}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
                     </Button>
                 </div>
@@ -741,7 +760,7 @@ function Triggers() {
                     <Modal.Title>Confirmă ștergerea</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                Sunteți sigur că vreți să ștergi regula cu numele <strong>{triggerToDelete}</strong>?
+                    Sunteți sigur că vreți să ștergi regula cu numele <strong>{triggerToDelete}</strong>?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
