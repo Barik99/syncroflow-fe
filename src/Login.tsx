@@ -24,7 +24,7 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
 
     if (data) {
       window.localStorage.setItem('email', email);
-      window.location.href = "/";
+      window.location.href = "/rules";
     } else {
       setError("Incorrect email or password. Please try again.");
     }

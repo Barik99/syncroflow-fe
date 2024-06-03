@@ -122,7 +122,7 @@ function Navigation() {
         // Clear the user's session
         window.localStorage.removeItem('email');
         // Redirect the user to the login page
-        window.location.href = '/login';
+        window.location.href = '/';
     };
 
     return (
@@ -200,7 +200,7 @@ function Navigation() {
                                         </Nav.Link>
                                     </>
                                 ) : (
-                                    <Nav.Link href="/login">
+                                    <Nav.Link href="/">
                                         <Button className="login-button text-white"
                                                 style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
                                             Autentificare
@@ -213,7 +213,7 @@ function Navigation() {
                 </>
             ) : (
                 <Navbar bg="dark" variant="dark">
-                    <Navbar.Brand href="/">
+                    <Navbar.Brand>
                         <img src="..\images\logo.png" alt="logo" className={"site-logo"}/>
                     </Navbar.Brand>
                     <Nav className="mr-auto">
@@ -298,7 +298,7 @@ function Navigation() {
                             </Button>
                         )}
                         {email === null ? (
-                            <Nav.Link href="/login">
+                            <Nav.Link href="/">
                                 <Button className="login-button text-white" style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
                                     Autentificare
                                 </Button>

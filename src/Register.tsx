@@ -25,7 +25,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
 
     if (data) {
       setNotification("Your account has been registered successfully!"); // Add this line
-      window.location.href = "/login";
+      window.location.href = "/";
     } else {
       setError("The account could not be registered");
     }

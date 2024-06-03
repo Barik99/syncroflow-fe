@@ -325,7 +325,7 @@ function Rules() {
             </div>
           </Toast>
           <div className="d-flex justify-content-center">
-            <div className="d-flex justify-content-center my-3 w-50">
+            <div className="search-reset-container">
               <Form.Control
                   type="search"
                   placeholder="Caută o regulă"

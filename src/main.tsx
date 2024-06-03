@@ -4,7 +4,6 @@ import App from "./App";
 import "bootstrap/dist/css/bootstrap.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Home from "./Home";
 import NotFoundPage from "./NotFoundPage";
 import Rules from "./Rules";
 import Triggers from "./Triggers";
@@ -14,12 +13,8 @@ import Actions from "./Actions"; // Import the Rules component
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
-    errorElement: <NotFoundPage />,
-  },
-  {
-    path: "/login",
     element: <App />,
+    errorElement: <NotFoundPage />,
   },
   {
     path: "/rules", // Add a new route for the Rules page
@@ -40,7 +35,7 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
 );
