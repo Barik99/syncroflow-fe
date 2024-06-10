@@ -29,7 +29,6 @@ interface ActionTypeMapping {
 
 const actionTypeMapping: ActionTypeMapping = {
     "Paste File": "Lipire fișier",
-    "File Size": "Dimensiune fișier",
     "Append String To File": "Adăugare șir la fișier",
     "Start External Program": "Pornire program extern",
     "Delete File": "Ștergere fișier",

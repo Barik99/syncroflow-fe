@@ -35,6 +35,7 @@ const FileExplorer: React.FC = () => {
     const [showDeleteFileModal, setShowDeleteFileModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const [isUploading, setIsUploading] = useState(false); // Add this state
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -58,10 +59,21 @@ const FileExplorer: React.FC = () => {
         const modifiedPath = path.map(dir => dir === 'Acasă' ? 'FileDirectory' : dir).join('/');
         formData.append('path', modifiedPath);
 
+        setIsUploading(true);
+        setShowToast(true);
+        setToastMessage('Se verifică fișierul...');
+
         const response = await fetch('/api/addFile', {
             method: 'POST',
             body: formData,
+        }).catch(error => {
+            console.error('Network error:', error);
+            setShowToast(true);
+            setToastMessage('Fișierul depășește dimensiunea maximă permisă (50 MB)');
+            throw error;
         });
+
+        setIsUploading(false);
 
         const message = await response.text();
 
@@ -82,8 +94,14 @@ const FileExplorer: React.FC = () => {
             setShowFileModal(false);
             setUploadedFile(null);
         } else {
-            setShowToast(true);
-            setToastMessage(`Error: ${message}`);
+            if (response.status === 413) {
+                setShowToast(true);
+                setToastMessage('Fisierul depășește dimensiunea maximă permisă (50 MB)');
+            } else {
+                const message = await response.text();
+                setShowToast(true);
+                setToastMessage(`Error: ${message}`);
+            }
         }
     };
 
@@ -575,7 +593,7 @@ const FileExplorer: React.FC = () => {
                 <Toast
                     className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Fișierul a fost șters cu succes!') || 
                     toastMessage.includes('Fișierul a fost încărcat cu succes!') || toastMessage.includes('Folderul a fost creat cu succes!') || 
-                    toastMessage.includes('Folderul a fost șters cu succes!') ? 'text-bg-success' : 'text-bg-danger'}`}
+                    toastMessage.includes('Folderul a fost șters cu succes!') || toastMessage.includes('Se verifică fișierul...') ? 'text-bg-success' : 'text-bg-danger'}`}
                     onClose={() => setShowToast(false)}
                     show={showToast}
                     delay={5000}

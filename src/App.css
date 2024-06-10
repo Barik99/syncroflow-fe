@@ -14,9 +14,27 @@
     flex-direction: column;
 }
 
+.loginForm{
+    width: 17rem;
+}
+
+.auth-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Dacă doriți să centrați și pe direcția verticală */
+}
+
 .authLabel{
     text-align: left;
-    padding: 0.20rem 0;
+    padding: 0rem 0;
+}
+
+.login-background {
+    background-color: #2f2f2f; /* Alegeți culoarea dorită */
+    border-radius: 10px; /* Ajustați rotunjirea colțurilor după cum doriți */
+    width: 400px; /* Ajustați lățimea după cum doriți */
+    height: 450px; /* Ajustați înălțimea după cum doriți */
 }
 
 .authInput{
@@ -370,4 +388,9 @@ input[type="search"]::-ms-clear {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
+}
+
+.confirm-button {
+    width: 6rem;
+    margin-top: 2rem; /* Acesta este noul stil adăugat */
 }

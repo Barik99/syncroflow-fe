@@ -12,82 +12,37 @@ function Navigation() {
     const [toastMessage, setToastMessage] = useState("");
     const [showToast, setShowToast] = useState(false);
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
 
     useEffect(() => {
-        // Save to localStorage whenever selectedTime, selectedDuration or isToggled changes
         localStorage.setItem('selectedTime', selectedTime);
         localStorage.setItem('selectedDuration', selectedDuration);
         localStorage.setItem('isToggled', JSON.stringify(isToggled));
     }, [selectedTime, selectedDuration, isToggled]);
 
     useEffect(() => {
-        const handleResize = () => {
-            window.location.reload();
-        };
-
+        const handleResize = () => window.location.reload();
         window.addEventListener('resize', handleResize);
-
-        // Clean up event listener on component unmount
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const handleToggle = () => {
         setIsToggled(!isToggled);
-
-        let timeValue = selectedTime;
-        if (selectedDuration === "1") { // If "Seconds" is selected
-            // @ts-ignore
-            timeValue *= 1;
-        }
-        if (selectedDuration === "2") { // If "Minutes" is selected
-            // @ts-ignore
-            timeValue *= 60;
-        }
-        if (selectedDuration === "3") { // If "Hours" is selected
-            // @ts-ignore
-            timeValue *= 3600;
-        }
-
-        if (!isToggled) { // If the scheduler is not running, start it
-            const url = `/api/schedulerStart/${email}/${timeValue}`;
-            console.log(url);
-            fetch(url, {
-                method: 'POST',
+        let timeValue: number = Number(selectedTime);
+        if (selectedDuration === "1") timeValue *= 1;
+        if (selectedDuration === "2") timeValue *= 60;
+        if (selectedDuration === "3") timeValue *= 3600;
+        const url = `/api/scheduler${isToggled ? 'Stop' : 'Start'}/${email}${!isToggled ? `/${timeValue}` : ''}`;
+        fetch(url, { method: 'POST' })
+            .then(response => response.text())
+            .then(data => {
+                setToastMessage(data);
+                setShowToast(true);
             })
-                .then(response => response.text())
-                .then(data => {
-                    console.log('Success:', data);
-                    setToastMessage(data);
-                    setShowToast(true);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    setToastMessage(`Error: ${error}`);
-                    setShowToast(true);
-                });
-        } else { // If the scheduler is running, stop it
-            const url = `/api/schedulerStop/${email}`;
-            console.log(url);
-            fetch(url, {
-                method: 'POST',
-            })
-                .then(response => response.text())
-                .then(data => {
-                    console.log('Success:', data);
-                    setToastMessage(data);
-                    setShowToast(true);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    setToastMessage(`Error: ${error}`);
-                    setShowToast(true);
-                });
-        }
+            .catch((error) => {
+                setToastMessage(`Error: ${error}`);
+                setShowToast(true);
+            });
     }
 // @ts-ignore
     const handleTimeChange = (event) => {
@@ -111,17 +66,12 @@ function Navigation() {
     );
 
     const handleKeyPressSchedulerTimeField = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        const value = e.currentTarget.value + e.key;
-        // @ts-ignore
-        if (!Number.isInteger(Number(value)) || value < 1 || e.key === '0') {
-            e.preventDefault();
-        }
+        const value = Number(e.currentTarget.value + e.key);
+        if (!Number.isInteger(value) || value < 1 || e.key === '0') e.preventDefault();
     };
 
     const handleLogout = () => {
-        // Clear the user's session
         window.localStorage.removeItem('email');
-        // Redirect the user to the login page
         window.location.href = '/';
     };
 

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import CryptoJS from "crypto-js";
-import config from './config';
+import Form from 'react-bootstrap/Form';
 
 function hashPassword(password: string) {
   return CryptoJS.SHA256(password).toString();
@@ -10,9 +10,48 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
+  const [emailValid, setEmailValid] = useState(true);
+  const [passValid, setPassValid] = useState(true);
+
+  const validateEmail = (email: string) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  const validatePassword = (password: string) => {
+    return password.length >= 8;
+  }
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const emailInput = e.target.value;
+    setEmail(emailInput);
+    setEmailValid(emailInput !== "" && validateEmail(emailInput));
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const passwordInput = e.target.value;
+    setPass(passwordInput);
+    setPassValid(passwordInput !== "" && validatePassword(passwordInput));
+  };
+
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+
+    setEmailValid(email !== "");
+    setPassValid(pass !== "");
+
+    if (email === "" || pass === "") {
+      return;
+    }
+
+    setEmailValid(validateEmail(email));
+    setPassValid(validatePassword(pass));
+
+    if (!emailValid || !passValid) {
+      return;
+    }
+
     const response = await fetch(`/api/login/${email}/${hashPassword(pass)}`, {
       method: 'POST',
       headers: {
@@ -25,48 +64,61 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
     if (data) {
       window.localStorage.setItem('email', email);
       window.location.href = "/rules";
+      setEmailValid(true);
+      setPassValid(true);
     } else {
       setError("Incorrect email or password. Please try again.");
     }
   };
 
   return (
-      <div className="auth-form-container">
-        {error && <div className="error-notification">{error}</div>}
-        <form className="loginForm" onSubmit={handleSubmit}>
-          <label className="authLabel" htmlFor="email">
-            Email
-          </label>
-          <input
-              className="authInput"
+      <div className="auth-form-container login-background">
+        <Form className="loginForm" onSubmit={handleSubmit}>
+          <h2>Autentifică-te</h2>
+          <br/>
+
+          <Form.Label className="authLabel" htmlFor="email">
+            Adresa de email
+          </Form.Label>
+          <Form.Control
+              className={`authInput ${emailValid ? '' : 'is-invalid'}`}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               type="email"
               placeholder="email@gmail.com"
               id="email"
               name="email"
           />
-          <label className="authLabel" htmlFor="password">
-            Password
-          </label>
-          <input
-              className="authInput"
+          <div className="invalid-feedback">
+            {emailValid ? 'Vă rugăm să introduceți o adresă de email validă.' : 'Email-ul nu poate fi gol.'}
+          </div>
+          <Form.Label className="authLabel" htmlFor="email">
+            Parola
+          </Form.Label>
+          <Form.Control
+              className={`authInput ${passValid ? '' : 'is-invalid'}`}
               value={pass}
-              onChange={(e) => setPass(e.target.value)}
+              onChange={handlePasswordChange}
               type="password"
               placeholder="************"
               id="password"
               name="password"
           />
-          <button className="authButton" type="submit">
-            Log In
-          </button>
-        </form>
+          <div className="invalid-feedback">
+            {pass === "" ? 'Password cannot be empty.' : 'Password must be at least 8 characters long.'}
+          </div>
+          <div className="auth-form-container">
+            <button className="authButton btn btn-primary confirm-button" type="submit">
+              Confirmă
+            </button>
+          </div>
+        </Form>
         <button
-            className="authRedirectLink"
+            className="authRedirectLink btn btn-link"
             onClick={() => props.onFormSwitch("register")}
+            style={{color: 'white', marginTop: '1rem'}}
         >
-          Don't have an account? Register here.
+          Nu ai un cont? Înregistrează-te aici.
         </button>
       </div>
   );
