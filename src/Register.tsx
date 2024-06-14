@@ -15,6 +15,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
   const [passValid, setPassValid] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const validateEmail = (email: string) => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -28,17 +29,27 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const emailInput = e.target.value;
     setEmail(emailInput);
-    setEmailValid(emailInput !== "" && validateEmail(emailInput));
+    setEmailValid(true); // reset validation state
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordInput = e.target.value;
     setPass(passwordInput);
-    setPassValid(passwordInput !== "" && validatePassword(passwordInput));
+    setPassValid(true); // reset validation state
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+
+    // Mutăm logica de validare aici
+    setEmailValid(email !== "" && validateEmail(email));
+    setPassValid(pass !== "" && validatePassword(pass));
+    setFormSubmitted(true);
+
+    // Dacă datele nu sunt valide, nu continuăm cu cererea
+    if (!emailValid || !passValid) {
+      return;
+    }
 
     const response = await fetch(`/api/register/${email}/${hashPassword(pass)}`, {
       method: 'POST',
@@ -54,13 +65,19 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
         setShowToast(true);
         return;
       } else {
-        setToastMessage(responseText);
-        setShowToast(true);
+        // Do not show toast if password is empty or invalid
+        if (pass !== "" && validatePassword(pass)) {
+          setToastMessage(responseText);
+          setShowToast(true);
+        }
       }
     } else {
       const responseText = await response.text();
-      setToastMessage(responseText);
-      setShowToast(true);
+      // Do not show toast if password is empty or invalid
+      if (pass !== "" && validatePassword(pass)) {
+        setToastMessage(responseText);
+        setShowToast(true);
+      }
     }
   };
 
@@ -104,7 +121,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
             Parola
           </Form.Label>
           <Form.Control
-              className={`authInput ${passValid ? '' : 'is-invalid'}`}
+              className={`authInput ${passValid || !formSubmitted ? '' : 'is-invalid'}`}
               value={pass}
               onChange={handlePasswordChange}
               type="password"

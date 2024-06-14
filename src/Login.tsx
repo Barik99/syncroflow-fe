@@ -19,8 +19,8 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
   }
 
   const validatePassword = (password: string) => {
-    return password.length >= 8;
-  }
+    return true;
+  };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const emailInput = e.target.value;
@@ -105,7 +105,7 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
               name="password"
           />
           <div className="invalid-feedback">
-            {pass === "" ? 'Password cannot be empty.' : 'Password must be at least 8 characters long.'}
+            {pass === "" ? 'Password cannot be empty.' : ''}
           </div>
           <div className="auth-form-container">
             <button className="authButton btn btn-primary confirm-button" type="submit">

@@ -33,7 +33,8 @@ const actionTypeMapping: ActionTypeMapping = {
     "Start External Program": "Pornire program extern",
     "Delete File": "Ștergere fișier",
     "Combined Actions": "Acțiuni combinate",
-    "Move File": "Mutare fișier"
+    "Move File": "Mutare fișier",
+    "Send Email": "Trimite email"
 };
 
 function Actions() {
@@ -72,6 +73,7 @@ function Actions() {
     const [searchTerm, setSearchTerm] = useState("");
     const [allActions, setAllActions] = useState<Action[]>([]);
     const [searchActionType, setSearchActionType] = useState("");
+    const [emailValid, setEmailValid] = useState(true);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
@@ -84,6 +86,11 @@ function Actions() {
         );
         setActions(filteredActions);
     };
+
+    const validateEmail = (email: string) => {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
 
     const handleReset = async () => {
         setSearchTerm("");
@@ -133,6 +140,10 @@ function Actions() {
         }
         if (field === 'commandLineArguments' && selectedType === 'Start External Program') {
             console.log('commandLineArguments:', e.target.value);
+        }
+        if (e.target.value.trim() !== '') {
+            setFieldValidation(prev => ({...prev, [field]: false}));
+            setFieldErrorMessage(prev => ({...prev, [field]: ''}));
         }
     };
 
@@ -263,6 +274,11 @@ function Actions() {
             setTypeValidation(false);
         }
 
+        if (!emailValid) {
+            console.log("Email is not valid");
+            return;
+        }
+
         let trigger: { [key: string]: any } = {
             name: triggerName,
             type: selectedType,
@@ -280,7 +296,31 @@ function Actions() {
 
         console.log("Trigger object after initial setup:", trigger);
 
-        if (selectedType === 'Delete File' || selectedType === 'Append String To File' ||
+        if (selectedType === 'Send Email') {
+            if (!validateEmail(triggerFields['receiver'])) {
+                setFieldValidation(prev => ({...prev, 'receiver': true}));
+                setFieldErrorMessage(prev => ({...prev, 'receiver': 'Adresa de email nu este validă'}));
+                return;
+            }
+
+            if (!triggerFields['receiver'] || triggerFields['receiver'].trim() === '') {
+                setFieldValidation(prev => ({...prev, 'receiver': true}));
+                setFieldErrorMessage(prev => ({...prev, 'receiver': 'Destinatarul este obligatoriu'}));
+                return;
+            }
+
+            if (!triggerFields['subject'] || triggerFields['subject'].trim() === '') {
+                setFieldValidation(prev => ({...prev, 'subject': true}));
+                setFieldErrorMessage(prev => ({...prev, 'subject': 'Subiectul este obligatoriu'}));
+                return;
+            }
+
+            if (!triggerFields['body'] || triggerFields['body'].trim() === '') {
+                setFieldValidation(prev => ({...prev, 'body': true}));
+                setFieldErrorMessage(prev => ({...prev, 'body': 'Conținutul email-ului este obligatoriu'}));
+                return;
+            }
+        } else if (selectedType === 'Delete File' || selectedType === 'Append String To File' ||
             selectedType === 'Start External Program') {
             console.log("Selected file path:", selectedFilePath);
             if (!selectedFilePath) {
@@ -403,6 +443,18 @@ function Actions() {
                 setSelectedFilePath(""); // Reset the selected file path
                 setSelectedDirectoryPath(""); // Reset the selected directory path
                 setShowDirectoryUploadButton(true);
+            } else if(selectedOption === "Send Email") {
+                // Initialize triggerFields with the fields of the selected type
+                const fields = triggerTypes[selectedOption];
+                let initialTriggerFields: {[key: string]: string} = {};
+                for (const field in fields) {
+                    initialTriggerFields[field] = '';
+                }
+                // If the selected type is 'Send Email', add a 'body' field
+                if (selectedOption === 'Send Email') {
+                    initialTriggerFields['body'] = '';
+                }
+                setTriggerFields(initialTriggerFields);
             } else {
                 setShowDirectoryUploadButton(false);
             }
@@ -772,7 +824,10 @@ function Actions() {
                                                                     selectedType === 'Combined Actions' && field === 'secondAction' ? 'Prima acțiune' :
                                                                         selectedType === 'Combined Actions' && field === 'firstAction' ? 'A doua acțiune' :
                                                                             selectedType === 'Move File' && field === 'destinationPath' ? 'Folderul de destinație' :
-                                                                                selectedType === 'Move File' && field === 'fileToMove' ? 'Fișierul de mutat' : field}
+                                                                                selectedType === 'Move File' && field === 'fileToMove' ? 'Fișierul de mutat' :
+                                                                                    selectedType === 'Send Email' && field === 'receiver' ? 'Destinatar' :
+                                                                                        selectedType === 'Send Email' && field === 'body' ? 'Corpul email-ului' :
+                                                                                            selectedType === 'Send Email' && field === 'subject' ? 'Subiectul email-ului' : field}
                                     </Form.Label>
                                     <br/>
                                     {selectedType === 'Paste File' && field === 'destinationPath' ? (
@@ -856,6 +911,29 @@ function Actions() {
                                             />
                                             {fieldValidation[field] &&
                                                 <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                        </div>
+                                    ) : selectedType === 'Send Email' && field === 'body' ? (
+                                        <div>
+                                            <Form.Control
+                                                as="textarea"
+                                                rows={3}
+                                                placeholder={`Introduceți corpul email-ului`}
+                                                onChange={handleFieldChange(field)}
+                                                className={fieldValidation[field] ? 'is-invalid' : ''}
+                                                value={triggerFields['stringToAppend']}
+                                            />
+                                            {fieldValidation[field] &&
+                                                <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
+                                        </div>
+                                    ) : selectedType === 'Send Email' && field === 'receiver' ? (
+                                        <div>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder={`Introduceți ${field}`}
+                                                onChange={handleFieldChange(field)}
+                                                className={fieldValidation[field] ? 'is-invalid' : ''}
+                                            />
+                                            {fieldValidation[field] && <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
                                         </div>
                                     ) : selectedType === 'Delete File' && field === 'fileToDelete' ||
                                     selectedType === 'Append String To File' && field === 'file' ||
