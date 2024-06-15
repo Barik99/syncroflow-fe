@@ -69,6 +69,9 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
         if (pass !== "" && validatePassword(pass)) {
           setToastMessage(responseText);
           setShowToast(true);
+          if (responseText === "Contul a fost creat cu succes!") {
+            props.onFormSwitch("login");
+          }
         }
       }
     } else {

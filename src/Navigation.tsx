@@ -6,18 +6,18 @@ import { Dropdown } from 'react-bootstrap';
 function Navigation() {
     const email = window.localStorage.getItem('email');
     // @ts-ignore
-    const [isToggled, setIsToggled] = useState(JSON.parse(localStorage.getItem('isToggled')) || false);
-    const [selectedTime, setSelectedTime] = useState(localStorage.getItem('selectedTime') || "");
-    const [selectedDuration, setSelectedDuration] = useState(localStorage.getItem('selectedDuration') || "Set Duration");
+    const [isToggled, setIsToggled] = useState(JSON.parse(localStorage.getItem(email + 'isToggled')) || false);
+    const [selectedTime, setSelectedTime] = useState(localStorage.getItem(email + 'selectedTime') || "");
+    const [selectedDuration, setSelectedDuration] = useState(localStorage.getItem(email + 'selectedDuration') || "Set Duration");
     const [toastMessage, setToastMessage] = useState("");
     const [showToast, setShowToast] = useState(false);
     const [show, setShow] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
 
     useEffect(() => {
-        localStorage.setItem('selectedTime', selectedTime);
-        localStorage.setItem('selectedDuration', selectedDuration);
-        localStorage.setItem('isToggled', JSON.stringify(isToggled));
+        localStorage.setItem(email + 'selectedTime', selectedTime);
+        localStorage.setItem(email + 'selectedDuration', selectedDuration);
+        localStorage.setItem(email + 'isToggled', JSON.stringify(isToggled));
     }, [selectedTime, selectedDuration, isToggled]);
 
     useEffect(() => {

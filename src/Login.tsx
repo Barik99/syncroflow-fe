@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import CryptoJS from "crypto-js";
 import Form from 'react-bootstrap/Form';
+import Toast from 'react-bootstrap/Toast';
 
 function hashPassword(password: string) {
   return CryptoJS.SHA256(password).toString();
@@ -12,6 +13,8 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
   const [error, setError] = useState("");
   const [emailValid, setEmailValid] = useState(true);
   const [passValid, setPassValid] = useState(true);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const validateEmail = (email: string) => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -59,20 +62,48 @@ function Login(props: { onFormSwitch: (arg0: string) => void }) {
       },
     });
 
-    const data = await response.json();
-
-    if (data) {
-      window.localStorage.setItem('email', email);
-      window.location.href = "/rules";
-      setEmailValid(true);
-      setPassValid(true);
+    if (response.ok) {
+      const responseText = await response.text();
+      if (responseText === "Email sau parolă incorectă!") {
+        setToastMessage(responseText);
+        setShowToast(true);
+        return;
+      } else {
+        // Do not show toast if password is empty or invalid
+        if (pass !== "" && validatePassword(pass)) {
+          if (responseText === "Autentificare reușită!") {
+            window.localStorage.setItem('email', email);
+            window.location.href = "/rules";
+          }
+        }
+      }
     } else {
-      setError("Incorrect email or password. Please try again.");
+      const responseText = await response.text();
+      // Do not show toast if password is empty or invalid
+      if (pass !== "" && validatePassword(pass)) {
+        setToastMessage(responseText);
+        setShowToast(true);
+      }
     }
   };
 
   return (
       <div className="auth-form-container login-background">
+        <Toast
+            className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Autentificare reușită!') ? 'text-bg-success' : 'text-bg-danger'}`}
+            onClose={() => setShowToast(false)}
+            show={showToast}
+            delay={5000}
+            autohide
+        >
+          <div className="d-flex">
+            <div className="toast-body">
+              {toastMessage}
+            </div>
+            <button type="button" className="btn-close btn-close-white me-2 m-auto"
+                    onClick={() => setShowToast(false)} aria-label="Close"></button>
+          </div>
+        </Toast>
         <Form className="loginForm" onSubmit={handleSubmit}>
           <h2>Autentifică-te</h2>
           <br/>
