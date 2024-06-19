@@ -33,9 +33,9 @@ const triggerTypeMapping: TriggerTypeMapping = {
     "Day Of Month": "Ziua lunii",
     "Time Of Day": "Ora zilei",
     "Day Of Week": "Ziua săptămânii",
-    "AND": "ȘI",
-    "OR": "SAU",
-    "NOT": "NU"
+    "AND": "AND",
+    "OR": "OR",
+    "NOT": "NOT"
 };
 
 interface DayOfWeekMapping {
@@ -1013,7 +1013,7 @@ function Triggers() {
                     </Modal.Body>
                 </Modal>
                 {triggers.length === 0 ? (
-                    <p>No triggers available at the moment.</p>
+                    <p>Nu sunt declanșatoare disponibile pentru moment.</p>
                 ) : (
                     <div className="row">
                         {triggers.map((trigger) => (

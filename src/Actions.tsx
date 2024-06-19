@@ -882,7 +882,7 @@ function Actions() {
                                         <Form.Select onChange={handleFieldChangeNotOrAnd(field)}
                                                      className={fieldValidation[field] ? 'is-invalid' : ''}
                                                      value={field === 'firstAction' ? firstTrigger : secondTrigger}>
-                                            <option>Selectează o acțiune</option>
+                                            <option>Alege o acțiune</option>
                                             {triggers.filter(trigger => trigger.name !== (field === 'firstAction' ? secondTrigger : firstTrigger)).map((trigger, index) => (
                                                 <option key={index}
                                                         value={trigger.name}>{trigger.name} ({trigger.type})</option>

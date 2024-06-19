@@ -35,7 +35,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const passwordInput = e.target.value;
     setPass(passwordInput);
-    setPassValid(true); // reset validation state
+    setPassValid(passwordInput !== "" && validatePassword(passwordInput));
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -65,12 +65,13 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
         setShowToast(true);
         return;
       } else {
-        // Do not show toast if password is empty or invalid
         if (pass !== "" && validatePassword(pass)) {
           setToastMessage(responseText);
           setShowToast(true);
           if (responseText === "Contul a fost creat cu succes!") {
-            props.onFormSwitch("login");
+            setTimeout(() => {
+              props.onFormSwitch("login");
+            }, 3000);
           }
         }
       }
@@ -85,7 +86,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
   };
 
   return (
-      <div className="auth-form-container login-background">
+      <div className="auth-form-container login-background" style={{background: 'linear-gradient(to top right, #5C1298, #CC8C01)'}}>
         <Toast
             className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage.includes('Contul a fost creat cu succes!') ? 'text-bg-success' : 'text-bg-danger'}`}
             onClose={() => setShowToast(false)}
@@ -133,7 +134,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
               name="password"
           />
           <div className="invalid-feedback">
-            {pass === "" ? 'Password cannot be empty.' : 'Password must be at least 8 characters long.'}
+            {pass === "" ? 'Parola nu poate fi goală.' : 'Parola trebuie să aibă cel puțin 8 caractere.'}
           </div>
           <div className="auth-form-container">
             <button className="authButton btn btn-primary confirm-button" type="submit">
