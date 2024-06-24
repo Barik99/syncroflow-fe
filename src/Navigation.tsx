@@ -1,35 +1,289 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Form, OverlayTrigger, Tooltip, Navbar, Nav, Toast, Offcanvas } from "react-bootstrap";
+import Button from 'react-bootstrap/Button';
+import { Dropdown } from 'react-bootstrap';
 
 function Navigation() {
-  const email = window.localStorage.getItem('email') || 'Login';
+    const email = window.localStorage.getItem('email');
+    // @ts-ignore
+    const [isToggled, setIsToggled] = useState(JSON.parse(localStorage.getItem(email + 'isToggled')) || false);
+    const [selectedTime, setSelectedTime] = useState(localStorage.getItem(email + 'selectedTime') || "");
+    const [selectedDuration, setSelectedDuration] = useState(localStorage.getItem(email + 'selectedDuration') || "Set Duration");
+    const [toastMessage, setToastMessage] = useState("");
+    const [showToast, setShowToast] = useState(false);
+    const [show, setShow] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
 
-  return (
-    <nav className="nav">
-      <div>
-        <a href="/" className="site-logo text-white">
-          <img src="..\images\logo.png" />
-        </a>
-        <a href="/rules" className="dashboard text-white">
-          Rules
-        </a>
-        <a href="/triggers" className="dashboard text-white">
-          Triggers
-        </a>
-        <a href="/actions" className="dashboard text-white">
-          Actions
-        </a>
-        <a href="/file-explorer" className="dashboard text-white">
-          File Explorer
-        </a>
-      </div>
-      <div className="login-create">
-        <button className="create-button">+ Create</button>
-        <a href="/login" className="login-button text-white">
-          {email}
-        </a>
-      </div>
-    </nav>
-  );
+    useEffect(() => {
+        localStorage.setItem(email + 'selectedTime', selectedTime);
+        localStorage.setItem(email + 'selectedDuration', selectedDuration);
+        localStorage.setItem(email + 'isToggled', JSON.stringify(isToggled));
+    }, [selectedTime, selectedDuration, isToggled]);
+
+    useEffect(() => {
+        const handleResize = () => window.location.reload();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const handleToggle = () => {
+        setIsToggled(!isToggled);
+        let timeValue: number = Number(selectedTime);
+        if (selectedDuration === "1") timeValue *= 1;
+        if (selectedDuration === "2") timeValue *= 60;
+        if (selectedDuration === "3") timeValue *= 3600;
+        const url = `/api/scheduler${isToggled ? 'Stop' : 'Start'}/${email}${!isToggled ? `/${timeValue}` : ''}`;
+        fetch(url, { method: 'POST' })
+            .then(response => response.text())
+            .then(data => {
+                setToastMessage(data);
+                setShowToast(true);
+            })
+            .catch((error) => {
+                setToastMessage(`Error: ${error}`);
+                setShowToast(true);
+            });
+    }
+// @ts-ignore
+    const handleTimeChange = (event) => {
+        setSelectedTime(event.target.value);
+    }
+// @ts-ignore
+    const handleDurationChange = (event) => {
+        setSelectedDuration(event.target.value);
+    }
+// @ts-ignore
+    const renderTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            Trebuie să selectezi durata de timp
+        </Tooltip>
+    );
+// @ts-ignore
+    const renderTimeTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            Trebuie să introduci o perioadă de timp
+        </Tooltip>
+    );
+
+    const handleKeyPressSchedulerTimeField = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const value = Number(e.currentTarget.value + e.key);
+        if (!Number.isInteger(value) || value < 1 || e.key === '0') e.preventDefault();
+    };
+
+    const handleLogout = () => {
+        window.localStorage.removeItem('email');
+        window.location.href = '/';
+    };
+
+    return (
+        <div>
+            {isMobile ? (
+                <>
+                    <Button variant="primary" onClick={() => setShow(true)} className="me-2" style={{marginTop: '1rem', marginLeft: '2rem'}}>
+                        &#9776;
+                    </Button>
+
+                    <Offcanvas show={show} onHide={() => setShow(false)} className="offcanvas-dark">
+                        <Offcanvas.Header closeButton>
+                            <Offcanvas.Title>
+                                <img src="..\images\logo.png" alt="logo" className={"site-logo"} style={{paddingLeft: '0.5rem'}}/>
+                            </Offcanvas.Title>
+                        </Offcanvas.Header>
+                        <Offcanvas.Body className="d-flex flex-column justify-content-between">
+                            <Nav className="flex-column offcanvas-dark">
+                                {email && (
+                                    <>
+                                        <Nav.Link href="/rules" className="transparent-button">Reguli</Nav.Link>
+                                        <Nav.Link href="/triggers" className="transparent-button">Declanșatori</Nav.Link>
+                                        <Nav.Link href="/actions" className="transparent-button">Acțiuni</Nav.Link>
+                                    </>
+                                )}
+                                <Nav.Link href="/file-explorer" className="transparent-button">Foldere și fișiere</Nav.Link>
+                                <Form className="scheduler-container-vertical">
+                                    <Form.Control type="number" onKeyPress={handleKeyPressSchedulerTimeField}
+                                                  placeholder="Timp programator" disabled={isToggled} value={selectedTime}
+                                                  onChange={handleTimeChange} min="1"/>
+                                    <Form.Select aria-label="Default select example" disabled={isToggled}
+                                                 value={selectedDuration} onChange={handleDurationChange}>
+                                        <option>Setează durata</option>
+                                        <option value="1">Secunde</option>
+                                        <option value="2">Minute</option>
+                                        <option value="3">Ore</option>
+                                    </Form.Select>
+                                    <Button
+                                        variant={isToggled ? "danger" : "success"}
+                                        onClick={handleToggle}
+                                        disabled={selectedDuration === "Setează durata" || selectedTime === ""}
+                                    >
+                                        {isToggled ? "Oprește" : "Pornește"}
+                                    </Button>
+                                </Form>
+                            </Nav>
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '1rem',
+                                left: 0,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                padding: '0 1rem'
+                            }}>
+                                {email ? (
+                                    <>
+                                        <Navbar.Text className="login-button text-white"
+                                                     style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none', paddingLeft: '0.3rem'}}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person" viewBox="0 0 16 16" style={{marginRight: '0.5rem'}}>
+                                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                                            </svg>
+                                            {email}
+                                        </Navbar.Text>
+                                        <Nav.Link onClick={handleLogout}
+                                                  style={{padding: '0.25rem 0.5rem', marginRight: '0.5rem'}}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" className="bi bi-box-arrow-right"
+                                                 viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                      d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                                <path fill-rule="evenodd"
+                                                      d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                                            </svg>
+                                        </Nav.Link>
+                                    </>
+                                ) : (
+                                    <Nav.Link href="/">
+                                        <Button className="login-button text-white"
+                                                style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
+                                            Autentificare
+                                        </Button>
+                                    </Nav.Link>
+                                )}
+                            </div>
+                        </Offcanvas.Body>
+                    </Offcanvas>
+                </>
+            ) : (
+                <Navbar bg="dark" variant="dark">
+                    <Navbar.Brand>
+                        <img src="..\images\logo.png" alt="logo" className={"site-logo"}/>
+                    </Navbar.Brand>
+                    <Nav className="mr-auto">
+                        {email && (
+                            <Nav.Link href="/rules">Reguli</Nav.Link>
+                        )}
+                        {email && (
+                            <Nav.Link href="/triggers">Declanșatori</Nav.Link>
+                        )}
+                        {email && (
+                            <Nav.Link href="/actions">Acțiuni</Nav.Link>
+                        )}
+                        <Nav.Link href="/file-explorer">Foldere și fișiere</Nav.Link>
+                    </Nav>
+                    <Navbar.Collapse className="justify-content-end">
+                        <Form className="scheduler-container">
+                            <Form.Control type="number" onKeyPress={handleKeyPressSchedulerTimeField}
+                                          placeholder="Timp programator" disabled={isToggled} value={selectedTime}
+                                          onChange={handleTimeChange} min="1"/>
+                            <Form.Select aria-label="Default select example" disabled={isToggled}
+                                         value={selectedDuration} onChange={handleDurationChange}>
+                                <option>Setează durata</option>
+                            <option value="1">Secunde</option>
+                            <option value="2">Minute</option>
+                            <option value="3">Ore</option>
+                        </Form.Select>
+                        {email === null ? (
+                            <OverlayTrigger
+                                placement="bottom"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={<Tooltip id="button-tooltip">Trebuie să te autentifici pentru a porni programarea</Tooltip>}
+                            >
+                            <span className="d-inline-block">
+                                <Button
+                                    variant={isToggled ? "danger" : "success"}
+                                    onClick={handleToggle}
+                                    disabled={true}
+                                >
+                                    {isToggled ? "Oprește" : "Pornește"}
+                                </Button>
+                            </span>
+                            </OverlayTrigger>
+                        ) : selectedDuration === "Setează durata" ? (
+                            <OverlayTrigger
+                                placement="bottom"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={renderTooltip}
+                            >
+                            <span className="d-inline-block">
+                                <Button
+                                    variant={isToggled ? "danger" : "success"}
+                                    onClick={handleToggle}
+                                    disabled={selectedDuration === "Setează durata" || selectedTime === ""}
+                                >
+                                    {isToggled ? "Oprește" : "Pornește"}
+                                </Button>
+                            </span>
+                            </OverlayTrigger>
+                        ) : selectedTime === "" ? (
+                            <OverlayTrigger
+                                placement="bottom"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={renderTimeTooltip}
+                            >
+                            <span className="d-inline-block">
+                                <Button
+                                    variant={isToggled ? "danger" : "success"}
+                                    onClick={handleToggle}
+                                    disabled={selectedDuration === "Setează durata" || selectedTime === ""}
+                                >
+                                    {isToggled ? "Oprește" : "Pornește"}
+                                </Button>
+                            </span>
+                            </OverlayTrigger>
+                        ) : (
+                            <Button
+                                variant={isToggled ? "danger" : "success"}
+                                onClick={handleToggle}
+                                disabled={selectedDuration === "Setează durata" || selectedTime === ""}
+                            >
+                                {isToggled ? "Oprește" : "Pornește"}
+                            </Button>
+                        )}
+                        {email === null ? (
+                            <Nav.Link href="/">
+                                <Button className="login-button text-white" style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
+                                    Autentificare
+                                </Button>
+                            </Nav.Link>
+                        ) : (
+                            <Dropdown>
+                                <Dropdown.Toggle id="dropdown-basic" className="login-button text-white" style={{backgroundColor: 'rgba(0, 0, 0, 0)', border: 'none'}}>
+                                    {email}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={handleLogout}>Deconectează-te</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        )}
+                    </Form>
+                </Navbar.Collapse>
+            </Navbar>
+            )}
+            <Toast
+                className={`toast-bottom-left align-items-center text-bg-primary border-0 ${toastMessage === 'Planificator a pornit cu succes!' ||
+                toastMessage === 'Planificator a fost oprit cu succes!' ? 'text-bg-success' : 'text-bg-danger'}`}
+                onClose={() => setShowToast(false)}
+                show={showToast}
+                delay={5000}
+                autohide
+            >
+                <div className="d-flex">
+                    <div className="toast-body">
+                        {toastMessage}
+                    </div>
+                    <button type="button" className="btn-close btn-close-white me-2 m-auto" onClick={() => setShowToast(false)} aria-label="Close"></button>
+                </div>
+            </Toast>
+        </div>
+    );
 }
 
 export default Navigation;

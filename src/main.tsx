@@ -4,38 +4,39 @@ import App from "./App";
 import "bootstrap/dist/css/bootstrap.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Home from "./Home";
 import NotFoundPage from "./NotFoundPage";
 import Rules from "./Rules";
 import Triggers from "./Triggers";
-import FileExplorer from "./FileExplorer"; // Import the Rules component
+import FileExplorer from "./FileExplorer";
+import Actions from "./Actions"; // Import the Rules component
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <App />,
     errorElement: <NotFoundPage />,
   },
   {
-    path: "/login",
-    element: <App />,
+    path: "/rules",
+    element: <ProtectedRoute><Rules /></ProtectedRoute>,
   },
   {
-    path: "/rules", // Add a new route for the Rules page
-    element: <Rules />,
+    path: "/triggers",
+    element: <ProtectedRoute><Triggers /></ProtectedRoute>,
   },
   {
-    path: "/triggers", // Add a new route for the Rules page
-    element: <Triggers />,
+    path: "/actions",
+    element: <ProtectedRoute><Actions /></ProtectedRoute>,
   },
   {
     path: "/file-explorer",
-    element: <FileExplorer />,
+    element: <ProtectedRoute><FileExplorer /></ProtectedRoute>,
   }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
 );
