@@ -8,19 +8,18 @@ function hashPassword(password: string) {
 
 function Register(props: { onFormSwitch: (arg0: string) => void }) {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [notification, setNotification] = useState(""); // Add this line
   const [pass, setPass] = useState("");
   const [emailValid, setEmailValid] = useState(true);
   const [passValid, setPassValid] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [confirmPass, setConfirmPass] = useState("");
 
-  const validateEmail = (email: string) => {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  }
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const confirmPassInput = e.target.value;
+    setConfirmPass(confirmPassInput);
+  };
 
   const validatePassword = (password: string) => {
     return password.length >= 8;
@@ -29,7 +28,7 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const emailInput = e.target.value;
     setEmail(emailInput);
-    setEmailValid(true); // reset validation state
+    setEmailValid(true);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,13 +40,21 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    // Mutăm logica de validare aici
-    setEmailValid(email !== "" && validateEmail(email));
-    setPassValid(pass !== "" && validatePassword(pass));
-    setFormSubmitted(true);
+    if (email === "" || pass === "") {
+      setToastMessage("Toate câmpurile sunt obligatorii!");
+      setShowToast(true);
+      return;
+    }
 
-    // Dacă datele nu sunt valide, nu continuăm cu cererea
-    if (!emailValid || !passValid) {
+    if (!validatePassword(pass)) {
+      setToastMessage("Parola trebuie să aibă cel puțin 8 caractere.");
+      setShowToast(true);
+      return;
+    }
+
+    if (pass !== confirmPass) {
+      setToastMessage("Parolele introduse nu sunt identice.");
+      setShowToast(true);
       return;
     }
 
@@ -77,7 +84,6 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
       }
     } else {
       const responseText = await response.text();
-      // Do not show toast if password is empty or invalid
       if (pass !== "" && validatePassword(pass)) {
         setToastMessage(responseText);
         setShowToast(true);
@@ -135,6 +141,21 @@ function Register(props: { onFormSwitch: (arg0: string) => void }) {
           />
           <div className="invalid-feedback">
             {pass === "" ? 'Parola nu poate fi goală.' : 'Parola trebuie să aibă cel puțin 8 caractere.'}
+          </div>
+          <Form.Label className="authLabel" htmlFor="confirmPassword">
+            Confirmă parola
+          </Form.Label>
+          <Form.Control
+              className={`authInput ${passValid || !formSubmitted ? '' : 'is-invalid'}`}
+              value={confirmPass}
+              onChange={handleConfirmPasswordChange}
+              type="password"
+              placeholder="************"
+              id="confirmPassword"
+              name="confirmPassword"
+          />
+          <div className="invalid-feedback">
+            {pass === "" ? 'Parola de confirmare nu poate fi goală.' : 'Parolele introduse nu sunt identice.'}
           </div>
           <div className="auth-form-container">
             <button className="authButton btn btn-primary confirm-button" type="submit">

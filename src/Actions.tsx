@@ -38,16 +38,16 @@ const actionTypeMapping: ActionTypeMapping = {
 };
 
 function Actions() {
-    const [triggers, setActions] = useState<Action[]>([]);
+    const [Actions, setActions] = useState<Action[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedType, setSelectedType] = useState("");
-    const [triggerTypes, setTriggerTypes] = useState<any>({});
-    const [triggerName, setTriggerName] = useState("");
-    const [triggerFields, setTriggerFields] = useState<{[key: string]: string}>({});
+    const [ActionTypes, setActionTypes] = useState<any>({});
+    const [ActionName, setActionName] = useState("");
+    const [ActionFields, setActionFields] = useState<{[key: string]: string}>({});
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [triggerToDelete, setTriggerToDelete] = useState('');
+    const [ActionToDelete, setActionToDelete] = useState('');
     const [nameValidation, setNameValidation] = useState(false);
     const [typeValidation, setTypeValidation] = useState(false);
     const [fieldValidation, setFieldValidation] = useState<{[key: string]: boolean}>({});
@@ -58,10 +58,10 @@ function Actions() {
     const [currentDirectory, setCurrentDirectory] = useState<DirectoryProps | null>(null);
     const [directoryContent, setDirectoryContent] = useState<FileItem[]>([]);
     const [selectedFilePath, setSelectedFilePath] = useState("");
-    const [tempTriggerName, setTempTriggerName] = useState("");
+    const [tempActionName, setTempActionName] = useState("");
     const [tempSelectedType, setTempSelectedType] = useState("");
-    const [firstTrigger, setFirstTrigger] = useState("");
-    const [secondTrigger, setSecondTrigger] = useState("");
+    const [firstAction, setFirstAction] = useState("");
+    const [secondAction, setSecondAction] = useState("");
     const [tempSizeThreshold, setTempSizeThreshold] = useState("");
     const [tempCommandLineArguments, setTempCommandLineArguments] = useState("");
     const [tempExitStatus, setTempExitStatus] = useState("");
@@ -102,9 +102,9 @@ function Actions() {
     const handleShow = () => {
         resetModal();
 
-        // Reset the firstTrigger and secondTrigger states
-        setFirstTrigger('Selectează un declanșator');
-        setSecondTrigger('Selectează un declanșator');
+        // Reset the firstAction and secondAction states
+        setFirstAction('Selectează un declanșator');
+        setSecondAction('Selectează un declanșator');
         setShowModal(true);
     };
 
@@ -130,11 +130,11 @@ function Actions() {
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value;
         value = value.replace(/[^a-z0-9]/gi, '');
-        setTriggerName(value);
+        setActionName(value);
     };
 
     const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTriggerFields(prevFields => ({...prevFields, [field]: e.target.value}));
+        setActionFields(prevFields => ({...prevFields, [field]: e.target.value}));
         if (field === 'stringToAppend' && selectedType === 'Append String To File') {
             console.log('stringToAppend:', e.target.value);
         }
@@ -149,11 +149,11 @@ function Actions() {
 
     const handleFieldChangeNotOrAnd = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.value;
-        setTriggerFields(prevFields => ({...prevFields, [field]: value}));
+        setActionFields(prevFields => ({...prevFields, [field]: value}));
         if (field === 'firstAction') {
-            setFirstTrigger(value);
+            setFirstAction(value);
         } else if (field === 'secondAction') {
-            setSecondTrigger(value);
+            setSecondAction(value);
         }
     };
 
@@ -173,40 +173,40 @@ function Actions() {
         setSelectedFilePath(filePath); // Set the selected file path
         if (tempSelectedType === 'Start External Program') {
             // Restore the commandLineArguments and exitStatus
-            setTriggerFields(prevFields => ({
+            setActionFields(prevFields => ({
                 ...prevFields,
                 'externalProgram': filePath
             }));
             console.log('Restored commandLineArguments:', tempCommandLineArguments); // Log the restored commandLineArguments
         } else if (tempSelectedType === 'Delete File') {
             // Set the fileToDelete field to the selected file path
-            setTriggerFields(prevFields => ({
+            setActionFields(prevFields => ({
                 ...prevFields,
                 'fileToDelete': filePath
             }));
         } else if (tempSelectedType === 'Append String To File') {
             // Set the fileToDelete field to the selected file path
-            setTriggerFields(prevFields => ({
+            setActionFields(prevFields => ({
                 ...prevFields,
                 'file': filePath
             }));
         } else if (tempSelectedType === 'Paste File') {
             // Set the fileToDelete field to the selected file path
-            setTriggerFields(prevFields => ({
+            setActionFields(prevFields => ({
                 ...prevFields,
                 'fileToPaste': filePath
             }));
         } else if (tempSelectedType === 'Move File') {
             // Set the fileToDelete field to the selected file path
-            setTriggerFields(prevFields => ({
+            setActionFields(prevFields => ({
                 ...prevFields,
                 'fileToMove': filePath
             }));
         }
-        setTriggerName(tempTriggerName); // Restore the trigger name
+        setActionName(tempActionName); // Restore the Action name
         setSelectedType(tempSelectedType); // Restore the selected type
         setShowFileExplorerModal(false); // Close the 'Select File' modal
-        setShowModal(true); // Re-open the 'Create Trigger' modal
+        setShowModal(true); // Re-open the 'Create Action' modal
     };
 
     const fetchActions = async () => {
@@ -249,17 +249,17 @@ function Actions() {
         const data = await response.json();
 
         if (typeof data === 'object') {
-            setTriggerTypes(data);
+            setActionTypes(data);
         } else {
             console.error('Error: Expected object from API, received:', data);
         }
     };
 
-    const createTrigger = async () => {
-        console.log("createTrigger function called");
+    const createAction = async () => {
+        console.log("createAction function called");
 
-        if (!triggerName) {
-            console.log("triggerName is not set");
+        if (!ActionName) {
+            console.log("ActionName is not set");
             setNameValidation(true);
             return;
         } else {
@@ -279,8 +279,8 @@ function Actions() {
             return;
         }
 
-        let trigger: { [key: string]: any } = {
-            name: triggerName,
+        let Action: { [key: string]: any } = {
+            name: ActionName,
             type: selectedType,
         };
 
@@ -288,34 +288,34 @@ function Actions() {
             return;
         }
 
-        if (selectedType === 'File Size' && (!triggerFields['sizeThreshold'] || triggerFields['sizeThreshold'].trim() === '')) {
+        if (selectedType === 'File Size' && (!ActionFields['sizeThreshold'] || ActionFields['sizeThreshold'].trim() === '')) {
             setFieldValidation(prev => ({...prev, 'sizeThreshold': true}));
             setFieldErrorMessage(prev => ({...prev, 'sizeThreshold': 'Dimensiunea fișierului este obligatorie'}));
             return;
         }
 
-        console.log("Trigger object after initial setup:", trigger);
+        console.log("Action object after initial setup:", Action);
 
         if (selectedType === 'Send Email') {
-            if (!validateEmail(triggerFields['receiver'])) {
+            if (!validateEmail(ActionFields['receiver'])) {
                 setFieldValidation(prev => ({...prev, 'receiver': true}));
                 setFieldErrorMessage(prev => ({...prev, 'receiver': 'Adresa de email nu este validă'}));
                 return;
             }
 
-            if (!triggerFields['receiver'] || triggerFields['receiver'].trim() === '') {
+            if (!ActionFields['receiver'] || ActionFields['receiver'].trim() === '') {
                 setFieldValidation(prev => ({...prev, 'receiver': true}));
                 setFieldErrorMessage(prev => ({...prev, 'receiver': 'Destinatarul este obligatoriu'}));
                 return;
             }
 
-            if (!triggerFields['subject'] || triggerFields['subject'].trim() === '') {
+            if (!ActionFields['subject'] || ActionFields['subject'].trim() === '') {
                 setFieldValidation(prev => ({...prev, 'subject': true}));
                 setFieldErrorMessage(prev => ({...prev, 'subject': 'Subiectul este obligatoriu'}));
                 return;
             }
 
-            if (!triggerFields['body'] || triggerFields['body'].trim() === '') {
+            if (!ActionFields['body'] || ActionFields['body'].trim() === '') {
                 setFieldValidation(prev => ({...prev, 'body': true}));
                 setFieldErrorMessage(prev => ({...prev, 'body': 'Conținutul email-ului este obligatoriu'}));
                 return;
@@ -328,10 +328,10 @@ function Actions() {
                 // Display an error message to the user
                 setToastMessage('Niciun fișier nu a fost selectat pentru acțiunea ' + selectedType);
                 setShowToast(true);
-                // Prevent the creation of the trigger
+                // Prevent the creation of the Action
                 return;
             }
-            trigger.file = selectedFilePath.replace("Acasă", "FileDirectory");
+            Action.file = selectedFilePath.replace("Acasă", "FileDirectory");
         } else if (selectedType === 'Paste File' || selectedType === 'Move File') {
             console.log("Selected directory path:", selectedDirectoryPath);
             if (!selectedDirectoryPath) {
@@ -339,29 +339,29 @@ function Actions() {
                 // Display an error message to the user
                 setToastMessage('Niciun fișier nu a fost selectat pentru acțiunea ' + selectedType);
                 setShowToast(true);
-                // Prevent the creation of the trigger
+                // Prevent the creation of the Action
                 return;
             }
-            trigger.destinationPath = selectedDirectoryPath.replace("Acasă", "FileDirectory");
-            console.log("Trigger object after setting destinationPath:", trigger);
+            Action.destinationPath = selectedDirectoryPath.replace("Acasă", "FileDirectory");
+            console.log("Action object after setting destinationPath:", Action);
             if (!selectedFilePath) {
                 console.error('Error: No file selected');
                 // Display an error message to the user
                 setToastMessage('Niciun fișier nu a fost selectat pentru acțiunea ' + selectedType);
                 setShowToast(true);
-                // Prevent the creation of the trigger
+                // Prevent the creation of the Action
                 return;
             }
-            trigger.file = selectedFilePath.replace("Acasă", "FileDirectory");
+            Action.file = selectedFilePath.replace("Acasă", "FileDirectory");
         }
 
-        console.log("Action object after file existence check:", trigger);
+        console.log("Action object after file existence check:", Action);
 
-        const fields = triggerTypes[selectedType];
+        const fields = ActionTypes[selectedType];
         console.log("Fields:", fields);
         for (const field in fields) {
-            console.log(`Field: ${field}, Value: ${triggerFields[field]}`);
-            if (!triggerFields[field]) {
+            console.log(`Field: ${field}, Value: ${ActionFields[field]}`);
+            if (!ActionFields[field]) {
                 console.log("Field is not set");
                 setFieldValidation(prev => ({...prev, [field]: true}));
                 return;
@@ -371,22 +371,22 @@ function Actions() {
             }
 
             if (fields[field] === "Long") {
-                trigger[field] = parseInt(triggerFields[field]);
+                Action[field] = parseInt(ActionFields[field]);
             } else {
-                trigger[field] = triggerFields[field];
+                Action[field] = ActionFields[field];
             }
         }
 
-        console.log("Trigger object after field setup:", trigger);
+        console.log("Action object after field setup:", Action);
 
         const response = await fetch(`/api/addAction/${email}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(trigger)
+            body: JSON.stringify(Action)
         });
-        console.log(JSON.stringify(trigger));
+        console.log(JSON.stringify(Action));
         if (!response.ok) {
             console.error('Error: HTTP status', response.status);
             const responseText = await response.text();
@@ -408,53 +408,53 @@ function Actions() {
         if (selectedOption === "Alegeți un tip de acțiune") {
             resetModal();
         } else {
-            // Initialize triggerFields with the fields of the selected type
-            const fields = triggerTypes[selectedOption];
-            let initialTriggerFields: {[key: string]: string} = {};
+            // Initialize ActionFields with the fields of the selected type
+            const fields = ActionTypes[selectedOption];
+            let initialActionFields: {[key: string]: string} = {};
             for (const field in fields) {
-                initialTriggerFields[field] = '';
+                initialActionFields[field] = '';
             }
-            setTriggerFields(initialTriggerFields);
+            setActionFields(initialActionFields);
 
-            // Reset the selected file path if the 'File Existence' trigger type is selected
+            // Reset the selected file path if the 'File Existence' Action type is selected
             if (selectedOption === 'Delete File') {
                 setSelectedFilePath('');
             } else if (selectedOption === "Append String To File") {
-                    // Initialize triggerFields with the fields of the selected type
-                    const fields = triggerTypes[selectedOption];
-                    let initialTriggerFields: {[key: string]: string} = {};
+                    // Initialize ActionFields with the fields of the selected type
+                    const fields = ActionTypes[selectedOption];
+                    let initialActionFields: {[key: string]: string} = {};
                     for (const field in fields) {
-                        initialTriggerFields[field] = '';
+                        initialActionFields[field] = '';
                     }
-                    setTriggerFields(initialTriggerFields);
+                    setActionFields(initialActionFields);
 
-                    // Reset the selected file path if the 'File Size' trigger type is selected
+                    // Reset the selected file path if the 'File Size' Action type is selected
                     setSelectedFilePath('');
             } else if (selectedOption === "Start External Program") {
                 setSelectedFilePath(''); // Reset the selected file path
-                // Initialize triggerFields with the fields of the selected type
-                const fields = triggerTypes[selectedOption];
-                let initialTriggerFields: {[key: string]: string} = {};
+                // Initialize ActionFields with the fields of the selected type
+                const fields = ActionTypes[selectedOption];
+                let initialActionFields: {[key: string]: string} = {};
                 for (const field in fields) {
-                    initialTriggerFields[field] = '';
+                    initialActionFields[field] = '';
                 }
-                setTriggerFields(initialTriggerFields); // Reset all the fields
+                setActionFields(initialActionFields); // Reset all the fields
             } else if (selectedOption === "Paste File" || selectedOption === "Move File") {
                 setSelectedFilePath(""); // Reset the selected file path
                 setSelectedDirectoryPath(""); // Reset the selected directory path
                 setShowDirectoryUploadButton(true);
             } else if(selectedOption === "Send Email") {
-                // Initialize triggerFields with the fields of the selected type
-                const fields = triggerTypes[selectedOption];
-                let initialTriggerFields: {[key: string]: string} = {};
+                // Initialize ActionFields with the fields of the selected type
+                const fields = ActionTypes[selectedOption];
+                let initialActionFields: {[key: string]: string} = {};
                 for (const field in fields) {
-                    initialTriggerFields[field] = '';
+                    initialActionFields[field] = '';
                 }
                 // If the selected type is 'Send Email', add a 'body' field
                 if (selectedOption === 'Send Email') {
-                    initialTriggerFields['body'] = '';
+                    initialActionFields['body'] = '';
                 }
-                setTriggerFields(initialTriggerFields);
+                setActionFields(initialActionFields);
             } else {
                 setShowDirectoryUploadButton(false);
             }
@@ -469,22 +469,22 @@ function Actions() {
         console.log(data); // Log the data to the console
         setFileExplorerData(data);
         setSelectedFile(""); // Reset the selected file
-        setTempTriggerName(triggerName); // Store the current trigger name
+        setTempActionName(ActionName); // Store the current Action name
         setTempSelectedType(selectedType); // Store the current selected type
         if (tempSelectedType === 'Start External Program') {
             // Store the current commandLineArguments and exitStatus
-            setTempCommandLineArguments(triggerFields['commandLineArguments']);
+            setTempCommandLineArguments(ActionFields['commandLineArguments']);
         }
         if (selectedType === 'File Size') {
-            setTempSizeThreshold(triggerFields['sizeThreshold']); // Store the current size threshold
+            setTempSizeThreshold(ActionFields['sizeThreshold']); // Store the current size threshold
             setTempSizeThreshold(''); // Clear the size threshold
         }
         if (selectedType === 'Append File To String') {
-            setTempSizeThreshold(triggerFields['stringToAppend']); // Store the current string to append
+            setTempSizeThreshold(ActionFields['stringToAppend']); // Store the current string to append
         }
-        setTriggerName(""); // Clear the trigger name
+        setActionName(""); // Clear the Action name
         setSelectedType(""); // Clear the selected type
-        setShowModal(false); // Close the 'Create Trigger' modal
+        setShowModal(false); // Close the 'Create Action' modal
         setShowFileExplorerModal(true); // Open the 'Select File' modal
         setCurrentDirectory(data);
         setDirectoryContent(data.children || []);
@@ -492,7 +492,7 @@ function Actions() {
     };
 
     const deleteAction = async () => {
-        const response = await fetch(`/api/removeAction/${email}/${triggerToDelete}`, {
+        const response = await fetch(`/api/removeAction/${email}/${ActionToDelete}`, {
             method: 'DELETE',
         });
         const responseText = await response.text();
@@ -520,9 +520,9 @@ function Actions() {
     };
 
     const resetModal = () => {
-        setTriggerName("");
+        setActionName("");
         setSelectedType("");
-        setTriggerFields({});
+        setActionFields({});
         setNameValidation(false);
         setTypeValidation(false);
         setFieldValidation({});
@@ -583,15 +583,15 @@ function Actions() {
         console.log("Selected directory path:", directoryPath);
         if (tempSelectedType === 'Paste File' || tempSelectedType === 'Move File') {
             // Set the destinationPath field to the selected directory path
-            setTriggerFields(prevFields => ({
+            setActionFields(prevFields => ({
                 ...prevFields,
                 'destinationPath': directoryPath
             }));
             console.log('Restored destinationPath:', directoryPath); // Log the restored destinationPath
         }
         setShowDirectoryExplorerModal(false); // Close the 'Select Directory' modal
-        setShowModal(true); // Re-open the 'Create Trigger' modal
-        setTriggerName(tempTriggerName); // Restore the trigger name
+        setShowModal(true); // Re-open the 'Create Action' modal
+        setActionName(tempActionName); // Restore the Action name
         setSelectedType(tempSelectedType); // Restore the selected type
     };
 
@@ -638,9 +638,9 @@ function Actions() {
         console.log(data); // Log the data to the console
         setFileExplorerData(data);
         setSelectedFile(""); // Reset the selected file
-        setTempTriggerName(triggerName); // Store the current trigger name
+        setTempActionName(ActionName); // Store the current Action name
         setTempSelectedType(selectedType); // Store the current selected type
-        setShowModal(false); // Close the 'Create Trigger' modal
+        setShowModal(false); // Close the 'Create Action' modal
         setShowDirectoryExplorerModal(true); // Open the 'Select Directory' modal
         setCurrentDirectory(data);
         setDirectoryContent(data.children || []);
@@ -652,8 +652,8 @@ function Actions() {
         directoryPath = directoryPath.replace("Acasă", "FileDirectory"); // Replace "Acasă" with "FileDirectory"
         setSelectedDirectoryPath(directoryPath); // Set the selected directory path
         setShowDirectoryExplorerModal(false); // Close the 'Select Directory' modal
-        setShowModal(true); // Re-open the 'Create Trigger' modal
-        setTriggerName(tempTriggerName); // Restore the trigger name
+        setShowModal(true); // Re-open the 'Create Action' modal
+        setActionName(tempActionName); // Restore the Action name
         setSelectedType(tempSelectedType); // Restore the selected type
     };
 
@@ -789,10 +789,10 @@ function Actions() {
                                 <Form.Label>Nume</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Enter trigger name"
+                                    placeholder="Introduceți numele acțiunii"
                                     onKeyPress={handleKeyPress}
                                     onChange={handleNameChange}
-                                    value={triggerName} // Set the value to triggerName
+                                    value={ActionName} // Set the value to ActionName
                                     maxLength={20}
                                     className={nameValidation ? 'is-invalid' : ''}
                                 />
@@ -804,14 +804,14 @@ function Actions() {
                                 <Form.Select onChange={(e) => handleTypeChange(e.target.value)}
                                              className={typeValidation ? 'is-invalid' : ''} value={selectedType}>
                                     <option>Alegeți un tip de acțiune</option>
-                                    {Object.keys(triggerTypes).map((type, index) => (
+                                    {Object.keys(ActionTypes).map((type, index) => (
                                         <option key={index} value={type}>{actionTypeMapping[type]}</option>
                                     ))}
                                 </Form.Select>
                                 {typeValidation &&
                                     <div className="invalid-feedback">Tipul acțiunii este obligatoriu</div>}
                             </Form.Group>
-                            {selectedType && Object.keys(triggerTypes[selectedType]).map((field: string, index: number) => (
+                            {selectedType && Object.keys(ActionTypes[selectedType]).map((field: string, index: number) => (
                                 <Form.Group key={index} className="mb-3">
                                     <Form.Label className="label-spacing">
                                         {selectedType === 'Paste File' && field === 'destinationPath' ? 'Folderul de destinație' :
@@ -881,11 +881,11 @@ function Actions() {
                                     ) : (selectedType === 'Combined Actions' && (field === 'firstAction' || field === 'secondAction')) ? (
                                         <Form.Select onChange={handleFieldChangeNotOrAnd(field)}
                                                      className={fieldValidation[field] ? 'is-invalid' : ''}
-                                                     value={field === 'firstAction' ? firstTrigger : secondTrigger}>
+                                                     value={field === 'firstAction' ? firstAction : secondAction}>
                                             <option>Alege o acțiune</option>
-                                            {triggers.filter(trigger => trigger.name !== (field === 'firstAction' ? secondTrigger : firstTrigger)).map((trigger, index) => (
+                                            {Actions.filter(Action => Action.name !== (field === 'firstAction' ? secondAction : firstAction)).map((Action, index) => (
                                                 <option key={index}
-                                                        value={trigger.name}>{trigger.name} ({trigger.type})</option>
+                                                        value={Action.name}>{Action.name} ({Action.type})</option>
                                             ))}
                                         </Form.Select>
                                     ) : selectedType === 'Start External Program' && field === 'commandLineArguments' ? (
@@ -895,7 +895,7 @@ function Actions() {
                                                 placeholder={`Introduceți argumentele liniei de comandă`}
                                                 onChange={handleFieldChange(field)}
                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
-                                                value={triggerFields['commandLineArguments']}
+                                                value={ActionFields['commandLineArguments']}
                                             />
                                             {fieldValidation[field] &&
                                                 <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
@@ -907,7 +907,7 @@ function Actions() {
                                                 placeholder={`Introduceți șirul de caractere de adăugat`}
                                                 onChange={handleFieldChange(field)}
                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
-                                                value={triggerFields['stringToAppend']}
+                                                value={ActionFields['stringToAppend']}
                                             />
                                             {fieldValidation[field] &&
                                                 <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
@@ -920,7 +920,7 @@ function Actions() {
                                                 placeholder={`Introduceți corpul email-ului`}
                                                 onChange={handleFieldChange(field)}
                                                 className={fieldValidation[field] ? 'is-invalid' : ''}
-                                                value={triggerFields['stringToAppend']}
+                                                value={ActionFields['stringToAppend']}
                                             />
                                             {fieldValidation[field] &&
                                                 <div className="invalid-feedback">{fieldErrorMessage[field]}</div>}
@@ -965,7 +965,7 @@ function Actions() {
                         <Button variant="secondary" onClick={handleClose}>
                             Anulează
                         </Button>
-                        <Button variant="primary" onClick={createTrigger}>
+                        <Button variant="primary" onClick={createAction}>
                             Adaugă
                         </Button>
                     </Modal.Footer>
@@ -974,16 +974,16 @@ function Actions() {
                     show={showFileExplorerModal}
                     onHide={() => {
                         setShowFileExplorerModal(false); // Close the 'Select File' modal
-                        setShowModal(true); // Open the 'Create Trigger' modal
-                        setTriggerName(tempTriggerName); // Restore the trigger name
+                        setShowModal(true); // Open the 'Create Action' modal
+                        setActionName(tempActionName); // Restore the Action name
                         setSelectedType(tempSelectedType); // Restore the selected type
                         if (tempSelectedType === 'Append String To File') {
                             // Restore the stringToAppend
-                            setTriggerFields(prevFields => ({
+                            setActionFields(prevFields => ({
                                 ...prevFields,
                                 'stringToAppend': tempStringToAppend
                             }));
-                            console.log("Restored String to Append: ", triggerFields['stringToAppend']);
+                            console.log("Restored String to Append: ", ActionFields['stringToAppend']);
                         }
                     }}
                 >
@@ -1011,8 +1011,8 @@ function Actions() {
                     show={showDirectoryExplorerModal}
                     onHide={() => {
                         setShowDirectoryExplorerModal(false); // Close the 'Select Directory' modal
-                        setShowModal(true); // Open the 'Create Trigger' modal
-                        setTriggerName(tempTriggerName); // Restore the trigger name
+                        setShowModal(true); // Open the 'Create Action' modal
+                        setActionName(tempActionName); // Restore the Action name
                         setSelectedType(tempSelectedType); // Restore the selected type
                     }}
                 >
@@ -1036,19 +1036,19 @@ function Actions() {
                         </Form>
                     </Modal.Body>
                 </Modal>
-                {triggers.length === 0 ? (
+                {Actions.length === 0 ? (
                     <p>Nu sunt acțiuni disponibile pentru moment.</p>
                 ) : (
                     <div className="row">
-                        {triggers.map((trigger) => (
-                            <div key={trigger.id} className="col-lg-3">
+                        {Actions.map((Action) => (
+                            <div key={Action.id} className="col-lg-3">
                                 <div className="card mb-3">
                                     <div className="card-body">
-                                        <h5 className="card-title">{trigger.name}</h5>
-                                        <p className="card-text">Tip: {actionTypeMapping[trigger.type]}</p>
+                                        <h5 className="card-title">{Action.name}</h5>
+                                        <p className="card-text">Tip: {actionTypeMapping[Action.type]}</p>
                                         <p className="card-text">
                                             Descriere: {
-                                            trigger.value
+                                            Action.value
                                                 .replace(/(folderul |fișierul |extern ).*(FileDirectory\\)/, '$1Acasă\\')
                                                 .split(' ')
                                                 .join(' ')
@@ -1060,7 +1060,7 @@ function Actions() {
                                                  fill="currentColor"
                                                  className="bi bi-trash cursor-pointer" viewBox="0 0 16 16"
                                                  onClick={() => {
-                                                     setTriggerToDelete(trigger.name);
+                                                     setActionToDelete(Action.name);
                                                      setShowDeleteModal(true);
                                                  }}>
                                                 <path

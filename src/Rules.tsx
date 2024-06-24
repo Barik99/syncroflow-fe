@@ -91,7 +91,7 @@ function Rules() {
     if (Array.isArray(data)) {
       const sortedRules = data.sort((a, b) => a.name.localeCompare(b.name));
       setRules(sortedRules);
-      setAllRules(sortedRules); // Set allRules with the fetched data
+      setAllRules(sortedRules);
     } else {
       console.error('Error: Expected array from API, received:', data);
     }
@@ -120,13 +120,13 @@ function Rules() {
     }
 
     const ruleData = {
-      name: ruleName, // Replace with the actual rule name
-      trigger: selectedType, // Replace with the actual trigger name
-      action: selectedAction, // Replace with the actual action name
-      active: isActive, // Replace with the actual active status
-      multiUse: isMultiUse, // Replace with the actual multiUse status
-      lastUse: null, // Replace with the actual lastUse value
-      sleepTime: isMultiUse ? parseInt(sleepTime) : 0 // Set sleepTime to 0 if isMultiUse is not checked
+      name: ruleName,
+      trigger: selectedType,
+      action: selectedAction,
+      active: isActive,
+      multiUse: isMultiUse,
+      lastUse: null,
+      sleepTime: isMultiUse ? parseInt(sleepTime) : 0
     };
 
     const response = await fetch(`/api/addRule/${email}`, {
@@ -229,8 +229,8 @@ function Rules() {
 
     const data = await response.text();
     setSearchTerm("");
-    setToastMessage(data); // Set the toast message to the text from the API response
-    setShowToast(true); // Show the toast message
+    setToastMessage(data);
+    setShowToast(true);
 
     setShowDeleteModal(false);
 
@@ -294,10 +294,9 @@ function Rules() {
     setFormErrors(errors);
   };
 
-
   const handleReset = () => {
     setSearchTerm("");
-    fetchRules(); // presupunând că aveți o funcție similară cu fetchTriggers pentru reguli
+    fetchRules();
   };
 
   return (
@@ -333,7 +332,7 @@ function Rules() {
                   value={searchTerm}
                   className="me-2"
                   onKeyPress={handleKeyPress}
-                  maxLength={20}
+                  maxLength={30}
               />
               <Button onClick={handleSearch}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -395,7 +394,7 @@ function Rules() {
                   <label htmlFor="ruleName" className="form-label">Numele regulii <span
                       className="required">*</span></label>
                   <input type="text" className={`form-control ${formErrors.ruleName ? 'is-invalid' : ''}`} id="ruleName"
-                         maxLength={20} placeholder="Introduceți numele regulii"
+                         maxLength={30} placeholder="Introduceți numele regulii"
                          onKeyPress={handleKeyPress} onChange={handleNameChange}/>
                   {formErrors.ruleName && <div className="invalid-feedback">{formErrors.ruleName}</div>}
                 </div>

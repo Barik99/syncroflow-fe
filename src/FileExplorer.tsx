@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Directory from './Directory';
-import File from './File';
 import Navigation from './Navigation';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
